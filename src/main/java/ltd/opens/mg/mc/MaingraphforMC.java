@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.storage.LevelResource;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -26,10 +27,15 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import ltd.opens.mg.mc.client.gui.BlueprintWebServer;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(MaingraphforMC.MODID)
@@ -113,5 +119,16 @@ public class MaingraphforMC {
     public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
+        
+        // Set the blueprint save path to the world directory
+        Path worldPath = event.getServer().getWorldPath(LevelResource.ROOT);
+        BlueprintWebServer.setSavePath(worldPath);
+    }
+
+    @SubscribeEvent
+    public void onServerStopping(ServerStoppingEvent event) {
+        LOGGER.info("Server stopping, resetting blueprint save path");
+        // Reset to default root path when server stops
+        BlueprintWebServer.setSavePath(Paths.get("."));
     }
 }

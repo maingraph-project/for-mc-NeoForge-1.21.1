@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MGMC Node Editor</title>
+    <link rel="stylesheet" href="blueprint.css">
+</head>
+<body>
+    <div id="menu-bar">
+        <span class="title">MGMC Blueprint</span>
+        <button id="btn-save" onclick="saveToMinecraft()">Save to Minecraft</button>
+        <div class="separator"></div>
+        <button id="btn-export" onclick="showOutput()">Export JSON</button>
+        <button id="btn-export-parsed" onclick="showParsedOutput()">Gen Parsed</button>
+        <button id="btn-reset" onclick="resetView()">Reset View</button>
+        <div class="separator"></div>
+        <select onchange="setLanguage(this.value)">
+            <option value="en">English</option>
+            <option value="zh">中文</option>
+        </select>
+        <span id="txt-hint" class="hint-text">Right click to add. Drag ports to connect.</span>
+    </div>
+
+    <div id="canvas">
+        <div id="world">
+            <svg id="svg-layer"></svg>
+        </div>
+    </div>
+
+    <div id="context-menu"></div>
+    <div id="node-context-menu">
+        <div class="menu-item" onclick="deleteActiveNode()">Delete Node</div>
+        <div class="menu-item" onclick="breakActiveNodeLinks()">Break Links</div>
+    </div>
+
+    <textarea id="output" readonly onmousedown="event.stopPropagation()"></textarea>
+
+    <div id="minimap">
+        <canvas id="mini-canvas"></canvas>
+        <div id="mini-viewport"></div>
+    </div>
+
+    <div id="toast"></div>
+
+    <div id="info-panel" class="collapsed">
+        <div class="info-header" onclick="toggleInfoPanel()">
+            <span class="info-title">Status Info</span>
+            <span class="info-toggle">▼</span>
+        </div>
+        <div class="info-content">
+            <div class="info-item">
+                <span class="info-label">Current Player:</span>
+                <span id="info-player" class="info-value">Loading...</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Save Path:</span>
+                <span id="info-path" class="info-value">Loading...</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Nodes:</span>
+                <span id="info-nodes" class="info-value">0</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Connections:</span>
+                <span id="info-conns" class="info-value">0</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Server Port:</span>
+                <span class="info-value">8666</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="blueprint.js"></script>
+</body>
+</html>

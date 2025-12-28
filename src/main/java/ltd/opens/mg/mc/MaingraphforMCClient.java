@@ -7,8 +7,15 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import ltd.opens.mg.mc.client.gui.BlueprintScreen;
+import ltd.opens.mg.mc.client.gui.BlueprintWebServer;
+import static net.minecraft.commands.Commands.literal;
+
+import java.awt.Desktop;
+import java.net.URI;
 
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
 @Mod(value = MaingraphforMC.MODID, dist = Dist.CLIENT)
@@ -27,5 +34,35 @@ public class MaingraphforMCClient {
         // Some client setup code
         MaingraphforMC.LOGGER.info("HELLO FROM CLIENT SETUP");
         MaingraphforMC.LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+        
+        // Sync player info to web server
+        BlueprintWebServer.setPlayerInfo(
+            Minecraft.getInstance().getUser().getName(),
+            Minecraft.getInstance().getUser().getProfileId().toString()
+        );
+        
+        // Start the web server
+        BlueprintWebServer.start();
+    }
+
+    @SubscribeEvent
+    static void onRegisterClientCommands(RegisterClientCommandsEvent event) {
+        event.getDispatcher().register(literal("mgmc")
+            .then(literal("gui")
+                .executes(context -> {
+                        try {
+                            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                                Desktop.getDesktop().browse(new URI(BlueprintWebServer.getUrl()));
+                            } else {
+                                // Fallback: print to chat
+                                context.getSource().sendFailure(net.minecraft.network.chat.Component.literal("Cannot open browser automatically. Please visit: " + BlueprintWebServer.getUrl()));
+                            }
+                        } catch (Exception e) {
+                            context.getSource().sendFailure(net.minecraft.network.chat.Component.literal("Failed to open browser: " + e.getMessage()));
+                        }
+                        return 1;
+                    })
+            )
+        );
     }
 }
