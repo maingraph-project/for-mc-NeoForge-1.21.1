@@ -12,38 +12,22 @@ const translations = {
         "categories": {
             "Events": "Events",
             "Function": "Function",
-            "Variables": "Variables",
-            "Math": "Math",
-            "Logic": "Logic",
-            "Appearance": "Appearance"
+            "Logic": "Logic"
         },
         "nodes": {
-            "on_called": { title: "On Called", label: "On Called" },
             "on_mgrun": { title: "On MGRUN", label: "On MGRUN" },
-            "print_string": { title: "Print String", label: "Print String" },
             "print_chat": { title: "Print to Chat", label: "Print to Chat" },
             "get_arg": { title: "Get Parameter", label: "Get Parameter" },
-            "player_health": { title: "Player Health", label: "Player Health" },
-            "add_float": { title: "Add", label: "Add (Float)" },
-            "branch": { title: "Branch", label: "Branch" },
-            "make_color": { title: "Make Color", label: "Make Color" }
+            "branch": { title: "Branch", label: "Branch" }
         },
         "pins": {
             "exec": "Exec",
-            "in_string": "In String",
             "message": "Message",
             "index": "Index",
-            "name": "Name",
             "value": "Value",
-            "a": "A",
-            "b": "B",
-            "result": "Result",
             "condition": "Condition",
             "true": "True",
-            "false": "False",
-            "op": "Op",
-            "base": "Base",
-            "color": "Color"
+            "false": "False"
         },
         "context": {
             "delete_node": "Delete Node",
@@ -58,38 +42,22 @@ const translations = {
         "categories": {
             "Events": "事件",
             "Function": "函数",
-            "Variables": "变量",
-            "Math": "数学",
-            "Logic": "逻辑",
-            "Appearance": "外观"
+            "Logic": "逻辑"
         },
         "nodes": {
-            "on_called": { title: "事件 被调用时", label: "被调用时" },
             "on_mgrun": { title: "事件 当运行MGRUN时", label: "当运行MGRUN时" },
-            "print_string": { title: "打印字符串", label: "打印字符串" },
             "print_chat": { title: "输出到聊天", label: "输出到聊天" },
             "get_arg": { title: "获取参数", label: "获取参数" },
-            "player_health": { title: "玩家生命值", label: "玩家生命值" },
-            "add_float": { title: "加法", label: "加法 (浮点)" },
-            "branch": { title: "分支", label: "分支" },
-            "make_color": { title: "创建颜色", label: "创建颜色" }
+            "branch": { title: "分支", label: "分支" }
         },
         "pins": {
             "exec": "执行",
-            "in_string": "输入字符串",
             "message": "内容",
             "index": "索引",
-            "name": "名称",
             "value": "值",
-            "a": "A",
-            "b": "B",
-            "result": "结果",
             "condition": "条件",
             "true": "真",
-            "false": "假",
-            "op": "操作符",
-            "base": "基色",
-            "color": "颜色"
+            "false": "假"
         },
         "context": {
             "delete_node": "删除节点",
@@ -210,7 +178,7 @@ const nodeDefinitions = [
         title: 'Get Parameter',
         color: '#4d4',
         inputs: [
-            {id: 'index', label: 'Index', type: 'number', hasInput: true, defaultValue: 0}
+            {id: 'index', label: 'Index', type: 'float', hasInput: true, defaultValue: 0}
         ],
         outputs: [{id: 'value', label: 'Value', type: 'string'}]
     },
@@ -707,45 +675,11 @@ function showOutput() {
     textArea.style.display = 'block';
 }
 
-function showParsedOutput() {
-    const parsedData = getParsedNodes();
-    const textArea = document.getElementById('output');
-    textArea.value = JSON.stringify(parsedData, null, 2);
-    textArea.style.display = 'block';
-}
-
-function getParsedNodes() {
-    return nodes.map(n => {
-        const def = nodeDefinitions.find(d => d.id === n.defId);
-        const nodeObj = { id: n.id, type: n.defId, inputs: {}, outputs: {} };
-        if (def) {
-            def.inputs.forEach(inputDef => {
-                const portId = inputDef.id;
-                const conn = connections.find(c => c.toNode === n.id && c.toSocket === portId);
-                if (conn) {
-                    nodeObj.inputs[portId] = { type: 'link', nodeId: conn.fromNode, socket: conn.fromSocket };
-                } else {
-                    const savedVal = n.inputValues && n.inputValues[portId];
-                    const val = savedVal !== undefined ? savedVal : inputDef.defaultValue;
-                    nodeObj.inputs[portId] = { type: 'value', value: val };
-                }
-            });
-            def.outputs.forEach(outputDef => {
-                const portId = outputDef.id;
-                const conns = connections.filter(c => c.fromNode === n.id && c.fromSocket === portId);
-                nodeObj.outputs[portId] = conns.map(c => ({ nodeId: c.toNode, socket: c.toSocket }));
-            });
-        }
-        return nodeObj;
-    });
-}
-
 async function saveToMinecraft() {
     const btn = document.getElementById('btn-save');
     btn.classList.add('loading');
     
     const data = {
-        execution: getParsedNodes(),
         ui: {
             nodes: nodes.map(n => ({
                 id: n.id,

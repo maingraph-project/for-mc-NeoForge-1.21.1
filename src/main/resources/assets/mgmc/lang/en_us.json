@@ -9,5 +9,7 @@
   "mgmc.configuration.items": "Item List",
   "mgmc.configuration.logDirtBlock": "Log Dirt Block",
   "mgmc.configuration.magicNumberIntroduction": "Magic Number Text",
-  "mgmc.configuration.magicNumber": "Magic Number"
+  "mgmc.configuration.magicNumber": "Magic Number",
+  "key.mgmc.open_blueprint": "Open Blueprint Editor",
+  "key.categories.mgmc": "Maingraph for MC"
 }

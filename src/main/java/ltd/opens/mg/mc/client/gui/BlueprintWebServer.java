@@ -86,8 +86,16 @@ public class BlueprintWebServer {
                 sendJsonResponse(exchange, 500, "{\"status\":\"error\",\"message\":\"" + e.getMessage() + "\"}");
             }
         } else if (path.equals("/api/load") && "GET".equalsIgnoreCase(exchange.getRequestMethod())) {
-            MaingraphforMC.LOGGER.info("Loading blueprint data");
+            MaingraphforMC.LOGGER.info("Loading blueprint data from {}", dataFile.toAbsolutePath());
             
+            if (Files.exists(dataFile)) {
+                try {
+                    lastSavedJson = Files.readString(dataFile);
+                } catch (IOException e) {
+                    MaingraphforMC.LOGGER.error("Failed to reload blueprint data", e);
+                }
+            }
+
             // Cleanly inject metadata into the saved JSON
             String metadataJson = String.format(
                 "\"metadata\":{\"playerName\":\"%s\",\"playerUuid\":\"%s\",\"savePath\":\"%s\"}",
@@ -154,6 +162,27 @@ public class BlueprintWebServer {
         }
     }
 
+    public static void save(String json) {
+        lastSavedJson = json;
+        try {
+            Files.writeString(dataFile, json);
+            MaingraphforMC.LOGGER.info("In-game editor saved to {}", dataFile.toAbsolutePath());
+        } catch (IOException e) {
+            MaingraphforMC.LOGGER.error("Failed to save from in-game editor", e);
+        }
+    }
+
+    public static String load() {
+        if (Files.exists(dataFile)) {
+            try {
+                lastSavedJson = Files.readString(dataFile);
+            } catch (IOException e) {
+                MaingraphforMC.LOGGER.error("Failed to load blueprint data", e);
+            }
+        }
+        return lastSavedJson;
+    }
+
     public static void stop() {
         if (server != null) {
             server.stop(0);
@@ -165,9 +194,8 @@ public class BlueprintWebServer {
         return "http://localhost:" + port + "/blueprint.html";
     }
 
-    public static void executeBlueprint(String eventType, String name, String[] args) {
-        if (lastSavedJson != null && !lastSavedJson.isEmpty()) {
-            BlueprintEngine.execute(lastSavedJson, eventType, name, args);
-        }
+    public static Path getDataFile() {
+        return dataFile;
     }
+
 }

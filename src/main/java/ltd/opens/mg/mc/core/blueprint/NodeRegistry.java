@@ -20,48 +20,46 @@ public class NodeRegistry {
     }
 
     static {
-        // Register some default nodes
-        register(new NodeDefinition.Builder("on_called", "On Called")
+        // Colors from web editor
+        int colorExec = 0xFFFFFFFF;
+        int colorString = 0xFFDA00DA;
+        int colorFloat = 0xFF36CF36;
+        int colorBoolean = 0xFF920101;
+        int colorObject = 0xFF00AAFF;
+
+        // Register default nodes matching web editor
+        // Events
+        register(new NodeDefinition.Builder("on_mgrun", "On MGRUN")
+            .category("Events")
             .color(0xFF880000)
-            .addOutput("Out", NodeDefinition.PortType.EXEC, 0xFFFFFFFF)
+            .addOutput("exec", NodeDefinition.PortType.EXEC, colorExec)
+            .addOutput("name", NodeDefinition.PortType.STRING, colorString)
             .build());
 
-        // Print String Node
-        register(new NodeDefinition.Builder("print_string", "Print String")
+        // Function
+        register(new NodeDefinition.Builder("print_chat", "Print to Chat")
+            .category("Function")
             .color(0xFF4488FF)
-            .addInput("exec", NodeDefinition.PortType.EXEC, 0xFFFFFFFF)
-            .addInput("in_string", NodeDefinition.PortType.DATA, 0xFF00FF00)
-            .addOutput("exec", NodeDefinition.PortType.EXEC, 0xFFFFFFFF)
+            .addInput("exec", NodeDefinition.PortType.EXEC, colorExec)
+            .addInput("message", NodeDefinition.PortType.STRING, colorString, true, "Hello Chat")
+            .addOutput("exec", NodeDefinition.PortType.EXEC, colorExec)
             .build());
 
-        // Player Health Node
-        register(new NodeDefinition.Builder("player_health", "Player Health")
-            .color(0xFFFF4444)
-            .addOutput("value", NodeDefinition.PortType.DATA, 0xFF00FF00)
-            .build());
-
-        // Add (Float) Node
-        register(new NodeDefinition.Builder("add_float", "Add (Float)")
+        register(new NodeDefinition.Builder("get_arg", "Get Parameter")
+            .category("Function")
             .color(0xFF44AA44)
-            .addInput("a", NodeDefinition.PortType.DATA, 0xFF00FF00)
-            .addInput("b", NodeDefinition.PortType.DATA, 0xFF00FF00)
-            .addOutput("result", NodeDefinition.PortType.DATA, 0xFF00FF00)
+            .addInput("index", NodeDefinition.PortType.FLOAT, colorFloat, true, 0)
+            .addOutput("value", NodeDefinition.PortType.STRING, colorString)
             .build());
 
-        // Branch Node
+        // Logic
         register(new NodeDefinition.Builder("branch", "Branch")
+            .category("Logic")
             .color(0xFF888888)
-            .addInput("exec", NodeDefinition.PortType.EXEC, 0xFFFFFFFF)
-            .addInput("condition", NodeDefinition.PortType.DATA, 0xFF00FF00)
-            .addOutput("true", NodeDefinition.PortType.EXEC, 0xFFFFFFFF)
-            .addOutput("false", NodeDefinition.PortType.EXEC, 0xFFFFFFFF)
-            .build());
-
-        // Make Color Node
-        register(new NodeDefinition.Builder("make_color", "Make Color")
-            .color(0xFF4444AA)
-            .addInput("base", NodeDefinition.PortType.DATA, 0xFF00FF00)
-            .addOutput("color", NodeDefinition.PortType.DATA, 0xFF00FF00)
+            .addInput("exec", NodeDefinition.PortType.EXEC, colorExec)
+            .addInput("condition", NodeDefinition.PortType.BOOLEAN, colorBoolean, true, true)
+            .addOutput("true", NodeDefinition.PortType.EXEC, colorExec)
+            .addOutput("false", NodeDefinition.PortType.EXEC, colorExec)
             .build());
     }
 }
