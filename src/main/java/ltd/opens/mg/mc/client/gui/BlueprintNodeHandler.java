@@ -21,7 +21,7 @@ public class BlueprintNodeHandler {
                 float[] pos = node.getPortPosition(i, true);
                 
                 if (port.hasInput) {
-                    float inputX = pos[0] + 8 + font.width(port.name) + 2;
+                    float inputX = pos[0] + 8 + font.width(port.displayName) + 2;
                     float inputY = pos[1] - 4;
                     float inputWidth = 50;
                     float inputHeight = 10;
@@ -29,23 +29,23 @@ public class BlueprintNodeHandler {
                         // Only allow editing if not connected
                         boolean isConnected = false;
                         for (GuiConnection conn : state.connections) {
-                            if (conn.to == node && conn.toPort.equals(port.name)) {
+                            if (conn.to == node && conn.toPort.equals(port.id)) {
                                 isConnected = true;
                                 break;
                             }
                         }
                         if (!isConnected) {
                             if (port.type == NodeDefinition.PortType.BOOLEAN) {
-                                JsonElement val = node.inputValues.get(port.name);
+                                JsonElement val = node.inputValues.get(port.id);
                                 boolean current = val != null ? val.getAsBoolean() : (port.defaultValue instanceof Boolean ? (Boolean) port.defaultValue : false);
-                                node.inputValues.addProperty(port.name, !current);
+                                node.inputValues.addProperty(port.id, !current);
                             } else if (port.options != null && port.options.length > 0) {
                                 // Open selection modal instead of cycling
-                                JsonElement val = node.inputValues.get(port.name);
+                                JsonElement val = node.inputValues.get(port.id);
                                 String current = val != null ? val.getAsString() : (port.defaultValue != null ? port.defaultValue.toString() : port.options[0]);
                                 
                                 final GuiNode targetNode = node;
-                                final String targetPort = port.name;
+                                final String targetPort = port.id;
                                 
                                 Minecraft.getInstance().setScreen(new InputModalScreen(
                                     screen, 
@@ -70,16 +70,16 @@ public class BlueprintNodeHandler {
                                     }
                                 ));
                             } else {
-                                JsonElement val = node.inputValues.get(port.name);
+                                JsonElement val = node.inputValues.get(port.id);
                                 String initialText = val != null ? val.getAsString() : (port.defaultValue != null ? port.defaultValue.toString() : "");
                                 boolean isNumeric = (port.type == NodeDefinition.PortType.FLOAT);
                                 
                                 final GuiNode targetNode = node;
-                                final String targetPort = port.name;
+                                final String targetPort = port.id;
                                 
                                 Minecraft.getInstance().setScreen(new InputModalScreen(
                                     screen, 
-                                    "Enter " + port.name, 
+                                    "Enter " + port.displayName, 
                                     initialText, 
                                     isNumeric,
                                     (newText) -> {

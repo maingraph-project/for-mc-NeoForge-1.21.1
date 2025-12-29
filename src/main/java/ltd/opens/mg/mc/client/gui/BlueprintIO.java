@@ -27,7 +27,7 @@ public class BlueprintIO {
                 
                 JsonObject inputs = new JsonObject();
                 for (NodeDefinition.PortDefinition port : node.definition.inputs()) {
-                    GuiConnection conn = findConnectionTo(node, port.name(), connections);
+                    GuiConnection conn = findConnectionTo(node, port.id(), connections);
                     JsonObject input = new JsonObject();
                     if (conn != null) {
                         input.addProperty("type", "link");
@@ -35,10 +35,10 @@ public class BlueprintIO {
                         input.addProperty("socket", conn.fromPort);
                     } else {
                         input.addProperty("type", "value");
-                        JsonElement val = node.inputValues.get(port.name());
+                        JsonElement val = node.inputValues.get(port.id());
                         input.add("value", val != null ? val : GSON.toJsonTree(port.defaultValue()));
                     }
-                    inputs.add(port.name(), input);
+                    inputs.add(port.id(), input);
                 }
                 nodeObj.add("inputs", inputs);
 
@@ -46,14 +46,14 @@ public class BlueprintIO {
                 for (NodeDefinition.PortDefinition port : node.definition.outputs()) {
                     JsonArray targets = new JsonArray();
                     for (GuiConnection conn : connections) {
-                        if (conn.from == node && conn.fromPort.equals(port.name())) {
+                        if (conn.from == node && conn.fromPort.equals(port.id())) {
                             JsonObject target = new JsonObject();
                             target.addProperty("nodeId", conn.to.id);
                             target.addProperty("socket", conn.toPort);
                             targets.add(target);
                         }
                     }
-                    outputs.add(port.name(), targets);
+                    outputs.add(port.id(), targets);
                 }
                 nodeObj.add("outputs", outputs);
                 execution.add(nodeObj);

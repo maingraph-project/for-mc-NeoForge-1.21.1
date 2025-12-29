@@ -76,12 +76,15 @@ public class NodeLogicRegistry {
     static {
         // Events
         register("on_mgrun", new OnMgRunHandler());
+        register("on_player_move", new OnPlayerMoveHandler());
 
         // Functions
         register("print_chat", new PrintChatHandler());
         register("print_string", new PrintStringHandler());
         register("get_list_item", new GetListItemHandler());
         register("get_entity_info", new GetEntityInfoHandler());
+        register("play_effect", new PlayEffectHandler());
+        register("explosion", new ExplosionHandler());
 
         // Logic
         register("branch", new BranchHandler());

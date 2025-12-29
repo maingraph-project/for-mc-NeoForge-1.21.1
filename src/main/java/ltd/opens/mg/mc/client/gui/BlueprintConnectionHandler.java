@@ -16,7 +16,7 @@ public class BlueprintConnectionHandler {
                 float[] pos = node.getPortPosition(i, true);
                 if (Math.abs(worldMouseX - pos[0]) < 5 && Math.abs(worldMouseY - pos[1]) < 5) {
                     state.connectionStartNode = node;
-                    state.connectionStartPort = node.inputs.get(i).name;
+                    state.connectionStartPort = node.inputs.get(i).id;
                     state.isConnectionFromInput = true;
                     return true;
                 }
@@ -26,7 +26,7 @@ public class BlueprintConnectionHandler {
                 float[] pos = node.getPortPosition(i, false);
                 if (Math.abs(worldMouseX - pos[0]) < 5 && Math.abs(worldMouseY - pos[1]) < 5) {
                     state.connectionStartNode = node;
-                    state.connectionStartPort = node.outputs.get(i).name;
+                    state.connectionStartPort = node.outputs.get(i).id;
                     state.isConnectionFromInput = false;
                     return true;
                 }
@@ -60,9 +60,9 @@ public class BlueprintConnectionHandler {
                             if (startPort != null && canConnect(startPort.type, targetPort.type)) {
                                 // Remove existing connections to this input if it's not EXEC
                                 if (targetPort.type != NodeDefinition.PortType.EXEC) {
-                                    state.connections.removeIf(c -> c.to == node && c.toPort.equals(targetPort.name));
+                                    state.connections.removeIf(c -> c.to == node && c.toPort.equals(targetPort.id));
                                 }
-                                state.connections.add(new GuiConnection(state.connectionStartNode, state.connectionStartPort, node, targetPort.name));
+                                state.connections.add(new GuiConnection(state.connectionStartNode, state.connectionStartPort, node, targetPort.id));
                             }
                             break;
                         }
@@ -77,9 +77,9 @@ public class BlueprintConnectionHandler {
                             if (startPort != null && canConnect(startPort.type, targetPort.type)) {
                                 // Remove existing connections to the start input if it's not EXEC
                                 if (startPort.type != NodeDefinition.PortType.EXEC) {
-                                    state.connections.removeIf(c -> c.to == state.connectionStartNode && c.toPort.equals(startPort.name));
+                                    state.connections.removeIf(c -> c.to == state.connectionStartNode && c.toPort.equals(startPort.id));
                                 }
-                                state.connections.add(new GuiConnection(node, targetPort.name, state.connectionStartNode, state.connectionStartPort));
+                                state.connections.add(new GuiConnection(node, targetPort.id, state.connectionStartNode, state.connectionStartPort));
                             }
                             break;
                         }

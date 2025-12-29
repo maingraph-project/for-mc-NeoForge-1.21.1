@@ -45,12 +45,43 @@ public class NodeRegistry {
             .addOutput("trigger_z", "Trigger Z", NodeDefinition.PortType.FLOAT, colorFloat)
             .build());
 
+        register(new NodeDefinition.Builder("on_player_move", "On Player Move")
+            .category("Events")
+            .color(0xFF0088FF)
+            .addOutput("exec", "Out", NodeDefinition.PortType.EXEC, colorExec)
+            .addOutput("x", "X", NodeDefinition.PortType.FLOAT, colorFloat)
+            .addOutput("y", "Y", NodeDefinition.PortType.FLOAT, colorFloat)
+            .addOutput("z", "Z", NodeDefinition.PortType.FLOAT, colorFloat)
+            .build());
+
         // Function
         register(new NodeDefinition.Builder("print_chat", "Print to Chat")
             .category("Function")
             .color(0xFF4488FF)
             .addInput("exec", "In", NodeDefinition.PortType.EXEC, colorExec)
             .addInput("message", "Message", NodeDefinition.PortType.STRING, colorString, true, "Hello Chat")
+            .addOutput("exec", "Out", NodeDefinition.PortType.EXEC, colorExec)
+            .build());
+
+        register(new NodeDefinition.Builder("play_effect", "Play Effect")
+            .category("Function")
+            .color(0xFF4488FF)
+            .addInput("exec", "In", NodeDefinition.PortType.EXEC, colorExec)
+            .addInput("effect", "Effect", NodeDefinition.PortType.STRING, colorString, true, "minecraft:happy_villager")
+            .addInput("x", "X", NodeDefinition.PortType.FLOAT, colorFloat, true, 0.0)
+            .addInput("y", "Y", NodeDefinition.PortType.FLOAT, colorFloat, true, 0.0)
+            .addInput("z", "Z", NodeDefinition.PortType.FLOAT, colorFloat, true, 0.0)
+            .addOutput("exec", "Out", NodeDefinition.PortType.EXEC, colorExec)
+            .build());
+
+        register(new NodeDefinition.Builder("explosion", "Explosion")
+            .category("Function")
+            .color(0xFFFF4444)
+            .addInput("exec", "In", NodeDefinition.PortType.EXEC, colorExec)
+            .addInput("x", "X", NodeDefinition.PortType.FLOAT, colorFloat, true, 0.0)
+            .addInput("y", "Y", NodeDefinition.PortType.FLOAT, colorFloat, true, 0.0)
+            .addInput("z", "Z", NodeDefinition.PortType.FLOAT, colorFloat, true, 0.0)
+            .addInput("radius", "Radius", NodeDefinition.PortType.FLOAT, colorFloat, true, 3.0)
             .addOutput("exec", "Out", NodeDefinition.PortType.EXEC, colorExec)
             .build());
 
