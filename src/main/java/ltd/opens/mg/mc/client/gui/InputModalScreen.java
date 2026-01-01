@@ -61,7 +61,9 @@ public class InputModalScreen extends Screen {
 
             this.addRenderableWidget(Button.builder(Component.translatable("gui.mgmc.modal.confirm"), (btn) -> {
                 onConfirm.accept(editBox.getValue());
-                this.minecraft.setScreen(parent);
+                if (this.minecraft.screen == this) {
+                    this.minecraft.setScreen(parent);
+                }
             }).bounds(startX + 10, startY + 55, 85, 20).build());
 
             this.addRenderableWidget(Button.builder(Component.translatable("gui.mgmc.modal.cancel"), (btn) -> {
@@ -75,7 +77,9 @@ public class InputModalScreen extends Screen {
                     final String opt = options[i];
                     Button b = Button.builder(Component.literal(opt), (btn) -> {
                         onConfirm.accept(opt);
-                        this.minecraft.setScreen(parent);
+                        if (this.minecraft.screen == this) {
+                            this.minecraft.setScreen(parent);
+                        }
                     }).bounds(startX + 10, btnY + (i * 22), width - 20, 20).build();
                     
                     this.addRenderableWidget(b);

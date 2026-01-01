@@ -71,5 +71,8 @@
   "node.mgmc.get_entity_info.port.is_player": "是否为玩家",
   "node.mgmc.cast.port.input": "输入",
   "node.mgmc.cast.port.to_type": "转换为类型",
-  "node.mgmc.cast.port.output": "输出"
+  "node.mgmc.cast.port.output": "输出",
+  "gui.mgmc.blueprint_editor.save_confirm.title": "蓝图已修改，是否保存？",
+  "gui.mgmc.blueprint_editor.save_confirm.save": "保存并退出",
+  "gui.mgmc.blueprint_editor.save_confirm.discard": "直接退出"
 }

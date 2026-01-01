@@ -31,6 +31,11 @@ public class BlueprintState {
     public GuiNode focusedNode = null;
     public String focusedPort = null;
     public int cursorTick = 0;
+    public boolean isDirty = false;
+
+    public void markDirty() {
+        this.isDirty = true;
+    }
 
     public void resetView() {
         panX = 0;

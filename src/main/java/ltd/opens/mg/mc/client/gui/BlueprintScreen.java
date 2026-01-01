@@ -111,6 +111,32 @@ public class BlueprintScreen extends Screen {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
+    @Override
+    public void onClose() {
+        if (state.isDirty) {
+            Minecraft.getInstance().setScreen(new InputModalScreen(
+                this,
+                Component.translatable("gui.mgmc.blueprint_editor.save_confirm.title").getString(),
+                "",
+                false,
+                new String[]{
+                    Component.translatable("gui.mgmc.blueprint_editor.save_confirm.save").getString(),
+                    Component.translatable("gui.mgmc.blueprint_editor.save_confirm.discard").getString()
+                },
+                InputModalScreen.Mode.SELECTION,
+                (selected) -> {
+                    if (selected.equals(Component.translatable("gui.mgmc.blueprint_editor.save_confirm.save").getString())) {
+                        BlueprintIO.save(this.dataFile, state.nodes, state.connections);
+                    }
+                    state.isDirty = false;
+                    Minecraft.getInstance().setScreen(new BlueprintSelectionScreen());
+                }
+            ));
+        } else {
+            Minecraft.getInstance().setScreen(new BlueprintSelectionScreen());
+        }
+    }
+
     private void renderCustomButton(GuiGraphics guiGraphics, int mouseX, int mouseY, int x, int y, int w, int h, String langKey) {
         boolean hovered = isHovering(mouseX, mouseY, x, y, w, h);
         int bgColor = hovered ? 0xFF3D3D3D : 0x00000000; // Transparent background when not hovered
@@ -148,7 +174,7 @@ public class BlueprintScreen extends Screen {
         if (mouseY < 26) {
             // Back
             if (isHovering((int)mouseX, (int)mouseY, 5, 3, 40, 20)) {
-                Minecraft.getInstance().setScreen(new BlueprintSelectionScreen());
+                onClose();
                 return true;
             }
             
@@ -164,6 +190,7 @@ public class BlueprintScreen extends Screen {
             rightX -= 55;
             if (isHovering((int)mouseX, (int)mouseY, rightX, 3, 50, 20)) {
                 BlueprintIO.save(this.dataFile, state.nodes, state.connections);
+                state.isDirty = false;
                 return true;
             }
             

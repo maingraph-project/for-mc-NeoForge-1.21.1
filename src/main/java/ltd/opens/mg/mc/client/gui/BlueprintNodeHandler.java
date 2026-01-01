@@ -40,6 +40,7 @@ public class BlueprintNodeHandler {
                                 JsonElement val = node.inputValues.get(port.id);
                                 boolean current = val != null ? val.getAsBoolean() : (port.defaultValue instanceof Boolean ? (Boolean) port.defaultValue : false);
                                 node.inputValues.addProperty(port.id, !current);
+                                state.markDirty();
                             } else if (port.options != null && port.options.length > 0) {
                                 // Open selection modal instead of cycling
                                 JsonElement val = node.inputValues.get(port.id);
@@ -61,6 +62,7 @@ public class BlueprintNodeHandler {
                                         
                                         if (!selected.equals(oldStr)) {
                                             targetNode.inputValues.addProperty(targetPort, selected);
+                                            state.markDirty();
                                             // Update output port type based on selection
                                             NodeDefinition.PortType newType = NodeDefinition.PortType.valueOf(selected.toUpperCase());
                                             targetNode.getPortByName("output", false).type = newType;
@@ -85,6 +87,7 @@ public class BlueprintNodeHandler {
                                     isNumeric,
                                     (newText) -> {
                                         targetNode.inputValues.addProperty(targetPort, newText);
+                                        state.markDirty();
                                     }
                                 ));
                             }
@@ -120,8 +123,14 @@ public class BlueprintNodeHandler {
 
     public boolean mouseDragged(double worldMouseX, double worldMouseY) {
         if (state.draggingNode != null) {
-            state.draggingNode.x = (float) (worldMouseX - state.dragOffsetX);
-            state.draggingNode.y = (float) (worldMouseY - state.dragOffsetY);
+            float dx = (float) (worldMouseX - state.dragOffsetX) - state.draggingNode.x;
+            float dy = (float) (worldMouseY - state.dragOffsetY) - state.draggingNode.y;
+            
+            if (Math.abs(dx) > 0.1 || Math.abs(dy) > 0.1) {
+                state.draggingNode.x = (float) (worldMouseX - state.dragOffsetX);
+                state.draggingNode.y = (float) (worldMouseY - state.dragOffsetY);
+                state.markDirty();
+            }
             return true;
         }
         return false;

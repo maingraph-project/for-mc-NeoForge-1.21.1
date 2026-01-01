@@ -21,6 +21,7 @@ public class BlueprintMenuHandler {
                     final GuiNode finalNode = state.contextMenuNode;
                     state.nodes.remove(state.contextMenuNode);
                     state.connections.removeIf(c -> c.from == finalNode || c.to == finalNode);
+                    state.markDirty();
                 }
                 state.showNodeContextMenu = false;
                 state.contextMenuNode = null;
@@ -29,6 +30,7 @@ public class BlueprintMenuHandler {
                 if (state.contextMenuNode != null) {
                     final GuiNode finalNode = state.contextMenuNode;
                     state.connections.removeIf(c -> c.from == finalNode || c.to == finalNode);
+                    state.markDirty();
                 }
                 state.showNodeContextMenu = false;
                 state.contextMenuNode = null;
@@ -47,6 +49,7 @@ public class BlueprintMenuHandler {
                 float worldY = (float) ((state.menuY - state.panY) / state.zoom);
                 GuiNode node = new GuiNode(def, worldX, worldY);
                 state.nodes.add(node);
+                state.markDirty();
                 state.showNodeMenu = false;
                 state.menu.reset();
                 return true;

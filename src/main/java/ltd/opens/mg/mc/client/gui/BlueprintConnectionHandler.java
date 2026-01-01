@@ -63,6 +63,7 @@ public class BlueprintConnectionHandler {
                                     state.connections.removeIf(c -> c.to == node && c.toPort.equals(targetPort.id));
                                 }
                                 state.connections.add(new GuiConnection(state.connectionStartNode, state.connectionStartPort, node, targetPort.id));
+                                state.markDirty();
                             }
                             break;
                         }
@@ -80,6 +81,7 @@ public class BlueprintConnectionHandler {
                                     state.connections.removeIf(c -> c.to == state.connectionStartNode && c.toPort.equals(startPort.id));
                                 }
                                 state.connections.add(new GuiConnection(node, targetPort.id, state.connectionStartNode, state.connectionStartPort));
+                                state.markDirty();
                             }
                             break;
                         }
