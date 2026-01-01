@@ -52,6 +52,8 @@ public class NodeRegistry {
             .addOutput("x", "X", NodeDefinition.PortType.FLOAT, colorFloat)
             .addOutput("y", "Y", NodeDefinition.PortType.FLOAT, colorFloat)
             .addOutput("z", "Z", NodeDefinition.PortType.FLOAT, colorFloat)
+            .addOutput("speed", "Speed", NodeDefinition.PortType.FLOAT, colorFloat)
+            .addOutput("uuid", "UUID", NodeDefinition.PortType.UUID, colorUUID)
             .build());
 
         // Function

@@ -69,7 +69,7 @@ public class MaingraphforMC {
                             try {
                                 JsonObject blueprint = BlueprintServerHandler.getBlueprint(level, blueprintName);
                                 if (blueprint != null) {
-                                    BlueprintEngine.execute(level, blueprint, "on_mgrun", eventName, args, triggerUuid, triggerName, pos.x, pos.y, pos.z);
+                                    BlueprintEngine.execute(level, blueprint, "on_mgrun", eventName, args, triggerUuid, triggerName, pos.x, pos.y, pos.z, 0.0);
                                 } else {
                                     context.getSource().sendFailure(Component.literal("Blueprint '" + blueprintName + "' not found."));
                                 }
@@ -90,7 +90,7 @@ public class MaingraphforMC {
                         try {
                             JsonObject blueprint = BlueprintServerHandler.getBlueprint(level, blueprintName);
                             if (blueprint != null) {
-                                BlueprintEngine.execute(level, blueprint, "on_mgrun", eventName, new String[0], triggerUuid, triggerName, pos.x, pos.y, pos.z);
+                                BlueprintEngine.execute(level, blueprint, "on_mgrun", eventName, new String[0], triggerUuid, triggerName, pos.x, pos.y, pos.z, 0.0);
                             } else {
                                 context.getSource().sendFailure(Component.literal("Blueprint '" + blueprintName + "' not found."));
                             }
@@ -179,13 +179,15 @@ public class MaingraphforMC {
                     double dx = x - lastPos[0];
                     double dy = y - lastPos[1];
                     double dz = z - lastPos[2];
+                    double distSq = dx * dx + dy * dy + dz * dz;
 
-                    if (dx * dx + dy * dy + dz * dz > 0.25) {
+                    if (distSq > 0.25) {
                         try {
+                            double speed = Math.sqrt(distSq) / 5.0; // Distance over 5 ticks
                             ServerLevel level = (ServerLevel) player.level();
                             for (JsonObject blueprint : getAllBlueprints(level)) {
                                 BlueprintEngine.execute(level, blueprint, "on_player_move", "", new String[0], 
-                                    uuid.toString(), player.getName().getString(), x, y, z);
+                                    uuid.toString(), player.getName().getString(), x, y, z, speed);
                             }
                             lastPositions.put(uuid, new Double[]{x, y, z});
                         } catch (Exception e) {}

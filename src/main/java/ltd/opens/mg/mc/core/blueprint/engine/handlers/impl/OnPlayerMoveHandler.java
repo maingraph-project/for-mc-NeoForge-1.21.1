@@ -10,6 +10,8 @@ public class OnPlayerMoveHandler implements NodeHandler {
         if (pinId.equals("x")) return String.valueOf(ctx.triggerX);
         if (pinId.equals("y")) return String.valueOf(ctx.triggerY);
         if (pinId.equals("z")) return String.valueOf(ctx.triggerZ);
+        if (pinId.equals("speed")) return String.valueOf(ctx.triggerSpeed);
+        if (pinId.equals("uuid")) return ctx.triggerUuid;
         return "";
     }
 }

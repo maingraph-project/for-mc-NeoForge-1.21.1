@@ -13,10 +13,11 @@ public class NodeContext {
     public final double triggerX;
     public final double triggerY;
     public final double triggerZ;
+    public final double triggerSpeed;
     public final Map<String, JsonObject> nodesMap;
 
     public NodeContext(Level level, String eventName, String[] args, String triggerUuid, String triggerName, 
-                       double triggerX, double triggerY, double triggerZ, Map<String, JsonObject> nodesMap) {
+                       double triggerX, double triggerY, double triggerZ, double triggerSpeed, Map<String, JsonObject> nodesMap) {
         this.level = level;
         this.eventName = eventName;
         this.args = args;
@@ -25,6 +26,7 @@ public class NodeContext {
         this.triggerX = triggerX;
         this.triggerY = triggerY;
         this.triggerZ = triggerZ;
+        this.triggerSpeed = triggerSpeed;
         this.nodesMap = nodesMap;
     }
 }

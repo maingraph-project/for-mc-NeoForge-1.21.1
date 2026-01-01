@@ -13,17 +13,17 @@ import java.util.Map;
 public class BlueprintEngine {
 
     public static void execute(Level level, String json, String eventType, String name, String[] args, 
-                                String triggerUuid, String triggerName, double tx, double ty, double tz) {
+                                String triggerUuid, String triggerName, double tx, double ty, double tz, double speed) {
         try {
             JsonObject root = JsonParser.parseString(json).getAsJsonObject();
-            execute(level, root, eventType, name, args, triggerUuid, triggerName, tx, ty, tz);
+            execute(level, root, eventType, name, args, triggerUuid, triggerName, tx, ty, tz, speed);
         } catch (Exception e) {
             MaingraphforMC.LOGGER.error("Error parsing blueprint JSON", e);
         }
     }
 
     public static void execute(Level level, JsonObject root, String eventType, String name, String[] args, 
-                                String triggerUuid, String triggerName, double tx, double ty, double tz) {
+                                String triggerUuid, String triggerName, double tx, double ty, double tz, double speed) {
         try {
             if (!root.has("execution") || !root.get("execution").isJsonArray()) {
                 return;
@@ -40,7 +40,7 @@ public class BlueprintEngine {
                 }
             }
 
-            NodeContext ctx = new NodeContext(level, name, args, triggerUuid, triggerName, tx, ty, tz, nodesMap);
+            NodeContext ctx = new NodeContext(level, name, args, triggerUuid, triggerName, tx, ty, tz, speed, nodesMap);
 
             for (JsonElement e : executionNodes) {
                 if (!e.isJsonObject()) continue;
