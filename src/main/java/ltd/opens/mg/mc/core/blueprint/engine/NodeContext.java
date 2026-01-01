@@ -1,9 +1,11 @@
 package ltd.opens.mg.mc.core.blueprint.engine;
 
 import com.google.gson.JsonObject;
+import net.minecraft.world.level.Level;
 import java.util.Map;
 
 public class NodeContext {
+    public final Level level;
     public final String eventName;
     public final String[] args;
     public final String triggerUuid;
@@ -13,8 +15,9 @@ public class NodeContext {
     public final double triggerZ;
     public final Map<String, JsonObject> nodesMap;
 
-    public NodeContext(String eventName, String[] args, String triggerUuid, String triggerName, 
+    public NodeContext(Level level, String eventName, String[] args, String triggerUuid, String triggerName, 
                        double triggerX, double triggerY, double triggerZ, Map<String, JsonObject> nodesMap) {
+        this.level = level;
         this.eventName = eventName;
         this.args = args;
         this.triggerUuid = triggerUuid;

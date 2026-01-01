@@ -1,30 +1,28 @@
-package ltd.opens.mg.mc.client.gui;
+package ltd.opens.mg.mc.core.blueprint.engine;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import ltd.opens.mg.mc.MaingraphforMC;
-import ltd.opens.mg.mc.core.blueprint.engine.NodeContext;
-import ltd.opens.mg.mc.core.blueprint.engine.NodeHandler;
-import ltd.opens.mg.mc.core.blueprint.engine.NodeLogicRegistry;
+import net.minecraft.world.level.Level;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class BlueprintEngine {
 
-    public static void execute(String json, String eventType, String name, String[] args, 
+    public static void execute(Level level, String json, String eventType, String name, String[] args, 
                                 String triggerUuid, String triggerName, double tx, double ty, double tz) {
         try {
             JsonObject root = JsonParser.parseString(json).getAsJsonObject();
-            execute(root, eventType, name, args, triggerUuid, triggerName, tx, ty, tz);
+            execute(level, root, eventType, name, args, triggerUuid, triggerName, tx, ty, tz);
         } catch (Exception e) {
             MaingraphforMC.LOGGER.error("Error parsing blueprint JSON", e);
         }
     }
 
-    public static void execute(JsonObject root, String eventType, String name, String[] args, 
+    public static void execute(Level level, JsonObject root, String eventType, String name, String[] args, 
                                 String triggerUuid, String triggerName, double tx, double ty, double tz) {
         try {
             if (!root.has("execution") || !root.get("execution").isJsonArray()) {
@@ -42,7 +40,7 @@ public class BlueprintEngine {
                 }
             }
 
-            NodeContext ctx = new NodeContext(name, args, triggerUuid, triggerName, tx, ty, tz, nodesMap);
+            NodeContext ctx = new NodeContext(level, name, args, triggerUuid, triggerName, tx, ty, tz, nodesMap);
 
             for (JsonElement e : executionNodes) {
                 if (!e.isJsonObject()) continue;

@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import ltd.opens.mg.mc.core.blueprint.engine.NodeContext;
 import ltd.opens.mg.mc.core.blueprint.engine.NodeHandler;
 import ltd.opens.mg.mc.core.blueprint.engine.NodeLogicRegistry;
-import net.minecraft.client.Minecraft;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -19,7 +19,7 @@ public class GetEntityInfoHandler implements NodeHandler {
 
         try {
             UUID uuid = UUID.fromString(uuidStr);
-            Entity entity = findEntity(uuid);
+            Entity entity = findEntity(uuid, ctx);
 
             if (entity != null) {
                 switch (pinId) {
@@ -51,23 +51,17 @@ public class GetEntityInfoHandler implements NodeHandler {
         return getDefaultValue(pinId);
     }
 
-    private Entity findEntity(UUID uuid) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null) return null;
+    private Entity findEntity(UUID uuid, NodeContext ctx) {
+        if (ctx.level == null) return null;
 
-        // 1. Check local player first (most common for trigger_uuid)
-        if (mc.player != null && mc.player.getUUID().equals(uuid)) {
-            return mc.player;
+        if (ctx.level instanceof ServerLevel serverLevel) {
+            return serverLevel.getEntity(uuid);
+        } else {
+            // Level doesn't have a direct allEntities() or similar simple getter in all versions
+            // but we can use getEntities(null, ...) with a large bounding box if needed.
+            // However, this handler should primarily run on server.
+            return null;
         }
-
-        // 2. Check all loaded entities
-        for (Entity e : mc.level.entitiesForRendering()) {
-            if (e.getUUID().equals(uuid)) {
-                return e;
-            }
-        }
-
-        return null;
     }
 
     private String getDefaultValue(String pinId) {
