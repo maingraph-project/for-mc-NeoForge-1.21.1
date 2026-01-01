@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import ltd.opens.mg.mc.core.blueprint.NodeDefinition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
 public class BlueprintNodeHandler {
@@ -21,7 +22,7 @@ public class BlueprintNodeHandler {
                 float[] pos = node.getPortPosition(i, true);
                 
                 if (port.hasInput) {
-                    float inputX = pos[0] + 8 + font.width(port.displayName) + 2;
+                    float inputX = pos[0] + 8 + font.width(Component.translatable(port.displayName)) + 2;
                     float inputY = pos[1] - 4;
                     float inputWidth = 50;
                     float inputHeight = 10;
@@ -79,7 +80,7 @@ public class BlueprintNodeHandler {
                                 
                                 Minecraft.getInstance().setScreen(new InputModalScreen(
                                     screen, 
-                                    Component.translatable("gui.mgmc.blueprint_editor.modal.enter_value", port.displayName).getString(), 
+                                    Component.translatable("gui.mgmc.blueprint_editor.modal.enter_value", Component.translatable(port.displayName)).getString(), 
                                     initialText, 
                                     isNumeric,
                                     (newText) -> {

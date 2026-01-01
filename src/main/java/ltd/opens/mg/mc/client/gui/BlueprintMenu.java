@@ -4,6 +4,7 @@ import ltd.opens.mg.mc.core.blueprint.NodeDefinition;
 import ltd.opens.mg.mc.core.blueprint.NodeRegistry;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,11 +25,11 @@ public class BlueprintMenu {
         
         // Delete Node
         boolean hoverDelete = mouseX >= x && mouseX <= x + width && mouseY >= y + 5 && mouseY <= y + 20;
-        guiGraphics.drawString(font, "Delete Node", x + 5, y + 7, hoverDelete ? 0xFFFFFF00 : 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.mgmc.blueprint_editor.context_menu.delete"), x + 5, y + 7, hoverDelete ? 0xFFFFFF00 : 0xFFFFFFFF, false);
         
         // Break Links
         boolean hoverBreak = mouseX >= x && mouseX <= x + width && mouseY >= y + 20 && mouseY <= y + 35;
-        guiGraphics.drawString(font, "Break Links", x + 5, y + 22, hoverBreak ? 0xFFFFFF00 : 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.mgmc.blueprint_editor.context_menu.break_links"), x + 5, y + 22, hoverBreak ? 0xFFFFFF00 : 0xFFFFFFFF, false);
     }
 
     public void renderNodeMenu(GuiGraphics guiGraphics, Font font, int mouseX, int mouseY, double menuX, double menuY) {
@@ -42,7 +43,7 @@ public class BlueprintMenu {
         }
         
         List<String> sortedCategories = new ArrayList<>(categories.keySet());
-        sortedCategories.sort(String::compareTo);
+        sortedCategories.sort((a, b) -> Component.translatable(a).getString().compareTo(Component.translatable(b).getString()));
         
         int height = sortedCategories.size() * 15 + 10;
         guiGraphics.fill(x, y, x + width, y + height, 0xEE1A1A1A);
@@ -50,14 +51,14 @@ public class BlueprintMenu {
         
         String currentHoveredCat = null;
         for (int i = 0; i < sortedCategories.size(); i++) {
-            String cat = sortedCategories.get(i);
+            String catKey = sortedCategories.get(i);
             int itemY = y + 5 + i * 15;
             boolean hovered = mouseX >= x && mouseX <= x + width && mouseY >= itemY && mouseY <= itemY + 15;
             int color = hovered ? 0xFFFFFF00 : 0xFFFFFFFF;
-            guiGraphics.drawString(font, cat, x + 5, itemY + 2, color, false);
+            guiGraphics.drawString(font, Component.translatable(catKey), x + 5, itemY + 2, color, false);
             
             if (hovered) {
-                currentHoveredCat = cat;
+                currentHoveredCat = catKey;
             }
         }
         
@@ -84,7 +85,7 @@ public class BlueprintMenu {
                 int itemY = subY + 5 + i * 15;
                 boolean hovered = mouseX >= subX && mouseX <= subX + subWidth && mouseY >= itemY && mouseY <= itemY + 15;
                 int color = hovered ? 0xFFFFFF00 : 0xFFFFFFFF;
-                guiGraphics.drawString(font, def.name(), subX + 5, itemY + 2, color, false);
+                guiGraphics.drawString(font, Component.translatable(def.name()), subX + 5, itemY + 2, color, false);
             }
         }
     }
@@ -117,7 +118,7 @@ public class BlueprintMenu {
             categories.computeIfAbsent(def.category(), k -> new ArrayList<>()).add(def);
         }
         List<String> sortedCategories = new ArrayList<>(categories.keySet());
-        sortedCategories.sort(String::compareTo);
+        sortedCategories.sort((a, b) -> Component.translatable(a).getString().compareTo(Component.translatable(b).getString()));
 
         int x = (int) menuX;
         int y = (int) menuY;
@@ -158,7 +159,7 @@ public class BlueprintMenu {
             categories.computeIfAbsent(def.category(), k -> new ArrayList<>()).add(def);
         }
         List<String> sortedCategories = new ArrayList<>(categories.keySet());
-        sortedCategories.sort(String::compareTo);
+        sortedCategories.sort((a, b) -> Component.translatable(a).getString().compareTo(Component.translatable(b).getString()));
 
         int x = (int) menuX;
         int y = (int) menuY;

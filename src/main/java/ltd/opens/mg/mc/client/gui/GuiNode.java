@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import ltd.opens.mg.mc.core.blueprint.NodeDefinition;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,11 +61,11 @@ public class GuiNode {
 
         // Calculate width
         float minWidth = 100;
-        float titleW = font.width(title) + 20;
+        float titleW = font.width(Component.translatable(title)) + 20;
 
         float maxInputW = 0;
         for (NodePort p : inputs) {
-            float w = 10 + font.width(p.displayName);
+            float w = 10 + font.width(Component.translatable(p.displayName));
             if (p.hasInput) {
                 w += 55; // Space for input field
             }
@@ -73,7 +74,7 @@ public class GuiNode {
 
         float maxOutputW = 0;
         for (NodePort p : outputs) {
-            float w = 10 + font.width(p.displayName);
+            float w = 10 + font.width(Component.translatable(p.displayName));
             maxOutputW = Math.max(maxOutputW, w);
         }
 
@@ -156,7 +157,7 @@ public class GuiNode {
         
         // Title - hide if too small
         if (zoom > 0.3f) {
-            guiGraphics.drawString(font, title, (int) x + 5, (int) y + 4, 0xFFFFFFFF, false); // Disabled shadow for performance
+            guiGraphics.drawString(font, Component.translatable(title), (int) x + 5, (int) y + 4, 0xFFFFFFFF, false); // Disabled shadow for performance
         }
 
         // Render Ports - Skip entirely if very zoomed out
@@ -221,10 +222,10 @@ public class GuiNode {
         // Port label - hide if zoomed out
         if (zoom > 0.4f) {
             if (isInput) {
-                guiGraphics.drawString(font, port.displayName, px + 8, py - 1, 0xFFAAAAAA, false);
+                guiGraphics.drawString(font, Component.translatable(port.displayName), px + 8, py - 1, 0xFFAAAAAA, false);
                 
                 if (port.hasInput && !isConnected && zoom > 0.6f) {
-                    float inputX = px + 8 + font.width(port.displayName) + 2;
+                    float inputX = px + 8 + font.width(Component.translatable(port.displayName)) + 2;
                     float inputY = py - 4;
                     float inputWidth = 50;
                     float inputHeight = 10;
@@ -241,7 +242,7 @@ public class GuiNode {
                         guiGraphics.fill((int)inputX + 2, (int)inputY + 2, (int)inputX + 8, (int)inputY + 8, boxColor);
                         guiGraphics.renderOutline((int)inputX + 1, (int)inputY + 1, 8, 8, 0xFFFFFFFF);
                         
-                        String text = boolVal ? "True" : "False";
+                        Component text = Component.translatable(boolVal ? "gui.mgmc.bool.true" : "gui.mgmc.bool.false");
                         guiGraphics.drawString(font, text, (int)inputX + 12, (int)inputY + 1, 0xFFCCCCCC, false);
                     } else if (port.options != null && port.options.length > 0) {
                         // Selection box style
@@ -277,7 +278,7 @@ public class GuiNode {
                     }
                 }
             } else {
-                guiGraphics.drawString(font, port.displayName, px - 8 - font.width(port.displayName), py - 1, 0xFFAAAAAA, false);
+                guiGraphics.drawString(font, Component.translatable(port.displayName), px - 8 - font.width(Component.translatable(port.displayName)), py - 1, 0xFFAAAAAA, false);
             }
         }
     }

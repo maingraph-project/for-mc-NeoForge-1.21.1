@@ -28,7 +28,7 @@ import net.minecraft.world.level.storage.LevelResource;
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
 @Mod(value = MaingraphforMC.MODID, dist = Dist.CLIENT)
 public class MaingraphforMCClient {
-    public static final KeyMapping.Category MGMC_CATEGORY = new KeyMapping.Category("key.categories.mgmc.main");
+    public static final KeyMapping.Category MGMC_CATEGORY = new KeyMapping.Category(Identifier.parse(MaingraphforMC.MODID + ":main"));
 
     public static final KeyMapping BLUEPRINT_KEY = new KeyMapping(
         "key.mgmc.open_blueprint",
