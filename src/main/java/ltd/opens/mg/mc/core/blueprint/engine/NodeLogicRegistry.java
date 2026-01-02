@@ -89,6 +89,12 @@ public class NodeLogicRegistry {
         register("list_set_item", new ListSetItemHandler());
         register("list_join", new ListJoinHandler());
         register("string_split", new StringSplitHandler());
+        register("string_concat", new StringConcatHandler());
+        register("string_length", new StringLengthHandler());
+        register("string_contains", new StringContainsHandler());
+        register("string_replace", new StringReplaceHandler());
+        register("string_substring", new StringSubstringHandler());
+        register("string_case", new StringCaseHandler());
         register("get_entity_info", new GetEntityInfoHandler());
         register("play_effect", new PlayEffectHandler());
         register("explosion", new ExplosionHandler());

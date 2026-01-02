@@ -225,6 +225,56 @@ public class NodeRegistry {
             .addOutput("output", "node.mgmc.port.output", NodeDefinition.PortType.STRING, colorString)
             .build());
 
+        register(new NodeDefinition.Builder("string_concat", "node.mgmc.string_concat.name")
+            .category("node_category.mgmc.variable.string")
+            .color(colorString)
+            .addInput("a", "node.mgmc.string_concat.port.a", NodeDefinition.PortType.STRING, colorString)
+            .addInput("b", "node.mgmc.string_concat.port.b", NodeDefinition.PortType.STRING, colorString)
+            .addOutput("output", "node.mgmc.port.output", NodeDefinition.PortType.STRING, colorString)
+            .build());
+
+        register(new NodeDefinition.Builder("string_length", "node.mgmc.string_length.name")
+            .category("node_category.mgmc.variable.string")
+            .color(colorString)
+            .addInput("string", "node.mgmc.port.input", NodeDefinition.PortType.STRING, colorString)
+            .addOutput("length", "node.mgmc.port.length", NodeDefinition.PortType.FLOAT, colorFloat)
+            .build());
+
+        register(new NodeDefinition.Builder("string_contains", "node.mgmc.string_contains.name")
+            .category("node_category.mgmc.variable.string")
+            .color(colorString)
+            .addInput("string", "node.mgmc.port.input", NodeDefinition.PortType.STRING, colorString)
+            .addInput("substring", "node.mgmc.string_contains.port.substring", NodeDefinition.PortType.STRING, colorString)
+            .addOutput("result", "node.mgmc.port.condition", NodeDefinition.PortType.BOOLEAN, colorBoolean)
+            .build());
+
+        register(new NodeDefinition.Builder("string_replace", "node.mgmc.string_replace.name")
+            .category("node_category.mgmc.variable.string")
+            .color(colorString)
+            .addInput("string", "node.mgmc.port.input", NodeDefinition.PortType.STRING, colorString)
+            .addInput("old", "node.mgmc.string_replace.port.old", NodeDefinition.PortType.STRING, colorString)
+            .addInput("new", "node.mgmc.string_replace.port.new", NodeDefinition.PortType.STRING, colorString)
+            .addOutput("output", "node.mgmc.port.output", NodeDefinition.PortType.STRING, colorString)
+            .build());
+
+        register(new NodeDefinition.Builder("string_substring", "node.mgmc.string_substring.name")
+            .category("node_category.mgmc.variable.string")
+            .color(colorString)
+            .addInput("string", "node.mgmc.port.input", NodeDefinition.PortType.STRING, colorString)
+            .addInput("start", "node.mgmc.string_substring.port.start", NodeDefinition.PortType.FLOAT, colorFloat, true, 0)
+            .addInput("end", "node.mgmc.string_substring.port.end", NodeDefinition.PortType.FLOAT, colorFloat, true, 5)
+            .addOutput("output", "node.mgmc.port.output", NodeDefinition.PortType.STRING, colorString)
+            .build());
+
+        register(new NodeDefinition.Builder("string_case", "node.mgmc.string_case.name")
+            .category("node_category.mgmc.variable.string")
+            .color(colorString)
+            .addInput("string", "node.mgmc.port.input", NodeDefinition.PortType.STRING, colorString)
+            .addInput("mode", "node.mgmc.string_case.port.mode", NodeDefinition.PortType.STRING, colorString, true, "UPPER",
+                new String[]{"UPPER", "LOWER", "TRIM"})
+            .addOutput("output", "node.mgmc.port.output", NodeDefinition.PortType.STRING, colorString)
+            .build());
+
         // Variable -> Float
         register(new NodeDefinition.Builder("float", "node.mgmc.float.name")
             .category("node_category.mgmc.variable.float")
