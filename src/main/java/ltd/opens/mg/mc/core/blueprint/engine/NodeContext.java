@@ -15,6 +15,7 @@ public class NodeContext {
     public final double triggerZ;
     public final double triggerSpeed;
     public final Map<String, JsonObject> nodesMap;
+    public boolean breakRequested = false;
 
     public NodeContext(Level level, String eventName, String[] args, String triggerUuid, String triggerName, 
                        double triggerX, double triggerY, double triggerZ, double triggerSpeed, Map<String, JsonObject> nodesMap) {

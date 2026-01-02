@@ -8,18 +8,28 @@ public class BlueprintViewHandler {
     }
 
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 2) { // Middle click for panning
+        if (button == 2 || button == 1) { // Middle click or Right click for panning
             state.isPanning = true;
             state.lastMouseX = mouseX;
             state.lastMouseY = mouseY;
+            state.startMouseX = mouseX;
+            state.startMouseY = mouseY;
             return true;
         }
         return false;
     }
 
-    public boolean mouseReleased(int button) {
-        if (button == 2) {
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (state.isPanning && (button == 2 || button == 1)) {
             state.isPanning = false;
+            
+            // 如果是右键，且位移很小，返回 false，让外层逻辑触发菜单
+            if (button == 1) {
+                double dist = Math.sqrt(Math.pow(mouseX - state.startMouseX, 2) + Math.pow(mouseY - state.startMouseY, 2));
+                if (dist < 5.0) {
+                    return false; // 不消费事件，交给菜单处理器
+                }
+            }
             return true;
         }
         return false;

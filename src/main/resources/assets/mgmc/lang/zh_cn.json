@@ -74,9 +74,21 @@
   "node.mgmc.cast.port.to_type": "转换为类型",
   "node.mgmc.cast.port.output": "输出",
   "node.mgmc.switch.name": "多分支",
-  "node.mgmc.switch.port.control": "控制表达式",
+  "node.mgmc.switch.port.control": "控制变量",
   "node.mgmc.switch.port.default": "默认",
   "node.mgmc.switch.add_branch": "添加分支",
+
+  "node.mgmc.for_loop.name": "有限循环",
+  "node.mgmc.for_loop.port.start": "循环起始值",
+  "node.mgmc.for_loop.port.end": "循环终止值",
+  "node.mgmc.for_loop.port.break": "跳出循环",
+  "node.mgmc.for_loop.port.loop_body": "循环体",
+  "node.mgmc.for_loop.port.completed": "循环完成",
+  "node.mgmc.for_loop.port.index": "当前循环值",
+
+  "node.mgmc.break_loop.name": "跳出循环",
+  "node.mgmc.break_loop.port.break": "跳出",
+
   "node.mgmc.string.name": "字符串",
   "node.mgmc.port.value": "值",
   "node.mgmc.port.output": "输出",

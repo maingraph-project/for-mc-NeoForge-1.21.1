@@ -57,7 +57,11 @@ public class BlueprintEventHandler {
         int button = event.buttonInfo().button();
 
         // 1. View interactions (panning end)
-        if (viewHandler.mouseReleased(button)) return true;
+        // If viewHandler returns false for button 1, it means the drag was short enough to be a click
+        if (viewHandler.mouseReleased(mouseX, mouseY, button)) return true;
+
+        // 2. Menu interactions (open context menu on right click release)
+        if (menuHandler.mouseReleased(mouseX, mouseY, button)) return true;
 
         // World coordinates for other interactions
         double worldMouseX = (mouseX - state.panX) / state.zoom;

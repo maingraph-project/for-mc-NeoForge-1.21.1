@@ -21,6 +21,7 @@ public class BlueprintState {
 
     public boolean isPanning = false;
     public double lastMouseX, lastMouseY;
+    public double startMouseX, startMouseY; // 用于判断拖拽位移
     
     public boolean showNodeMenu = false;
     public double menuX, menuY;

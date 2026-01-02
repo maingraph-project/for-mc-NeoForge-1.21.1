@@ -138,6 +138,25 @@ public class NodeRegistry {
             .addOutput("default", "node.mgmc.switch.port.default", NodeDefinition.PortType.EXEC, colorExec)
             .build());
 
+        register(new NodeDefinition.Builder("for_loop", "node.mgmc.for_loop.name")
+            .category("node_category.mgmc.logic")
+            .color(0xFF888888)
+            .addInput("exec", "node.mgmc.port.exec_in", NodeDefinition.PortType.EXEC, colorExec)
+            .addInput("start", "node.mgmc.for_loop.port.start", NodeDefinition.PortType.FLOAT, colorFloat, true, 0)
+            .addInput("end", "node.mgmc.for_loop.port.end", NodeDefinition.PortType.FLOAT, colorFloat, true, 10)
+            .addInput("break", "node.mgmc.for_loop.port.break", NodeDefinition.PortType.EXEC, colorExec)
+            .addOutput("loop_body", "node.mgmc.for_loop.port.loop_body", NodeDefinition.PortType.EXEC, colorExec)
+            .addOutput("completed", "node.mgmc.for_loop.port.completed", NodeDefinition.PortType.EXEC, colorExec)
+            .addOutput("index", "node.mgmc.for_loop.port.index", NodeDefinition.PortType.FLOAT, colorFloat)
+            .build());
+
+        register(new NodeDefinition.Builder("break_loop", "node.mgmc.break_loop.name")
+            .category("node_category.mgmc.logic")
+            .color(0xFF888888)
+            .addInput("exec", "node.mgmc.port.exec_in", NodeDefinition.PortType.EXEC, colorExec)
+            .addOutput("break", "node.mgmc.break_loop.port.break", NodeDefinition.PortType.EXEC, colorExec)
+            .build());
+
         register(new NodeDefinition.Builder("string", "node.mgmc.string.name")
             .category("node_category.mgmc.logic")
             .color(colorString)

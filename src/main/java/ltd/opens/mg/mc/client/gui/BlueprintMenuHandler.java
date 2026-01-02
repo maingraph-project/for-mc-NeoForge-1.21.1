@@ -62,6 +62,10 @@ public class BlueprintMenuHandler {
             return true;
         }
 
+        return false;
+    }
+
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if (button == 1) { // Right click
             double worldMouseX = (mouseX - state.panX) / state.zoom;
             double worldMouseY = (mouseY - state.panY) / state.zoom;
@@ -82,7 +86,6 @@ public class BlueprintMenuHandler {
             state.menuY = mouseY;
             return true;
         }
-
         return false;
     }
 }
