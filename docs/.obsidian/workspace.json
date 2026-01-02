@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "命令/mgrun.md",
+                "file": "核心概念.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "mgrun"
+              "title": "核心概念"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "命令/mgrun.md",
+                "file": "核心概念.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "mgrun 的反向链接列表"
+              "title": "核心概念 的反向链接列表"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "命令/mgrun.md",
+                "file": "核心概念.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "mgrun 的出链列表"
+              "title": "核心概念 的出链列表"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "命令/mgrun.md",
+                "file": "核心概念.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "mgrun 的大纲"
+              "title": "核心概念 的大纲"
             }
           }
         ]
@@ -183,10 +183,11 @@
       "bases:创建新数据库": false
     }
   },
-  "active": "994b8e2d8c7d5c2f",
+  "active": "954d9884ece51304",
   "lastOpenFiles": [
-    "节点/事件/当运行【斜杠】mgrun命令时.md",
+    "图片",
     "命令/mgrun.md",
+    "节点/事件/当运行【斜杠】mgrun命令时.md",
     "命令",
     "类型.md",
     "核心概念.md",
