@@ -88,9 +88,9 @@ public class NodeRegistry {
             .addOutput("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, colorExec)
             .build());
 
-        // Action -> Entity
+        // Variable -> Entity
         register(new NodeDefinition.Builder("get_entity_info", "node.mgmc.get_entity_info.name")
-            .category("node_category.mgmc.action.entity")
+            .category("node_category.mgmc.variable.entity")
             .color(0xFF44AA44)
             .addInput("uuid", "node.mgmc.port.uuid", NodeDefinition.PortType.UUID, colorUUID)
             .addOutput("name", "node.mgmc.port.name", NodeDefinition.PortType.STRING, colorString)
