@@ -33,7 +33,7 @@ public class NodeRegistry {
         // Register default nodes matching web editor
         // Events
         register(new NodeDefinition.Builder("on_mgrun", "node.mgmc.on_mgrun.name")
-            .category("node_category.mgmc.events")
+            .category("node_category.mgmc.events.world")
             .color(0xFF880000)
             .addOutput("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, colorExec)
             .addOutput("name", "node.mgmc.port.name", NodeDefinition.PortType.STRING, colorString)
@@ -46,7 +46,7 @@ public class NodeRegistry {
             .build());
 
         register(new NodeDefinition.Builder("on_player_move", "node.mgmc.on_player_move.name")
-            .category("node_category.mgmc.events")
+            .category("node_category.mgmc.events.player")
             .color(0xFF0088FF)
             .addOutput("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, colorExec)
             .addOutput("x", "node.mgmc.port.x", NodeDefinition.PortType.FLOAT, colorFloat)
@@ -57,7 +57,7 @@ public class NodeRegistry {
             .build());
 
         register(new NodeDefinition.Builder("on_break_block", "node.mgmc.on_break_block.name")
-            .category("node_category.mgmc.events")
+            .category("node_category.mgmc.events.player")
             .color(0xFF0088FF)
             .addOutput("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, colorExec)
             .addOutput("x", "node.mgmc.port.x", NodeDefinition.PortType.FLOAT, colorFloat)
@@ -68,7 +68,7 @@ public class NodeRegistry {
             .build());
 
         register(new NodeDefinition.Builder("on_place_block", "node.mgmc.on_place_block.name")
-            .category("node_category.mgmc.events")
+            .category("node_category.mgmc.events.player")
             .color(0xFF0088FF)
             .addOutput("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, colorExec)
             .addOutput("x", "node.mgmc.port.x", NodeDefinition.PortType.FLOAT, colorFloat)
@@ -79,7 +79,7 @@ public class NodeRegistry {
             .build());
 
         register(new NodeDefinition.Builder("on_interact_block", "node.mgmc.on_interact_block.name")
-            .category("node_category.mgmc.events")
+            .category("node_category.mgmc.events.player")
             .color(0xFF0088FF)
             .addOutput("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, colorExec)
             .addOutput("x", "node.mgmc.port.x", NodeDefinition.PortType.FLOAT, colorFloat)
@@ -90,7 +90,7 @@ public class NodeRegistry {
             .build());
 
         register(new NodeDefinition.Builder("on_player_join", "node.mgmc.on_player_join.name")
-            .category("node_category.mgmc.events")
+            .category("node_category.mgmc.events.player")
             .color(0xFF0088FF)
             .addOutput("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, colorExec)
             .addOutput("uuid", "node.mgmc.port.uuid", NodeDefinition.PortType.UUID, colorUUID)
@@ -98,7 +98,7 @@ public class NodeRegistry {
             .build());
 
         register(new NodeDefinition.Builder("on_player_death", "node.mgmc.on_player_death.name")
-            .category("node_category.mgmc.events")
+            .category("node_category.mgmc.events.player")
             .color(0xFF0088FF)
             .addOutput("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, colorExec)
             .addOutput("x", "node.mgmc.port.x", NodeDefinition.PortType.FLOAT, colorFloat)
@@ -108,7 +108,7 @@ public class NodeRegistry {
             .build());
 
         register(new NodeDefinition.Builder("on_player_respawn", "node.mgmc.on_player_respawn.name")
-            .category("node_category.mgmc.events")
+            .category("node_category.mgmc.events.player")
             .color(0xFF0088FF)
             .addOutput("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, colorExec)
             .addOutput("x", "node.mgmc.port.x", NodeDefinition.PortType.FLOAT, colorFloat)
@@ -118,7 +118,7 @@ public class NodeRegistry {
             .build());
 
         register(new NodeDefinition.Builder("on_player_hurt", "node.mgmc.on_player_hurt.name")
-            .category("node_category.mgmc.events")
+            .category("node_category.mgmc.events.player")
             .color(0xFF0088FF)
             .addOutput("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, colorExec)
             .addOutput("damage_amount", "node.mgmc.port.damage_amount", NodeDefinition.PortType.FLOAT, colorFloat)
@@ -127,7 +127,7 @@ public class NodeRegistry {
             .build());
 
         register(new NodeDefinition.Builder("on_use_item", "node.mgmc.on_use_item.name")
-            .category("node_category.mgmc.events")
+            .category("node_category.mgmc.events.player")
             .color(0xFF0088FF)
             .addOutput("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, colorExec)
             .addOutput("item_id", "node.mgmc.port.item_id", NodeDefinition.PortType.STRING, colorString)
@@ -135,7 +135,7 @@ public class NodeRegistry {
             .build());
 
         register(new NodeDefinition.Builder("on_player_attack", "node.mgmc.on_player_attack.name")
-            .category("node_category.mgmc.events")
+            .category("node_category.mgmc.events.player")
             .color(0xFF0088FF)
             .addOutput("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, colorExec)
             .addOutput("victim_uuid", "node.mgmc.port.victim_uuid", NodeDefinition.PortType.UUID, colorUUID)
@@ -143,7 +143,7 @@ public class NodeRegistry {
             .build());
 
         register(new NodeDefinition.Builder("on_entity_death", "node.mgmc.on_entity_death.name")
-            .category("node_category.mgmc.events")
+            .category("node_category.mgmc.events.entity")
             .color(0xFF0088FF)
             .addOutput("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, colorExec)
             .addOutput("x", "node.mgmc.port.x", NodeDefinition.PortType.FLOAT, colorFloat)
@@ -154,7 +154,7 @@ public class NodeRegistry {
             .build());
 
         register(new NodeDefinition.Builder("on_entity_hurt", "node.mgmc.on_entity_hurt.name")
-            .category("node_category.mgmc.events")
+            .category("node_category.mgmc.events.entity")
             .color(0xFF0088FF)
             .addOutput("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, colorExec)
             .addOutput("damage_amount", "node.mgmc.port.damage_amount", NodeDefinition.PortType.FLOAT, colorFloat)
@@ -163,7 +163,7 @@ public class NodeRegistry {
             .build());
 
         register(new NodeDefinition.Builder("on_entity_spawn", "node.mgmc.on_entity_spawn.name")
-            .category("node_category.mgmc.events")
+            .category("node_category.mgmc.events.entity")
             .color(0xFF0088FF)
             .addOutput("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, colorExec)
             .addOutput("x", "node.mgmc.port.x", NodeDefinition.PortType.FLOAT, colorFloat)
