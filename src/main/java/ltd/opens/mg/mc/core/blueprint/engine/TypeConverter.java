@@ -7,50 +7,68 @@ import java.util.UUID;
  */
 public class TypeConverter {
 
-    public static String cast(String value, String targetType) {
-        if (value == null) value = "";
+    public static String toString(Object value) {
+        if (value == null) return "";
+        return String.valueOf(value);
+    }
+
+    public static double toDouble(Object value) {
+        if (value == null) return 0.0;
+        if (value instanceof Number) return ((Number) value).doubleValue();
+        if (value instanceof Boolean) return (Boolean) value ? 1.0 : 0.0;
+        try {
+            String s = String.valueOf(value);
+            if (s.isEmpty()) return 0.0;
+            return Double.parseDouble(s);
+        } catch (Exception e) {
+            return 0.0;
+        }
+    }
+
+    public static boolean toBoolean(Object value) {
+        if (value == null) return false;
+        if (value instanceof Boolean) return (Boolean) value;
+        if (value instanceof Number) return ((Number) value).doubleValue() != 0;
+        String s = String.valueOf(value).toLowerCase();
+        return s.equals("true") || s.equals("1") || s.equals("yes");
+    }
+
+    public static int toInt(Object value) {
+        if (value == null) return 0;
+        if (value instanceof Number) return ((Number) value).intValue();
+        return (int) Math.round(toDouble(value));
+    }
+
+    public static Object cast(Object value, String targetType) {
+        if (value == null) return null;
         if (targetType == null) return value;
         
         targetType = targetType.toUpperCase();
         
         switch (targetType) {
             case "STRING":
-                return value;
+                return toString(value);
                 
             case "FLOAT":
-                try {
-                    if (value.isEmpty()) return "0.0";
-                    // 处理可能的科学计数法或非标准格式
-                    return String.valueOf(Double.parseDouble(value));
-                } catch (Exception e) {
-                    return "0.0";
-                }
+                return toDouble(value);
                 
             case "BOOLEAN":
-                if (value.equalsIgnoreCase("true") || value.equals("1")) return "true";
-                if (value.equalsIgnoreCase("false") || value.equals("0")) return "false";
-                // 只有明确的 true 相关值才返回 true，避免意外
-                return "false";
+                return toBoolean(value);
+                
+            case "INT":
+                return toInt(value);
                 
             case "UUID":
                 try {
-                    if (value.isEmpty()) return "";
-                    return UUID.fromString(value).toString();
+                    String s = toString(value);
+                    if (s.isEmpty()) return "";
+                    return UUID.fromString(s).toString();
                 } catch (Exception e) {
                     return "";
                 }
-                
-            case "INT":
-                try {
-                    if (value.isEmpty()) return "0";
-                    return String.valueOf((int) Math.round(Double.parseDouble(value)));
-                } catch (Exception e) {
-                    return "0";
-                }
 
             case "LIST":
-                // 列表底层就是字符串，确保不为 null 即可
-                return value;
+                return toString(value);
 
             default:
                 return value;
