@@ -1,4 +1,11 @@
-package ltd.opens.mg.mc.client.gui.blueprint;
+package ltd.opens.mg.mc.client.gui.blueprint.handler;
+
+import ltd.opens.mg.mc.client.gui.blueprint.BlueprintState;
+import ltd.opens.mg.mc.client.gui.blueprint.menu.*;
+import ltd.opens.mg.mc.client.gui.blueprint.manager.*;
+import ltd.opens.mg.mc.client.gui.blueprint.render.*;
+import ltd.opens.mg.mc.client.gui.blueprint.io.*;
+
 
 public class BlueprintViewHandler {
     private final BlueprintState state;
@@ -23,11 +30,11 @@ public class BlueprintViewHandler {
         if (state.isPanning && (button == 2 || button == 1)) {
             state.isPanning = false;
             
-            // 如果是右键，且位移很小，返回 false，让外层逻辑触发菜单
+            // 濡傛灉鏄彸閿紝涓斾綅绉诲緢灏忥紝杩斿洖 false锛岃澶栧眰閫昏緫瑙﹀彂鑿滃崟
             if (button == 1) {
                 double dist = Math.sqrt(Math.pow(mouseX - state.startMouseX, 2) + Math.pow(mouseY - state.startMouseY, 2));
                 if (dist < 5.0) {
-                    return false; // 不消费事件，交给菜单处理器
+                    return false; // 涓嶆秷璐逛簨浠讹紝浜ょ粰鑿滃崟澶勭悊鍣?
                 }
             }
             return true;
@@ -68,3 +75,5 @@ public class BlueprintViewHandler {
         return true;
     }
 }
+
+
