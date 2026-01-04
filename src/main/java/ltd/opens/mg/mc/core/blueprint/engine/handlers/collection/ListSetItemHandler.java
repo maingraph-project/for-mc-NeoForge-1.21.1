@@ -7,31 +7,25 @@ import ltd.opens.mg.mc.core.blueprint.engine.NodeLogicRegistry;
 import ltd.opens.mg.mc.core.blueprint.engine.TypeConverter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ListSetItemHandler implements NodeHandler {
     @Override
     public Object getValue(JsonObject node, String pinId, NodeContext ctx) {
         if (pinId.equals("list_out")) {
-            String listStr = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "list_in", ctx));
+            List<Object> list = new ArrayList<>(TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, "list_in", ctx)));
             int index = TypeConverter.toInt(NodeLogicRegistry.evaluateInput(node, "index", ctx));
-            String value = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "value", ctx));
-            
-            if (listStr == null || listStr.isEmpty()) return value;
+            Object value = NodeLogicRegistry.evaluateInput(node, "value", ctx);
             
             try {
-                String[] items = listStr.split("\\|");
-                
-                List<String> list = new ArrayList<>(Arrays.asList(items));
                 if (index >= 0 && index < list.size()) {
                     list.set(index, value);
                 } else if (index == list.size()) {
                     list.add(value);
                 }
-                return String.join("|", list);
+                return list;
             } catch (Exception e) {
-                return listStr;
+                return list;
             }
         }
         return null;

@@ -6,17 +6,15 @@ import ltd.opens.mg.mc.core.blueprint.engine.NodeHandler;
 import ltd.opens.mg.mc.core.blueprint.engine.NodeLogicRegistry;
 import ltd.opens.mg.mc.core.blueprint.engine.TypeConverter;
 
+import java.util.List;
+
 public class ListLengthHandler implements NodeHandler {
     @Override
     public Object getValue(JsonObject node, String pinId, NodeContext ctx) {
         if (pinId.equals("length")) {
             try {
-                String listStr = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "list", ctx));
-                if (listStr == null || listStr.isEmpty()) return 0;
-                
-                // 使用正则表达式分割，并处理可能的空项
-                String[] items = listStr.split("\\|", -1);
-                return (float) items.length;
+                List<Object> list = TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, "list", ctx));
+                return (double) list.size();
             } catch (Exception e) {
                 return 0.0;
             }

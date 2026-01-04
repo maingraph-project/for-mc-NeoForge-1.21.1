@@ -6,18 +6,20 @@ import ltd.opens.mg.mc.core.blueprint.engine.NodeHandler;
 import ltd.opens.mg.mc.core.blueprint.engine.NodeLogicRegistry;
 import ltd.opens.mg.mc.core.blueprint.engine.TypeConverter;
 
+import java.util.List;
+
 public class ListContainsHandler implements NodeHandler {
     @Override
     public Object getValue(JsonObject node, String pinId, NodeContext ctx) {
         if (pinId.equals("result")) {
-            String listStr = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "list", ctx));
-            String item = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "item", ctx));
+            List<Object> list = TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, "list", ctx));
+            Object item = NodeLogicRegistry.evaluateInput(node, "item", ctx);
             
-            if (listStr == null || listStr.isEmpty()) return false;
+            if (list.contains(item)) return true;
             
-            String[] items = listStr.split("\\|");
-            for (String s : items) {
-                if (s.equals(item)) return "true";
+            String itemStr = TypeConverter.toString(item);
+            for (Object o : list) {
+                if (TypeConverter.toString(o).equals(itemStr)) return true;
             }
             return false;
         }

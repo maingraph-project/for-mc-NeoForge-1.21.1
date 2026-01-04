@@ -6,18 +6,21 @@ import ltd.opens.mg.mc.core.blueprint.engine.NodeHandler;
 import ltd.opens.mg.mc.core.blueprint.engine.NodeLogicRegistry;
 import ltd.opens.mg.mc.core.blueprint.engine.TypeConverter;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class ListJoinHandler implements NodeHandler {
     @Override
     public Object getValue(JsonObject node, String pinId, NodeContext ctx) {
         if (pinId.equals("string")) {
-            String listStr = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "list", ctx));
+            List<Object> list = TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, "list", ctx));
             String delim = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "delimiter", ctx));
             
-            if (listStr == null || listStr.isEmpty()) return null;
             if (delim == null) delim = "";
             
-            String[] items = listStr.split("\\|");
-            return String.join(delim, items);
+            return list.stream()
+                    .map(TypeConverter::toString)
+                    .collect(Collectors.joining(delim));
         }
         return null;
     }

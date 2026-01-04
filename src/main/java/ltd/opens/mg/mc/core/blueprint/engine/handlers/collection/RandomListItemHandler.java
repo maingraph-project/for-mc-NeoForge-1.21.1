@@ -6,6 +6,7 @@ import ltd.opens.mg.mc.core.blueprint.engine.NodeHandler;
 import ltd.opens.mg.mc.core.blueprint.engine.NodeLogicRegistry;
 import ltd.opens.mg.mc.core.blueprint.engine.TypeConverter;
 
+import java.util.List;
 import java.util.Random;
 
 public class RandomListItemHandler implements NodeHandler {
@@ -15,12 +16,9 @@ public class RandomListItemHandler implements NodeHandler {
     public Object getValue(JsonObject node, String pinId, NodeContext ctx) {
         if (pinId.equals("item")) {
             try {
-                String listStr = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "list", ctx));
-                if (listStr == null || listStr.isEmpty()) return null;
-                
-                String[] items = listStr.split("\\|");
-                if (items.length > 0) {
-                    return items[RANDOM.nextInt(items.length)];
+                List<Object> list = TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, "list", ctx));
+                if (!list.isEmpty()) {
+                    return list.get(RANDOM.nextInt(list.size()));
                 }
             } catch (Exception e) {}
         }

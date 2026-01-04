@@ -6,20 +6,18 @@ import ltd.opens.mg.mc.core.blueprint.engine.NodeHandler;
 import ltd.opens.mg.mc.core.blueprint.engine.NodeLogicRegistry;
 import ltd.opens.mg.mc.core.blueprint.engine.TypeConverter;
 
+import java.util.List;
+
 public class GetListItemHandler implements NodeHandler {
     @Override
     public Object getValue(JsonObject node, String pinId, NodeContext ctx) {
         if (pinId.equals("value")) {
             try {
-                String listStr = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "list", ctx));
+                List<Object> list = TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, "list", ctx));
                 int index = TypeConverter.toInt(NodeLogicRegistry.evaluateInput(node, "index", ctx));
                 
-                if (listStr == null || listStr.isEmpty()) return null;
-                
-                String[] items = listStr.split("\\|");
-                
-                if (index >= 0 && index < items.length) {
-                    return items[index];
+                if (index >= 0 && index < list.size()) {
+                    return list.get(index);
                 }
             } catch (Exception e) {}
         }

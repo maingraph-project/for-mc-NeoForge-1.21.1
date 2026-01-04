@@ -1,6 +1,9 @@
 package ltd.opens.mg.mc.core.blueprint.engine;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * 转换引擎 - 负责蓝图系统中各种数据类型的安全转换
@@ -9,6 +12,11 @@ public class TypeConverter {
 
     public static String toString(Object value) {
         if (value == null) return "";
+        if (value instanceof List) {
+            return ((List<?>) value).stream()
+                    .map(TypeConverter::toString)
+                    .collect(Collectors.joining("|"));
+        }
         return String.valueOf(value);
     }
 
@@ -37,6 +45,33 @@ public class TypeConverter {
         if (value == null) return 0;
         if (value instanceof Number) return ((Number) value).intValue();
         return (int) Math.round(toDouble(value));
+    }
+
+    public static List<Object> toList(Object value) {
+        if (value == null) return new ArrayList<>();
+        if (value instanceof List) {
+            //noinspection unchecked
+            return (List<Object>) value;
+        }
+        
+        String s = String.valueOf(value);
+        if (s.isEmpty()) return new ArrayList<>();
+        
+        List<Object> list = new ArrayList<>();
+        if (s.contains("|")) {
+            String[] parts = s.split("\\|");
+            for (String part : parts) {
+                // 简单的去引号处理，用于兼容旧的 item.contains("|") 逻辑
+                if (part.startsWith("\"") && part.endsWith("\"") && part.length() >= 2) {
+                    list.add(part.substring(1, part.length() - 1));
+                } else {
+                    list.add(part);
+                }
+            }
+        } else {
+            list.add(s);
+        }
+        return list;
     }
 
     public static Object cast(Object value, String targetType) {
@@ -68,7 +103,7 @@ public class TypeConverter {
                 }
 
             case "LIST":
-                return toString(value);
+                return toList(value);
 
             default:
                 return value;
