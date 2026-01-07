@@ -15,6 +15,7 @@ import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.Identifier;
 import net.minecraft.core.registries.BuiltInRegistries;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -30,9 +31,9 @@ public class ActionNodes {
         NodeHelper.setup("print_chat", "node.mgmc.print_chat.name")
             .category("node_category.mgmc.action")
             .color(COLOR_ACTION)
-            .input("exec", "node.mgmc.port.exec", NodeDefinition.PortType.EXEC, 0)
-            .input("message", "node.mgmc.print_chat.port.message", NodeDefinition.PortType.STRING, COLOR_STRING, "")
-            .output("exec", "node.mgmc.port.exec", NodeDefinition.PortType.EXEC, 0)
+            .input("exec", "node.mgmc.port.exec_in", NodeDefinition.PortType.EXEC, 0)
+            .input("message", "node.mgmc.port.message", NodeDefinition.PortType.STRING, COLOR_STRING, "")
+            .output("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, 0)
             .registerExec((node, ctx) -> {
                 String message = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "message", ctx));
                 if (ctx.level != null && !ctx.level.isClientSide()) {
@@ -60,7 +61,7 @@ public class ActionNodes {
             .color(COLOR_ACTION)
             .input("exec", "node.mgmc.port.exec_in", NodeDefinition.PortType.EXEC, 0)
             .input("uuid", "node.mgmc.port.uuid", NodeDefinition.PortType.STRING, COLOR_STRING, "")
-            .input("command", "node.mgmc.run_command_as_player.port.command", NodeDefinition.PortType.STRING, COLOR_STRING, "")
+            .input("command", "node.mgmc.port.command", NodeDefinition.PortType.STRING, COLOR_STRING, "")
             .output("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, 0)
             .registerExec((node, ctx) -> {
                 String uuidStr = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "uuid", ctx));
@@ -92,14 +93,14 @@ public class ActionNodes {
 
         // play_effect (播放特效)
         NodeHelper.setup("play_effect", "node.mgmc.play_effect.name")
-            .category("node_category.mgmc.action")
+            .category("node_category.mgmc.action.world")
             .color(COLOR_ACTION)
-            .input("exec", "node.mgmc.port.exec", NodeDefinition.PortType.EXEC, 0)
-            .input("effect", "node.mgmc.play_effect.port.effect", NodeDefinition.PortType.STRING, COLOR_STRING, "minecraft:heart")
+            .input("exec", "node.mgmc.port.exec_in", NodeDefinition.PortType.EXEC, 0)
+            .input("effect", "node.mgmc.port.effect", NodeDefinition.PortType.STRING, COLOR_STRING, "minecraft:heart")
             .input("x", "node.mgmc.port.x", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .input("y", "node.mgmc.port.y", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .input("z", "node.mgmc.port.z", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
-            .output("exec", "node.mgmc.port.exec", NodeDefinition.PortType.EXEC, 0)
+            .output("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, 0)
             .registerExec((node, ctx) -> {
                 String effectName = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "effect", ctx));
                 double x = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "x", ctx));
@@ -109,7 +110,7 @@ public class ActionNodes {
                 try {
                     if (ctx.level instanceof ServerLevel serverLevel) {
                         Identifier id = Identifier.parse(effectName);
-                        var particleTypeOptional = BuiltInRegistries.PARTICLE_TYPE.getOptional(id);
+                        Optional<ParticleType<?>> particleTypeOptional = BuiltInRegistries.PARTICLE_TYPE.getOptional(id);
                         if (particleTypeOptional.isPresent()) {
                             ParticleType<?> type = particleTypeOptional.get();
                             if (type instanceof ParticleOptions options) {
@@ -123,13 +124,13 @@ public class ActionNodes {
 
         // explosion (爆炸)
         NodeHelper.setup("explosion", "node.mgmc.explosion.name")
-            .category("node_category.mgmc.action")
+            .category("node_category.mgmc.action.world")
             .color(COLOR_ACTION)
             .input("exec", "node.mgmc.port.exec_in", NodeDefinition.PortType.EXEC, 0)
+            .input("radius", "node.mgmc.port.radius", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 3.0)
             .input("x", "node.mgmc.port.x", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .input("y", "node.mgmc.port.y", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .input("z", "node.mgmc.port.z", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
-            .input("radius", "node.mgmc.explosion.port.radius", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 3.0)
             .output("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, 0)
             .registerExec((node, ctx) -> {
                 double x = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "x", ctx));

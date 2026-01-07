@@ -123,10 +123,10 @@ public class EventNodes {
             .color(COLOR_EVENT_PLAYER)
             .execOut()
             .output("uuid", "node.mgmc.port.uuid", NodeDefinition.PortType.UUID, COLOR_UUID)
-            .output("trigger_name", "node.mgmc.port.name", NodeDefinition.PortType.STRING, COLOR_STRING)
+            .output("name", "node.mgmc.port.name", NodeDefinition.PortType.STRING, COLOR_STRING)
             .registerValue((node, portId, ctx) -> switch (portId) {
                 case "uuid" -> ctx.triggerUuid;
-                case "trigger_name" -> ctx.triggerName;
+                case "name" -> ctx.triggerName;
                 default -> null;
             });
 
