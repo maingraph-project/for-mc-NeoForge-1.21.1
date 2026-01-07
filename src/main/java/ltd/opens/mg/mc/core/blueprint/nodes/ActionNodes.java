@@ -58,10 +58,10 @@ public class ActionNodes {
         NodeHelper.setup("run_command_as_player", "node.mgmc.run_command_as_player.name")
             .category("node_category.mgmc.action")
             .color(COLOR_ACTION)
-            .input("exec", "node.mgmc.port.exec", NodeDefinition.PortType.EXEC, 0)
+            .input("exec", "node.mgmc.port.exec_in", NodeDefinition.PortType.EXEC, 0)
             .input("uuid", "node.mgmc.port.uuid", NodeDefinition.PortType.STRING, COLOR_STRING, "")
-            .input("command", "node.mgmc.port.command", NodeDefinition.PortType.STRING, COLOR_STRING, "")
-            .output("exec", "node.mgmc.port.exec", NodeDefinition.PortType.EXEC, 0)
+            .input("command", "node.mgmc.run_command_as_player.port.command", NodeDefinition.PortType.STRING, COLOR_STRING, "")
+            .output("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, 0)
             .registerExec((node, ctx) -> {
                 String uuidStr = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "uuid", ctx));
                 String command = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "command", ctx));
@@ -125,12 +125,12 @@ public class ActionNodes {
         NodeHelper.setup("explosion", "node.mgmc.explosion.name")
             .category("node_category.mgmc.action")
             .color(COLOR_ACTION)
-            .input("exec", "node.mgmc.port.exec", NodeDefinition.PortType.EXEC, 0)
+            .input("exec", "node.mgmc.port.exec_in", NodeDefinition.PortType.EXEC, 0)
             .input("x", "node.mgmc.port.x", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .input("y", "node.mgmc.port.y", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .input("z", "node.mgmc.port.z", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .input("radius", "node.mgmc.explosion.port.radius", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 3.0)
-            .output("exec", "node.mgmc.port.exec", NodeDefinition.PortType.EXEC, 0)
+            .output("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, 0)
             .registerExec((node, ctx) -> {
                 double x = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "x", ctx));
                 double y = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "y", ctx));
