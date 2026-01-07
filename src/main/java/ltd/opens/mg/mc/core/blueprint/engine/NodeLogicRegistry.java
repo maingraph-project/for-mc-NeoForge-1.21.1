@@ -116,22 +116,6 @@ public class NodeLogicRegistry {
     }
 
     static {
-        // Events
-        register("on_mgrun", new OnMgRunHandler());
-        register("on_player_move", new OnPlayerMoveHandler());
-        register("on_break_block", new OnBreakBlockHandler());
-        register("on_place_block", new OnPlaceBlockHandler());
-        register("on_interact_block", new OnInteractBlockHandler());
-        register("on_player_join", new OnPlayerJoinHandler());
-        register("on_player_death", new OnPlayerDeathHandler());
-        register("on_player_respawn", new OnPlayerRespawnHandler());
-        register("on_player_hurt", new OnPlayerHurtHandler());
-        register("on_use_item", new OnUseItemHandler());
-        register("on_player_attack", new OnPlayerAttackHandler());
-        register("on_entity_death", new OnEntityDeathHandler());
-        register("on_entity_hurt", new OnEntityHurtHandler());
-        register("on_entity_spawn", new OnEntitySpawnHandler());
-
         // Functions
         register("print_chat", new PrintChatHandler());
         register("run_command_as_player", new RunCommandAsPlayerHandler());

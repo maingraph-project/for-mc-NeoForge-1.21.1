@@ -11,7 +11,6 @@ public class NodeRegistrar {
     private static final int colorEnum = 0xFFFFAA00;
 
     public static void registerAll() {
-        registerEvents();
         registerActions();
         registerVariables();
         registerLogic();

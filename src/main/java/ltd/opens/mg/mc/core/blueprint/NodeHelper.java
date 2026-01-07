@@ -36,6 +36,14 @@ public class NodeHelper {
     }
 
     /**
+     * 设置节点颜色
+     */
+    public NodeHelper color(int color) {
+        builder.color(color);
+        return this;
+    }
+
+    /**
      * 添加输入端口
      */
     public NodeHelper input(String id, String displayNameKey, NodeDefinition.PortType type, int color) {
@@ -109,18 +117,21 @@ public class NodeHelper {
     /**
      * 为简单节点提供快速注册接口（仅支持 getValue 逻辑）
      */
+    /**
+     * 极简逻辑注册（适用于只读数据的节点，如变量、事件数据获取）
+     */
     public void register(SimpleValueHandler valueHandler) {
         register(new NodeHandler() {
             @Override
             public Object getValue(com.google.gson.JsonObject node, String portId, ltd.opens.mg.mc.core.blueprint.engine.NodeContext ctx) {
-                return valueHandler.handle(node, ctx);
+                return valueHandler.handle(node, portId, ctx);
             }
         });
     }
 
     @FunctionalInterface
     public interface SimpleValueHandler {
-        Object handle(com.google.gson.JsonObject node, ltd.opens.mg.mc.core.blueprint.engine.NodeContext ctx);
+        Object handle(com.google.gson.JsonObject node, String portId, ltd.opens.mg.mc.core.blueprint.engine.NodeContext ctx);
     }
 
     /**
