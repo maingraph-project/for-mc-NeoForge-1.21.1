@@ -36,33 +36,33 @@
 - [ ] `get_entity_info` (获取实体信息) -> **独立类** `GetEntityInfoNode.java`
 
 ### 2.3 数学运算节点 (Math Nodes) -> `MathNodes.java`
-- [ ] `add_float` (+)
-- [ ] `sub_float` (-)
-- [ ] `mul_float` (*)
-- [ ] `div_float` (/)
-- [ ] `mod_float` (%)
-- [ ] `abs_float` (绝对值)
-- [ ] `min_float` (最小值)
-- [ ] `max_float` (最大值)
-- [ ] `clamp_float` (区间限制)
-- [ ] `round_float` (四舍五入)
-- [ ] `floor_float` (向下取整)
-- [ ] `ceil_float` (向上取整)
-- [ ] `random_float` (随机浮点数)
-- [ ] `random_int` (随机整数)
-- [ ] `random_bool` (随机布尔)
+- [x] `add_float` (+)
+- [x] `sub_float` (-)
+- [x] `mul_float` (*)
+- [x] `div_float` (/)
+- [x] `mod_float` (%)
+- [x] `abs_float` (绝对值)
+- [x] `min_float` (最小值)
+- [x] `max_float` (最大值)
+- [x] `clamp_float` (区间限制)
+- [x] `round_float` (四舍五入)
+- [x] `floor_float` (向下取整)
+- [x] `ceil_float` (向上取整)
+- [x] `random_float` (随机浮点数)
+- [x] `random_int` (随机整数)
+- [x] `random_bool` (随机布尔)
 
 ### 2.4 逻辑比较节点 (Logic Nodes) -> `LogicNodes.java`
-- [ ] `compare_eq` (==)
-- [ ] `compare_neq` (!=)
-- [ ] `compare_gt` (>)
-- [ ] `compare_gte` (>=)
-- [ ] `compare_lt` (<)
-- [ ] `compare_lte` (<=)
-- [ ] `logic_and` (与)
-- [ ] `logic_or` (或)
-- [ ] `logic_not` (非)
-- [ ] `logic_xor` (异或)
+- [x] `compare_eq` (==)
+- [x] `compare_neq` (!=)
+- [x] `compare_gt` (>)
+- [x] `compare_gte` (>=)
+- [x] `compare_lt` (<)
+- [x] `compare_lte` (<=)
+- [x] `logic_and` (与)
+- [x] `logic_or` (或)
+- [x] `logic_not` (非)
+- [x] `logic_xor` (异或)
 
 ### 2.5 变量与常量节点 (Variable Nodes) -> `VariableNodes.java`
 - [ ] `float` (浮点数常量)
@@ -101,6 +101,6 @@
 - [ ] `cast` (类型转换) -> **需修复硬编码**
 
 ## 3. 清理工作
-- [ ] 移除 `NodeRegistrar.java` 中的旧注册逻辑
-- [ ] 更新 `NodeInitializer.java` 调用新注册入口
+- [x] 移除 `NodeRegistrar.java` 中的旧注册逻辑
+- [x] 更新 `NodeInitializer.java` 调用新注册入口
 - [ ] 验证 `NodeDefinition` 是否正确加载 I18n 和 颜色

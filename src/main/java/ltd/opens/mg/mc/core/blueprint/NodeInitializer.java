@@ -1,6 +1,7 @@
 package ltd.opens.mg.mc.core.blueprint;
 
 import ltd.opens.mg.mc.core.blueprint.nodes.EventNodes;
+import ltd.opens.mg.mc.core.blueprint.nodes.LogicNodes;
 import ltd.opens.mg.mc.core.blueprint.nodes.MathNodes;
 
 /**
@@ -13,5 +14,6 @@ public class NodeInitializer {
     public static void init() {
         EventNodes.register();
         MathNodes.register();
+        LogicNodes.register();
     }
 }
