@@ -1,7 +1,9 @@
 package ltd.opens.mg.mc.core.blueprint.nodes;
 
+import com.google.gson.JsonObject;
 import ltd.opens.mg.mc.core.blueprint.NodeDefinition;
 import ltd.opens.mg.mc.core.blueprint.NodeHelper;
+import ltd.opens.mg.mc.core.blueprint.engine.NodeContext;
 import ltd.opens.mg.mc.core.blueprint.engine.NodeLogicRegistry;
 import ltd.opens.mg.mc.core.blueprint.engine.TypeConverter;
 
@@ -25,7 +27,7 @@ public class MathNodes {
             .input("a", "node.mgmc.port.a", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .input("b", "node.mgmc.port.b", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .output("result", "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
-            .register((node, portId, ctx) -> {
+            .registerValue((node, portId, ctx) -> {
                 double a = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "a", ctx));
                 double b = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "b", ctx));
                 return a + b;
@@ -37,7 +39,7 @@ public class MathNodes {
             .input("a", "node.mgmc.port.a", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .input("b", "node.mgmc.port.b", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .output("result", "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
-            .register((node, portId, ctx) -> {
+            .registerValue((node, portId, ctx) -> {
                 double a = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "a", ctx));
                 double b = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "b", ctx));
                 return a - b;
@@ -49,7 +51,7 @@ public class MathNodes {
             .input("a", "node.mgmc.port.a", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 1.0)
             .input("b", "node.mgmc.port.b", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 1.0)
             .output("result", "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
-            .register((node, portId, ctx) -> {
+            .registerValue((node, portId, ctx) -> {
                 double a = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "a", ctx));
                 double b = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "b", ctx));
                 return a * b;
@@ -61,7 +63,7 @@ public class MathNodes {
             .input("a", "node.mgmc.port.a", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 1.0)
             .input("b", "node.mgmc.port.b", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 1.0)
             .output("result", "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
-            .register((node, portId, ctx) -> {
+            .registerValue((node, portId, ctx) -> {
                 double a = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "a", ctx));
                 double b = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "b", ctx));
                 return b != 0 ? a / b : 0.0;
@@ -73,7 +75,7 @@ public class MathNodes {
             .input("a", "node.mgmc.port.a", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 1.0)
             .input("b", "node.mgmc.port.b", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 1.0)
             .output("result", "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
-            .register((node, portId, ctx) -> {
+            .registerValue((node, portId, ctx) -> {
                 double a = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "a", ctx));
                 double b = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "b", ctx));
                 return b != 0 ? a % b : 0.0;
@@ -84,7 +86,7 @@ public class MathNodes {
             .color(COLOR_MATH)
             .input("input", "node.mgmc.port.input", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .output("result", "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
-            .register((node, portId, ctx) -> Math.abs(TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "input", ctx))));
+            .registerValue((node, portId, ctx) -> Math.abs(TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "input", ctx))));
 
         NodeHelper.setup("min_float", "node.mgmc.min_float.name")
             .category("node_category.mgmc.logic.math")
@@ -92,7 +94,7 @@ public class MathNodes {
             .input("a", "node.mgmc.port.a", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .input("b", "node.mgmc.port.b", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .output("result", "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
-            .register((node, portId, ctx) -> {
+            .registerValue((node, portId, ctx) -> {
                 double a = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "a", ctx));
                 double b = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "b", ctx));
                 return Math.min(a, b);
@@ -104,7 +106,7 @@ public class MathNodes {
             .input("a", "node.mgmc.port.a", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .input("b", "node.mgmc.port.b", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .output("result", "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
-            .register((node, portId, ctx) -> {
+            .registerValue((node, portId, ctx) -> {
                 double a = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "a", ctx));
                 double b = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "b", ctx));
                 return Math.max(a, b);
@@ -117,7 +119,7 @@ public class MathNodes {
             .input("min", "node.mgmc.port.min", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .input("max", "node.mgmc.port.max", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 1.0)
             .output("result", "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
-            .register((node, portId, ctx) -> {
+            .registerValue((node, portId, ctx) -> {
                 double val = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "value", ctx));
                 double min = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "min", ctx));
                 double max = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "max", ctx));
@@ -129,21 +131,21 @@ public class MathNodes {
             .color(COLOR_MATH)
             .input("input", "node.mgmc.port.input", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .output("result", "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
-            .register((node, portId, ctx) -> (double) Math.round(TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "input", ctx))));
+            .registerValue((node, portId, ctx) -> (double) Math.round(TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "input", ctx))));
 
         NodeHelper.setup("floor_float", "node.mgmc.floor_float.name")
             .category("node_category.mgmc.logic.math")
             .color(COLOR_MATH)
             .input("input", "node.mgmc.port.input", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .output("result", "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
-            .register((node, portId, ctx) -> Math.floor(TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "input", ctx))));
+            .registerValue((node, portId, ctx) -> Math.floor(TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "input", ctx))));
 
         NodeHelper.setup("ceil_float", "node.mgmc.ceil_float.name")
             .category("node_category.mgmc.logic.math")
             .color(COLOR_MATH)
             .input("input", "node.mgmc.port.input", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .output("result", "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
-            .register((node, portId, ctx) -> Math.ceil(TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "input", ctx))));
+            .registerValue((node, portId, ctx) -> Math.ceil(TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "input", ctx))));
 
         // --- 随机数 ---
         NodeHelper.setup("random_float", "node.mgmc.random_float.name")
@@ -152,7 +154,7 @@ public class MathNodes {
             .input("min", "node.mgmc.port.min", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .input("max", "node.mgmc.port.max", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 1.0)
             .output("result", "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
-            .register((node, portId, ctx) -> {
+            .registerValue((node, portId, ctx) -> {
                 double min = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "min", ctx));
                 double max = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "max", ctx));
                 return min + (max - min) * RANDOM.nextDouble();
@@ -164,7 +166,7 @@ public class MathNodes {
             .input("min", "node.mgmc.port.min", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
             .input("max", "node.mgmc.port.max", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 100.0)
             .output("result", "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
-            .register((node, portId, ctx) -> {
+            .registerValue((node, portId, ctx) -> {
                 int min = (int) TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "min", ctx));
                 int max = (int) TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "max", ctx));
                 if (max <= min) return (double) min;
@@ -176,7 +178,7 @@ public class MathNodes {
             .color(COLOR_MATH)
             .input("chance", "node.mgmc.random_bool.port.chance", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.5)
             .output("result", "node.mgmc.port.condition", NodeDefinition.PortType.BOOLEAN, COLOR_BOOLEAN)
-            .register((node, portId, ctx) -> {
+            .registerValue((node, portId, ctx) -> {
                 double chance = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "chance", ctx));
                 return RANDOM.nextDouble() < chance;
             });

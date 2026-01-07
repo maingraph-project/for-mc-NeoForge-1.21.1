@@ -51,14 +51,18 @@ public class NodeHelper {
         return this;
     }
 
-    public NodeHelper input(String id, String displayNameKey, NodeDefinition.PortType type, int color, Object defaultValue) {
-        builder.addInput(id, displayNameKey, type, color, true, defaultValue);
+    public NodeHelper input(String id, String displayNameKey, NodeDefinition.PortType type, int color, boolean hasInput, Object defaultValue) {
+        builder.addInput(id, displayNameKey, type, color, hasInput, defaultValue);
         return this;
     }
 
-    public NodeHelper input(String id, String displayNameKey, NodeDefinition.PortType type, int color, Object defaultValue, String[] options) {
-        builder.addInput(id, displayNameKey, type, color, true, defaultValue, options);
+    public NodeHelper input(String id, String displayNameKey, NodeDefinition.PortType type, int color, boolean hasInput, Object defaultValue, String[] options) {
+        builder.addInput(id, displayNameKey, type, color, hasInput, defaultValue, options);
         return this;
+    }
+
+    public NodeHelper input(String id, String displayNameKey, NodeDefinition.PortType type, int color, Object defaultValue) {
+        return input(id, displayNameKey, type, color, true, defaultValue);
     }
 
     /**
@@ -102,6 +106,10 @@ public class NodeHelper {
         return this;
     }
 
+    public NodeHelper property(String key, Object value) {
+        return flag(key, value);
+    }
+
     /**
      * 注册节点（元数据与逻辑同时注册）
      * @param handler 节点执行逻辑处理器
@@ -114,13 +122,37 @@ public class NodeHelper {
         NodeLogicRegistry.register(id, handler);
     }
 
+    public void registerExec(SimpleExecuteHandler handler) {
+        register(new NodeHandler() {
+            @Override
+            public void execute(com.google.gson.JsonObject node, ltd.opens.mg.mc.core.blueprint.engine.NodeContext ctx) {
+                handler.handle(node, ctx);
+            }
+        });
+    }
+
+    public static abstract class NodeHandlerAdapter implements NodeHandler {
+        @Override
+        public void execute(com.google.gson.JsonObject node, ltd.opens.mg.mc.core.blueprint.engine.NodeContext ctx) {}
+
+        @Override
+        public Object getValue(com.google.gson.JsonObject node, String portId, ltd.opens.mg.mc.core.blueprint.engine.NodeContext ctx) {
+            return null;
+        }
+    }
+
+    @FunctionalInterface
+    public interface SimpleExecuteHandler {
+        void handle(com.google.gson.JsonObject node, ltd.opens.mg.mc.core.blueprint.engine.NodeContext ctx);
+    }
+
     /**
      * 为简单节点提供快速注册接口（仅支持 getValue 逻辑）
      */
     /**
      * 极简逻辑注册（适用于只读数据的节点，如变量、事件数据获取）
      */
-    public void register(SimpleValueHandler valueHandler) {
+    public void registerValue(SimpleValueHandler valueHandler) {
         register(new NodeHandler() {
             @Override
             public Object getValue(com.google.gson.JsonObject node, String portId, ltd.opens.mg.mc.core.blueprint.engine.NodeContext ctx) {

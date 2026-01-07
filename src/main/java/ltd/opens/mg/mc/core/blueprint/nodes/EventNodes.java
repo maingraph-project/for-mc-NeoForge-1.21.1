@@ -1,7 +1,9 @@
 package ltd.opens.mg.mc.core.blueprint.nodes;
 
+import com.google.gson.JsonObject;
 import ltd.opens.mg.mc.core.blueprint.NodeDefinition;
 import ltd.opens.mg.mc.core.blueprint.NodeHelper;
+import ltd.opens.mg.mc.core.blueprint.engine.NodeContext;
 
 import java.util.Arrays;
 
@@ -32,7 +34,7 @@ public class EventNodes {
             .output("trigger_x", "node.mgmc.on_mgrun.port.trigger_x", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
             .output("trigger_y", "node.mgmc.on_mgrun.port.trigger_y", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
             .output("trigger_z", "node.mgmc.on_mgrun.port.trigger_z", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
-            .register((node, portId, ctx) -> switch (portId) {
+            .registerValue((node, portId, ctx) -> switch (portId) {
                 case "name" -> ctx.eventName;
                 case "parameters" -> Arrays.asList(ctx.args);
                 case "trigger_uuid" -> ctx.triggerUuid != null ? ctx.triggerUuid : "";
@@ -53,7 +55,7 @@ public class EventNodes {
             .output("z", "node.mgmc.port.z", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
             .output("speed", "node.mgmc.on_player_move.port.speed", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
             .output("uuid", "node.mgmc.port.uuid", NodeDefinition.PortType.UUID, COLOR_UUID)
-            .register((node, portId, ctx) -> switch (portId) {
+            .registerValue((node, portId, ctx) -> switch (portId) {
                 case "x" -> ctx.triggerX;
                 case "y" -> ctx.triggerY;
                 case "z" -> ctx.triggerZ;
@@ -71,7 +73,7 @@ public class EventNodes {
             .output("z", "node.mgmc.port.z", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
             .output("block_id", "node.mgmc.port.block_id", NodeDefinition.PortType.STRING, COLOR_STRING)
             .output("uuid", "node.mgmc.port.uuid", NodeDefinition.PortType.UUID, COLOR_UUID)
-            .register((node, portId, ctx) -> switch (portId) {
+            .registerValue((node, portId, ctx) -> switch (portId) {
                 case "x" -> ctx.triggerX;
                 case "y" -> ctx.triggerY;
                 case "z" -> ctx.triggerZ;
@@ -89,7 +91,7 @@ public class EventNodes {
             .output("z", "node.mgmc.port.z", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
             .output("block_id", "node.mgmc.port.block_id", NodeDefinition.PortType.STRING, COLOR_STRING)
             .output("uuid", "node.mgmc.port.uuid", NodeDefinition.PortType.UUID, COLOR_UUID)
-            .register((node, portId, ctx) -> switch (portId) {
+            .registerValue((node, portId, ctx) -> switch (portId) {
                 case "x" -> ctx.triggerX;
                 case "y" -> ctx.triggerY;
                 case "z" -> ctx.triggerZ;
@@ -107,7 +109,7 @@ public class EventNodes {
             .output("z", "node.mgmc.port.z", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
             .output("block_id", "node.mgmc.port.block_id", NodeDefinition.PortType.STRING, COLOR_STRING)
             .output("uuid", "node.mgmc.port.uuid", NodeDefinition.PortType.UUID, COLOR_UUID)
-            .register((node, portId, ctx) -> switch (portId) {
+            .registerValue((node, portId, ctx) -> switch (portId) {
                 case "x" -> ctx.triggerX;
                 case "y" -> ctx.triggerY;
                 case "z" -> ctx.triggerZ;
@@ -122,7 +124,7 @@ public class EventNodes {
             .execOut()
             .output("uuid", "node.mgmc.port.uuid", NodeDefinition.PortType.UUID, COLOR_UUID)
             .output("trigger_name", "node.mgmc.port.name", NodeDefinition.PortType.STRING, COLOR_STRING)
-            .register((node, portId, ctx) -> switch (portId) {
+            .registerValue((node, portId, ctx) -> switch (portId) {
                 case "uuid" -> ctx.triggerUuid;
                 case "trigger_name" -> ctx.triggerName;
                 default -> null;
@@ -136,7 +138,7 @@ public class EventNodes {
             .output("y", "node.mgmc.port.y", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
             .output("z", "node.mgmc.port.z", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
             .output("uuid", "node.mgmc.port.uuid", NodeDefinition.PortType.UUID, COLOR_UUID)
-            .register((node, portId, ctx) -> switch (portId) {
+            .registerValue((node, portId, ctx) -> switch (portId) {
                 case "x" -> ctx.triggerX;
                 case "y" -> ctx.triggerY;
                 case "z" -> ctx.triggerZ;
@@ -152,7 +154,7 @@ public class EventNodes {
             .output("y", "node.mgmc.port.y", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
             .output("z", "node.mgmc.port.z", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
             .output("uuid", "node.mgmc.port.uuid", NodeDefinition.PortType.UUID, COLOR_UUID)
-            .register((node, portId, ctx) -> switch (portId) {
+            .registerValue((node, portId, ctx) -> switch (portId) {
                 case "x" -> ctx.triggerX;
                 case "y" -> ctx.triggerY;
                 case "z" -> ctx.triggerZ;
@@ -167,7 +169,7 @@ public class EventNodes {
             .output("damage_amount", "node.mgmc.port.damage_amount", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
             .output("attacker_uuid", "node.mgmc.port.attacker_uuid", NodeDefinition.PortType.UUID, COLOR_UUID)
             .output("uuid", "node.mgmc.port.uuid", NodeDefinition.PortType.UUID, COLOR_UUID)
-            .register((node, portId, ctx) -> switch (portId) {
+            .registerValue((node, portId, ctx) -> switch (portId) {
                 case "damage_amount" -> ctx.triggerValue;
                 case "attacker_uuid" -> ctx.triggerExtraUuid;
                 case "uuid" -> ctx.triggerUuid;
@@ -180,7 +182,7 @@ public class EventNodes {
             .execOut()
             .output("item_id", "node.mgmc.port.item_id", NodeDefinition.PortType.STRING, COLOR_STRING)
             .output("uuid", "node.mgmc.port.uuid", NodeDefinition.PortType.UUID, COLOR_UUID)
-            .register((node, portId, ctx) -> switch (portId) {
+            .registerValue((node, portId, ctx) -> switch (portId) {
                 case "item_id" -> ctx.triggerItemId;
                 case "uuid" -> ctx.triggerUuid;
                 default -> null;
@@ -192,7 +194,7 @@ public class EventNodes {
             .execOut()
             .output("victim_uuid", "node.mgmc.port.victim_uuid", NodeDefinition.PortType.UUID, COLOR_UUID)
             .output("uuid", "node.mgmc.port.uuid", NodeDefinition.PortType.UUID, COLOR_UUID)
-            .register((node, portId, ctx) -> switch (portId) {
+            .registerValue((node, portId, ctx) -> switch (portId) {
                 case "victim_uuid" -> ctx.triggerExtraUuid;
                 case "uuid" -> ctx.triggerUuid;
                 default -> null;
@@ -208,7 +210,7 @@ public class EventNodes {
             .output("z", "node.mgmc.port.z", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
             .output("victim_uuid", "node.mgmc.port.victim_uuid", NodeDefinition.PortType.UUID, COLOR_UUID)
             .output("attacker_uuid", "node.mgmc.port.attacker_uuid", NodeDefinition.PortType.UUID, COLOR_UUID)
-            .register((node, portId, ctx) -> switch (portId) {
+            .registerValue((node, portId, ctx) -> switch (portId) {
                 case "x" -> ctx.triggerX;
                 case "y" -> ctx.triggerY;
                 case "z" -> ctx.triggerZ;
@@ -224,7 +226,7 @@ public class EventNodes {
             .output("damage_amount", "node.mgmc.port.damage_amount", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
             .output("victim_uuid", "node.mgmc.port.victim_uuid", NodeDefinition.PortType.UUID, COLOR_UUID)
             .output("attacker_uuid", "node.mgmc.port.attacker_uuid", NodeDefinition.PortType.UUID, COLOR_UUID)
-            .register((node, portId, ctx) -> switch (portId) {
+            .registerValue((node, portId, ctx) -> switch (portId) {
                 case "damage_amount" -> ctx.triggerValue;
                 case "victim_uuid" -> ctx.triggerUuid;
                 case "attacker_uuid" -> ctx.triggerExtraUuid;
@@ -239,7 +241,7 @@ public class EventNodes {
             .output("y", "node.mgmc.port.y", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
             .output("z", "node.mgmc.port.z", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
             .output("uuid", "node.mgmc.port.uuid", NodeDefinition.PortType.UUID, COLOR_UUID)
-            .register((node, portId, ctx) -> switch (portId) {
+            .registerValue((node, portId, ctx) -> switch (portId) {
                 case "x" -> ctx.triggerX;
                 case "y" -> ctx.triggerY;
                 case "z" -> ctx.triggerZ;

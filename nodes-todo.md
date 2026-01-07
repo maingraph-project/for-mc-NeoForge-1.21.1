@@ -72,20 +72,20 @@
 - [x] `set_variable` (设置变量)
 
 ### 2.6 控制流节点 (Control Flow Nodes) -> `ControlFlowNodes.java`
-- [ ] `branch` (分支/If)
-- [ ] `switch` (切换器) -> **需修复硬编码**
-- [ ] `for_loop` (循环)
-- [ ] `break_loop` (中断)
+- [x] `branch` (分支/If)
+- [x] `switch` (切换器)
+- [x] `for_loop` (循环)
+- [x] `break_loop` (中断)
 
 ### 2.7 字符串操作节点 (String Nodes) -> `StringNodes.java`
-- [ ] `string_concat` (拼接)
-- [ ] `string_combine` (组合)
-- [ ] `string_length` (长度)
-- [ ] `string_contains` (包含)
-- [ ] `string_replace` (替换)
-- [ ] `string_substring` (子串)
-- [ ] `string_case` (大小写转换)
-- [ ] `string_split` (分割)
+- [x] `string_concat` (连接)
+- [x] `string_combine` (组合)
+- [x] `string_length` (长度)
+- [x] `string_contains` (包含)
+- [x] `string_replace` (替换)
+- [x] `string_substring` (截取)
+- [x] `string_case` (大小写转换)
+- [x] `string_split` (分割)
 
 ### 2.8 列表操作节点 (List Nodes) -> `ListNodes.java`
 - [ ] `get_list_item` (获取元素)

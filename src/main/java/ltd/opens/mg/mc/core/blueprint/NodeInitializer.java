@@ -5,6 +5,8 @@ import ltd.opens.mg.mc.core.blueprint.nodes.LogicNodes;
 import ltd.opens.mg.mc.core.blueprint.nodes.MathNodes;
 import ltd.opens.mg.mc.core.blueprint.nodes.VariableNodes;
 import ltd.opens.mg.mc.core.blueprint.nodes.ConversionNodes;
+import ltd.opens.mg.mc.core.blueprint.nodes.ControlFlowNodes;
+import ltd.opens.mg.mc.core.blueprint.nodes.StringNodes;
 
 /**
  * 蓝图节点统一初始化入口
@@ -19,5 +21,7 @@ public class NodeInitializer {
         LogicNodes.register();
         VariableNodes.register();
         ConversionNodes.register();
+        ControlFlowNodes.register();
+        StringNodes.register();
     }
 }

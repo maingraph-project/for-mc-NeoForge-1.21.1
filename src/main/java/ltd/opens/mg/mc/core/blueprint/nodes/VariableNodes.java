@@ -1,7 +1,9 @@
 package ltd.opens.mg.mc.core.blueprint.nodes;
 
+import com.google.gson.JsonObject;
 import ltd.opens.mg.mc.core.blueprint.NodeDefinition;
 import ltd.opens.mg.mc.core.blueprint.NodeHelper;
+import ltd.opens.mg.mc.core.blueprint.engine.NodeContext;
 import ltd.opens.mg.mc.core.blueprint.engine.NodeLogicRegistry;
 import ltd.opens.mg.mc.core.blueprint.engine.TypeConverter;
 
@@ -21,7 +23,7 @@ public class VariableNodes {
             .category("node_category.mgmc.data.constants")
             .color(COLOR_FLOAT)
             .output("value", "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
-            .register((node, portId, ctx) -> {
+            .registerValue((node, portId, ctx) -> {
                 if (node.has("properties")) {
                     var props = node.getAsJsonObject("properties");
                     if (props.has("value")) return props.get("value").getAsDouble();
@@ -33,7 +35,7 @@ public class VariableNodes {
             .category("node_category.mgmc.data.constants")
             .color(COLOR_BOOLEAN)
             .output("value", "node.mgmc.port.output", NodeDefinition.PortType.BOOLEAN, COLOR_BOOLEAN)
-            .register((node, portId, ctx) -> {
+            .registerValue((node, portId, ctx) -> {
                 if (node.has("properties")) {
                     var props = node.getAsJsonObject("properties");
                     if (props.has("value")) return props.get("value").getAsBoolean();
@@ -45,7 +47,7 @@ public class VariableNodes {
             .category("node_category.mgmc.data.constants")
             .color(COLOR_STRING)
             .output("value", "node.mgmc.port.output", NodeDefinition.PortType.STRING, COLOR_STRING)
-            .register((node, portId, ctx) -> {
+            .registerValue((node, portId, ctx) -> {
                 if (node.has("properties")) {
                     var props = node.getAsJsonObject("properties");
                     if (props.has("value")) return props.get("value").getAsString();
@@ -59,7 +61,7 @@ public class VariableNodes {
             .color(COLOR_VARIABLE)
             .input("name", "node.mgmc.port.name", NodeDefinition.PortType.STRING, COLOR_STRING, "")
             .output("value", "node.mgmc.port.value", NodeDefinition.PortType.OBJECT, 0xFFFFFFFF)
-            .register((node, portId, ctx) -> {
+            .registerValue((node, portId, ctx) -> {
                 String name = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "name", ctx));
                 if (name == null || name.trim().isEmpty()) return null;
                 return ctx.variables.get(name.trim());
@@ -73,9 +75,9 @@ public class VariableNodes {
             .input("name", "node.mgmc.port.name", NodeDefinition.PortType.STRING, COLOR_STRING, "")
             .input("value", "node.mgmc.port.value", NodeDefinition.PortType.OBJECT, 0xFFFFFFFF)
             .output("value", "node.mgmc.port.value", NodeDefinition.PortType.OBJECT, 0xFFFFFFFF)
-            .register(new ltd.opens.mg.mc.core.blueprint.engine.NodeHandler() {
+            .register(new NodeHelper.NodeHandlerAdapter() {
                 @Override
-                public void execute(com.google.gson.JsonObject node, ltd.opens.mg.mc.core.blueprint.engine.NodeContext ctx) {
+                public void execute(JsonObject node, NodeContext ctx) {
                     String name = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "name", ctx));
                     Object value = NodeLogicRegistry.evaluateInput(node, "value", ctx);
                     if (name != null && !name.trim().isEmpty()) {
@@ -85,7 +87,7 @@ public class VariableNodes {
                 }
 
                 @Override
-                public Object getValue(com.google.gson.JsonObject node, String portId, ltd.opens.mg.mc.core.blueprint.engine.NodeContext ctx) {
+                public Object getValue(JsonObject node, String portId, NodeContext ctx) {
                     return NodeLogicRegistry.evaluateInput(node, "value", ctx);
                 }
             });

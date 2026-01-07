@@ -1,7 +1,9 @@
 package ltd.opens.mg.mc.core.blueprint.nodes;
 
+import com.google.gson.JsonObject;
 import ltd.opens.mg.mc.core.blueprint.NodeDefinition;
 import ltd.opens.mg.mc.core.blueprint.NodeHelper;
+import ltd.opens.mg.mc.core.blueprint.engine.NodeContext;
 import ltd.opens.mg.mc.core.blueprint.engine.NodeLogicRegistry;
 import ltd.opens.mg.mc.core.blueprint.engine.TypeConverter;
 
@@ -25,9 +27,9 @@ public class ConversionNodes {
             .category("node_category.mgmc.logic.math")
             .color(COLOR_CONVERSION)
             .input("input", "node.mgmc.cast.port.input", NodeDefinition.PortType.ANY, 0xFFAAAAAA)
-            .input("to_type", "node.mgmc.cast.port.to_type", NodeDefinition.PortType.STRING, 0xFFFFFFFF, "STRING", typeOptions)
+            .input("to_type", "node.mgmc.cast.port.to_type", NodeDefinition.PortType.STRING, 0xFFFFFFFF, true, "STRING", typeOptions)
             .output("output", "node.mgmc.cast.port.output", NodeDefinition.PortType.ANY, 0xFFAAAAAA)
-            .register((node, portId, ctx) -> {
+            .registerValue((node, portId, ctx) -> {
                 Object input = NodeLogicRegistry.evaluateInput(node, "input", ctx);
                 String targetType = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "to_type", ctx));
                 return TypeConverter.cast(input, targetType);

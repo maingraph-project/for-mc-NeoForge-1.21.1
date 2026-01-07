@@ -127,24 +127,12 @@ public class NodeLogicRegistry {
         register("list_contains", new ListContainsHandler());
         register("list_set_item", new ListSetItemHandler());
         register("list_join", new ListJoinHandler());
-        register("string_split", new StringSplitHandler());
-        register("string_concat", new StringConcatHandler());
-        register("string_combine", new StringCombineHandler());
-        register("string_length", new StringLengthHandler());
-        register("string_contains", new StringContainsHandler());
-        register("string_replace", new StringReplaceHandler());
-        register("string_substring", new StringSubstringHandler());
-        register("string_case", new StringCaseHandler());
         register("get_entity_info", new GetEntityInfoHandler());
         register("play_effect", new PlayEffectHandler());
         register("explosion", new ExplosionHandler());
 
         // Logic
-        register("branch", new BranchHandler());
-        register("switch", new SwitchHandler());
-        register("for_loop", new ForLoopHandler());
-        register("break_loop", new BreakLoopHandler());
-
+        
         // Data
         register("player_health", new PlayerHealthHandler());
         register("random_list_item", new RandomListItemHandler());
