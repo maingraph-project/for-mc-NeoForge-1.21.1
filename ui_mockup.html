@@ -235,6 +235,16 @@
             <button class="add-btn" onclick="showAddIdModal()" title="新建定义">+</button>
         </div>
         <div class="list-container" id="id-list">
+            <!-- 固定系统项 -->
+            <div class="list-item" onclick="selectId(this, 'mgmc:global')" style="background: #3a2d4a; border-bottom: 2px solid #5e4485;">
+                <span class="id-text" style="color: #b39ddb;">🌍 全局系统定义 (Global)</span>
+                <span class="badge">1 个蓝图</span>
+            </div>
+            <div class="list-item" onclick="selectId(this, 'mgmc:players')" style="background: #2d3a4a; border-bottom: 2px solid #446e85;">
+                <span class="id-text" style="color: #90caf9;">👥 全体玩家定义 (Players)</span>
+                <span class="badge">1 个蓝图</span>
+            </div>
+            <div style="height: 10px; background: #1a1a1a;"></div> <!-- 分割线 -->
             <!-- 模拟数据 -->
             <div class="list-item selected" onclick="selectId(this, 'minecraft:diamond_ore')">
                 <span class="id-text">minecraft:diamond_ore</span>
