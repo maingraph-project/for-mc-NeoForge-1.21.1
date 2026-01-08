@@ -22,6 +22,12 @@ public class BlueprintMappingScreen extends Screen {
     private EditBox idInput;
     private String selectedId = null;
 
+    // 右键菜单状态
+    private boolean showMenu = false;
+    private double menuX, menuY;
+    private String contextMenuId = null;
+    private String contextMenuBlueprint = null;
+
     public BlueprintMappingScreen() {
         super(Component.translatable("gui.mgmc.mapping.title"));
     }
@@ -160,6 +166,63 @@ public class BlueprintMappingScreen extends Screen {
         
         guiGraphics.drawString(this.font, Component.translatable("gui.mgmc.mapping.ids"), 10, 30, 0xAAAAAA);
         guiGraphics.drawString(this.font, Component.translatable("gui.mgmc.mapping.blueprints"), this.width / 3 + 20, 30, 0xAAAAAA);
+
+        // 渲染右键菜单
+        if (showMenu) {
+            renderContextMenu(guiGraphics, mouseX, mouseY);
+        }
+    }
+
+    private void renderContextMenu(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        int x = (int)menuX;
+        int y = (int)menuY;
+        int w = 100;
+        int h = 20; // 目前只有一个选项
+
+        if (x + w > this.width) x -= w;
+        if (y + h > this.height) y -= h;
+
+        guiGraphics.fill(x, y, x + w, y + h, 0xFF202020);
+        guiGraphics.renderOutline(x, y, w, h, 0xFFFFFFFF);
+
+        // 删除/移除 选项
+        boolean hover = mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
+        if (hover) guiGraphics.fill(x + 1, y + 1, x + w - 1, y + h - 1, 0xFF404040);
+        
+        String label = contextMenuId != null ? "gui.mgmc.mapping.delete_id" : "gui.mgmc.mapping.remove_mapping";
+        guiGraphics.drawString(font, Component.translatable(label), x + 10, y + 6, 0xFFFF5555);
+    }
+
+    @Override
+    public boolean mouseClicked(MouseButtonEvent event, boolean isDouble) {
+        if (showMenu) {
+            int x = (int)menuX;
+            int y = (int)menuY;
+            int w = 100;
+            if (x + w > this.width) x -= w;
+            if (y + 20 > this.height) y -= 20;
+
+            if (event.x() >= x && event.x() <= x + w && event.y() >= y && event.y() <= y + 20) {
+                if (contextMenuId != null) {
+                    // 删除 ID (不允许删除内置 ID)
+                    if (!contextMenuId.equals(BlueprintRouter.GLOBAL_ID) && !contextMenuId.equals(BlueprintRouter.PLAYERS_ID)) {
+                        workingMappings.remove(contextMenuId);
+                        if (contextMenuId.equals(selectedId)) {
+                            selectedId = BlueprintRouter.GLOBAL_ID;
+                        }
+                        refreshIdList();
+                    }
+                } else if (contextMenuBlueprint != null && selectedId != null) {
+                    // 移除蓝图绑定
+                    workingMappings.get(selectedId).remove(contextMenuBlueprint);
+                    selectId(selectedId);
+                }
+                showMenu = false;
+                return true;
+            }
+            showMenu = false;
+        }
+        return super.mouseClicked(event, isDouble);
     }
 
     // --- 内部类：ID 列表 ---
@@ -216,6 +279,14 @@ public class BlueprintMappingScreen extends Screen {
         @Override
         public boolean mouseClicked(MouseButtonEvent event, boolean isDouble) {
             selectId(id);
+            if (event.buttonInfo().button() == 1) { // 右键
+                contextMenuId = id;
+                contextMenuBlueprint = null;
+                menuX = event.x();
+                menuY = event.y();
+                showMenu = true;
+                return true;
+            }
             return true;
         }
 
@@ -284,6 +355,15 @@ public class BlueprintMappingScreen extends Screen {
             int xBtnWidth = 20;
             int xBtnX = entryLeft + entryWidth - xBtnWidth;
             
+            if (event.buttonInfo().button() == 1) { // 右键
+                contextMenuId = null;
+                contextMenuBlueprint = blueprintPath;
+                menuX = event.x();
+                menuY = event.y();
+                showMenu = true;
+                return true;
+            }
+
             if (event.x() >= xBtnX) {
                 if (selectedId != null && workingMappings.containsKey(selectedId)) {
                     workingMappings.get(selectedId).remove(blueprintPath);

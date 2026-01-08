@@ -28,6 +28,8 @@
   "gui.mgmc.mapping.select_blueprint.title": "选择要绑定的蓝图",
   "gui.mgmc.mapping.select": "选择",
   "gui.mgmc.mapping.cancel": "取消",
+  "gui.mgmc.mapping.delete_id": "删除 ID",
+  "gui.mgmc.mapping.remove_mapping": "移除绑定",
   "gui.mgmc.blueprint_editor.title": "蓝图编辑器 - %s",
   "gui.mgmc.blueprint_editor.back": "返回",
   "gui.mgmc.blueprint_editor.save": "保存",

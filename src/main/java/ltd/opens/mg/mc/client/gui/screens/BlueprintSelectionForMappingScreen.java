@@ -90,6 +90,16 @@ public class BlueprintSelectionForMappingScreen extends Screen {
             super(minecraft, width, height, y, itemHeight);
         }
         public void add(BlueprintEntry entry) { super.addEntry(entry); }
+
+        @Override
+        public int getRowWidth() {
+            return 310;
+        }
+
+        @Override
+        public int getRowLeft() {
+            return BlueprintSelectionForMappingScreen.this.width / 2 - 155;
+        }
     }
 
     class BlueprintEntry extends ObjectSelectionList.Entry<BlueprintEntry> {
@@ -98,10 +108,25 @@ public class BlueprintSelectionForMappingScreen extends Screen {
         
         @Override
         public void renderContent(GuiGraphics guiGraphics, int index, int top, boolean isHovered, float partialTick) {
-            int x = list.getX();
-            int y = top + 2;
-            int color = list.getSelected() == this ? 0xFFFFFF00 : 0xFFFFFFFF;
-            guiGraphics.drawString(font, name, x + 5, y + 5, color);
+            int entryWidth = this.getWidth();
+            int entryLeft = this.getX();
+            int entryHeight = this.getHeight();
+            int y = this.getY();
+            if (y <= 0) y = top;
+
+            boolean isSelected = list.getSelected() == this;
+
+            // 渲染背景和边框
+            if (isSelected) {
+                guiGraphics.fill(entryLeft, y, entryLeft + entryWidth, y + entryHeight, 0x44FFFFFF);
+                guiGraphics.renderOutline(entryLeft, y, entryWidth, entryHeight, 0xFFFFCC00);
+            } else if (isHovered) {
+                guiGraphics.fill(entryLeft, y, entryLeft + entryWidth, y + entryHeight, 0x22FFFFFF);
+                guiGraphics.renderOutline(entryLeft, y, entryWidth, entryHeight, 0xFF888888);
+            }
+
+            int color = isSelected ? 0xFFFFCC00 : (isHovered ? 0xFFFFFFFF : 0xFFAAAAAA);
+            guiGraphics.drawString(font, name, entryLeft + 5, y + (entryHeight - 8) / 2, color);
         }
         
         @Override

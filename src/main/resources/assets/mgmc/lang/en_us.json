@@ -28,6 +28,8 @@
   "gui.mgmc.mapping.select_blueprint.title": "Select Blueprint to Bind",
   "gui.mgmc.mapping.select": "Select",
   "gui.mgmc.mapping.cancel": "Cancel",
+  "gui.mgmc.mapping.delete_id": "Delete ID",
+  "gui.mgmc.mapping.remove_mapping": "Remove Binding",
   "gui.mgmc.blueprint_editor.title": "Blueprint Editor - %s",
   "gui.mgmc.blueprint_editor.back": "Back",
   "gui.mgmc.blueprint_editor.save": "Save",
