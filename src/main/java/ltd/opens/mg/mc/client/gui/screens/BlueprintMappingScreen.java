@@ -51,11 +51,12 @@ public class BlueprintMappingScreen extends Screen {
         int controlsY = this.height - 65;
 
         // ID 输入框
-        this.idInput = new EditBox(this.font, 10, controlsY, sidePanelWidth, 20, Component.literal("ID"));
+        int idInputWidth = sidePanelWidth - 65;
+        this.idInput = new EditBox(this.font, 10, controlsY, idInputWidth, 20, Component.literal("ID"));
         this.idInput.setHint(Component.translatable("gui.mgmc.mapping.id_hint"));
         this.addRenderableWidget(this.idInput);
 
-        // 添加 ID 按钮
+        // 添加 ID 按钮 (紧跟在输入框后面)
         this.addRenderableWidget(Button.builder(Component.translatable("gui.mgmc.mapping.add_id"), b -> {
             String id = this.idInput.getValue().trim();
             if (!id.isEmpty() && !workingMappings.containsKey(id)) {
@@ -63,9 +64,9 @@ public class BlueprintMappingScreen extends Screen {
                 refreshIdList();
                 this.idInput.setValue("");
             }
-        }).bounds(10 + sidePanelWidth + 5, controlsY, 60, 20).build());
+        }).bounds(10 + idInputWidth + 5, controlsY, 60, 20).build());
 
-        // 添加蓝图按钮 (放在右侧列表下方)
+        // 添加蓝图按钮 (放在右侧列表下方，也就是 sidePanelWidth + 20 处)
         this.addRenderableWidget(Button.builder(Component.translatable("gui.mgmc.mapping.add_blueprint"), b -> {
             if (selectedId != null) {
                 Minecraft.getInstance().setScreen(new BlueprintSelectionForMappingScreen(this, selectedId));
