@@ -98,9 +98,10 @@ public class BlueprintSelectionForMappingScreen extends Screen {
         
         @Override
         public void renderContent(GuiGraphics guiGraphics, int index, int top, boolean isHovered, float partialTick) {
-            int y = this.getY();
-            if (y <= 0) y = top;
-            guiGraphics.drawString(font, name, this.getX() + 5, y + 5, 0xFFFFFFFF);
+            int x = list.getX();
+            int y = top + 2;
+            int color = list.getSelected() == this ? 0xFFFFFF00 : 0xFFFFFFFF;
+            guiGraphics.drawString(font, name, x + 5, y + 5, color);
         }
         
         @Override

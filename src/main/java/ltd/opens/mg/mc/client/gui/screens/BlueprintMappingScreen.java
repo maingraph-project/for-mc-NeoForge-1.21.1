@@ -28,23 +28,30 @@ public class BlueprintMappingScreen extends Screen {
 
     @Override
     protected void init() {
-        // 请求数据
-        if (Minecraft.getInstance().getConnection() != null) {
+        // 只有在没有数据时才请求，避免覆盖本地未保存的修改
+        if (this.workingMappings.isEmpty() && Minecraft.getInstance().getConnection() != null) {
             Minecraft.getInstance().getConnection().send(new ServerboundCustomPayloadPacket(new RequestMappingsPayload()));
         }
 
+        int sidePanelWidth = this.width / 3;
+        int mainPanelWidth = this.width - sidePanelWidth - 40;
+        int listHeight = this.height - 120;
+
         // ID 列表 (左侧)
-        this.idList = new IdList(this.minecraft, this.width / 3, this.height - 100, 40, 20);
+        this.idList = new IdList(this.minecraft, sidePanelWidth, listHeight, 40, 20);
         this.idList.setX(10);
         this.addRenderableWidget(this.idList);
 
         // 蓝图列表 (右侧)
-        this.blueprintList = new BlueprintSelectionList(this.minecraft, this.width / 2, this.height - 100, 40, 20);
-        this.blueprintList.setX(this.width / 3 + 20);
+        this.blueprintList = new BlueprintSelectionList(this.minecraft, mainPanelWidth, listHeight, 40, 20);
+        this.blueprintList.setX(sidePanelWidth + 20);
         this.addRenderableWidget(this.blueprintList);
 
+        // 底部控制区起始 Y
+        int controlsY = this.height - 65;
+
         // ID 输入框
-        this.idInput = new EditBox(this.font, 10, this.height - 45, this.width / 3, 20, Component.literal("ID"));
+        this.idInput = new EditBox(this.font, 10, controlsY, sidePanelWidth, 20, Component.literal("ID"));
         this.idInput.setHint(Component.translatable("gui.mgmc.mapping.id_hint"));
         this.addRenderableWidget(this.idInput);
 
@@ -56,29 +63,34 @@ public class BlueprintMappingScreen extends Screen {
                 refreshIdList();
                 this.idInput.setValue("");
             }
-        }).bounds(10 + this.width / 3 + 5, this.height - 45, 60, 20).build());
+        }).bounds(10 + sidePanelWidth + 5, controlsY, 60, 20).build());
 
-        // 添加蓝图按钮
+        // 添加蓝图按钮 (放在右侧列表下方)
         this.addRenderableWidget(Button.builder(Component.translatable("gui.mgmc.mapping.add_blueprint"), b -> {
             if (selectedId != null) {
                 Minecraft.getInstance().setScreen(new BlueprintSelectionForMappingScreen(this, selectedId));
             }
-        }).bounds(this.width / 3 + 20, this.height - 45, 100, 20).build());
+        }).bounds(sidePanelWidth + 20, controlsY, 100, 20).build());
 
-        // 保存按钮
+        // 保存和返回按钮 (最底部)
+        int footerY = this.height - 30;
         this.addRenderableWidget(Button.builder(Component.translatable("gui.mgmc.mapping.save"), b -> {
             if (Minecraft.getInstance().getConnection() != null) {
                 Minecraft.getInstance().getConnection().send(new ServerboundCustomPayloadPacket(new SaveMappingsPayload(new HashMap<>(workingMappings))));
             }
             this.onClose();
-        }).bounds(this.width - 110, this.height - 30, 100, 20).build());
+        }).bounds(this.width - 110, footerY, 100, 20).build());
 
-        // 返回按钮
         this.addRenderableWidget(Button.builder(Component.translatable("gui.mgmc.mapping.back"), b -> {
             this.onClose();
-        }).bounds(this.width - 220, this.height - 30, 100, 20).build());
+        }).bounds(this.width - 220, footerY, 100, 20).build());
 
         refreshIdList();
+        
+        // 默认选中 GLOBAL_ID
+        if (selectedId == null) {
+            selectId(BlueprintRouter.GLOBAL_ID);
+        }
     }
 
     public void updateMappingsFromServer(Map<String, Set<String>> mappings) {
@@ -96,7 +108,11 @@ public class BlueprintMappingScreen extends Screen {
         workingMappings.putIfAbsent(BlueprintRouter.PLAYERS_ID, new HashSet<>());
 
         workingMappings.keySet().stream().sorted().forEach(id -> {
-            this.idList.add(new IdEntry(id));
+            IdEntry entry = new IdEntry(id);
+            this.idList.add(entry);
+            if (id.equals(prevSelected)) {
+                this.idList.setSelected(entry);
+            }
         });
 
         if (prevSelected != null && workingMappings.containsKey(prevSelected)) {
@@ -106,6 +122,7 @@ public class BlueprintMappingScreen extends Screen {
 
     public void addMapping(String id, String path) {
         workingMappings.computeIfAbsent(id, k -> new HashSet<>()).add(path);
+        // 如果当前选中的正是这个 ID，立即刷新右侧列表
         if (id.equals(selectedId)) {
             selectId(id);
         }
@@ -113,11 +130,25 @@ public class BlueprintMappingScreen extends Screen {
 
     private void selectId(String id) {
         this.selectedId = id;
-        this.blueprintList.clearEntries();
-        if (id != null && workingMappings.containsKey(id)) {
-            workingMappings.get(id).forEach(bp -> {
-                this.blueprintList.add(new BlueprintMappingEntry(bp));
-            });
+        
+        // 确保右侧列表存在
+        if (this.blueprintList != null) {
+            this.blueprintList.clearEntries();
+            if (id != null && workingMappings.containsKey(id)) {
+                workingMappings.get(id).stream().sorted().forEach(bp -> {
+                    this.blueprintList.add(new BlueprintMappingEntry(bp));
+                });
+            }
+        }
+        
+        // 更新左侧列表的视觉选中状态
+        if (this.idList != null) {
+            for (IdEntry entry : this.idList.children()) {
+                if (entry.id.equals(id)) {
+                    this.idList.setSelected(entry);
+                    break;
+                }
+            }
         }
     }
 
@@ -155,10 +186,10 @@ public class BlueprintMappingScreen extends Screen {
 
         @Override
         public void renderContent(GuiGraphics guiGraphics, int index, int top, boolean isHovered, float partialTick) {
-            int y = this.getY();
-            if (y <= 0) y = top;
+            int x = idList.getX();
+            int y = top + 2;
             int color = selectedId != null && selectedId.equals(id) ? 0xFFFFFF00 : 0xFFFFFFFF;
-            guiGraphics.drawString(font, id, this.getX() + 5, y + 5, color);
+            guiGraphics.drawString(font, id, x + 5, y + 5, color);
         }
 
         @Override
@@ -198,19 +229,19 @@ public class BlueprintMappingScreen extends Screen {
 
         @Override
         public void renderContent(GuiGraphics guiGraphics, int index, int top, boolean isHovered, float partialTick) {
-            int y = this.getY();
-            if (y <= 0) y = top;
-            guiGraphics.drawString(font, blueprintPath, this.getX() + 5, y + 5, 0xFFFFFFFF);
+            int x = blueprintList.getX();
+            int y = top + 2;
+            guiGraphics.drawString(font, blueprintPath, x + 5, y + 5, 0xFFFFFFFF);
             
             // 删除按钮 (X)
-            int xBtnX = this.getX() + this.getWidth() - 20;
-            // 简单的悬停检测逻辑可以根据 mouseX/mouseY 实现，这里先渲染
-            guiGraphics.drawString(font, "X", xBtnX, y + 5, 0xFFAAAAAA);
+            int xBtnX = x + blueprintList.getWidth() - 25;
+            guiGraphics.drawString(font, "X", xBtnX, y + 5, isHovered ? 0xFFFF0000 : 0xFFAAAAAA);
         }
 
         @Override
         public boolean mouseClicked(MouseButtonEvent event, boolean isDouble) {
-            int xBtnX = this.getX() + this.getWidth() - 20;
+            int x = blueprintList.getX();
+            int xBtnX = x + blueprintList.getWidth() - 25;
             if (event.x() >= xBtnX) {
                 if (selectedId != null && workingMappings.containsKey(selectedId)) {
                     workingMappings.get(selectedId).remove(blueprintPath);
