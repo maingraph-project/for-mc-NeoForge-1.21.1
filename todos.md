@@ -2,22 +2,42 @@
 
 ## 第一阶段：基础设施与规范 (重构基础)
 - [ ] **提升线程安全性**
-    - 将 [NodeRegistry.java] 和 [NodeLogicRegistry.java] 的底层 `HashMap` 替换为 `ConcurrentHashMap`。
+    - 将 NodeRegistry.java 和 NodeLogicRegistry.java 的底层 HashMap 替换为 ConcurrentHashMap。
     - **因果关系**：确保在后续引入多线程初始化或事件驱动注册时，底层存储不会崩溃。
 - [ ] **引入命名空间机制**
-    - 自动为节点 ID 添加 `modid:` 前缀（例如 `mgmc:on_mgrun`）。
+    - 自动为 node ID 添加 modid: 前缀（例如 mgmc:on_mgrun）。
     - **因果关系**：确立 ID 契约。在开放外部 API 之前必须解决，否则后期更改 ID 格式会导致蓝图存档不兼容。
+- [ ] **增加重复注册校验**
+    - 在 NodeRegistry.java 注册时检查 ID 是否已存在。
+    - **因果关系**：防止不同模组（或同一模组不同位置）无意中覆盖已有的节点定义，增加系统稳定性。
 
 ## 第二阶段：初始化流程重构 (控制力与解耦)
 - [ ] **消除静态初始化风险**
-    - 移除 [NodeRegistry.java] 中的 `static {}` 块。
-    - 改用显式的初始化流程（由 Mod 构造函数或 `FMLCommonSetupEvent` 触发）。
+    - 移除 NodeRegistry.java 中的 static {} 块。
+    - 改用显式的初始化流程（由 Mod 构造函数或 FMLCommonSetupEvent触发）。
     - **因果关系**：夺回初始化时机的控制权，这是实现“注册事件”的前提。
-- [ ] **逻辑与元数据解耦**
-    - 优化架构，允许客户端仅加载 [NodeDefinition]（元数据）而不必加载执行逻辑 `NodeHandler`。
-    - **因果关系**：减少客户端内存占用，并为未来纯客户端的编辑器功能打下基础。
+- [ ] **逻辑与元数据解耦 (重要)**
+    - 重构 NodeHelper.java 的 register 方法，支持仅注册元数据而不提供 NodeHandler。
+    - **因果关系**：允许客户端在不加载服务器逻辑（及其依赖）的情况下渲染节点 UI，是实现纯客户端编辑器和减小分发的关键。
+- [ ] **引入常量池管理端口 ID**
+    - 建立 NodePorts 常量类，统一管理 "exec", "value", "uuid" 等硬编码字符串。
+    - **因果关系**：减少代码中的魔数和硬编码字符串，提高代码可维护性和减少拼写错误导致的 Bug。
 
-## 第三阶段：外部接入 (API 开放)
+## 第三阶段：定义语法优化 (消除槽点与设计缺陷)
+- [ ] **减少注册时的样板代码 (Boilerplate)**
+    - 在 NodeHelper.java 中提供更高级的封装。例如数学节点只需提供 lambda 表达式，自动处理 TypeConverter 和 evaluateInput。
+    - **槽点**：目前每个数学节点（如 MathNodes.java）都在手动转换类型，重复且易错。
+- [ ] **规范化颜色与分类定义**
+    - 将节点颜色和分类从各节点类（如 ControlFlowNodes.java）提取到统一的主题管理类中。
+    - **槽点**：目前颜色散落在各处，难以统一调整风格。
+- [ ] **修复执行期状态污染**
+    - 禁止在执行期间通过 node.addProperty() 修改节点定义（如 ControlFlowNodes.java 中的 _index）。
+    - **缺陷**：这种做法在并发执行或嵌套循环时会产生竞态条件和数据污染。应将中间状态存储在 NodeContext 的临时作用域中。
+
+## 第四阶段：外部接入 (API 开放)
 - [ ] **实现自定义注册事件**
-    - 设计专用的 `RegisterNodesEvent`，允许其他模组通过订阅事件来注册节点。
+    - 设计专用的 RegisterNodesEvent，允许其他模组通过订阅事件来注册节点。
     - **因果关系**：基于前两个阶段的稳定基础，正式向外部提供符合 NeoForge 规范的扩展接口。
+- [ ] **实现注册表冻结机制**
+    - 在初始化完成后冻结 NodeRegistry.java，禁止后续修改。
+    - **因果关系**：确保运行时环境的稳定性，防止动态注册带来的潜在不可预测行为。
