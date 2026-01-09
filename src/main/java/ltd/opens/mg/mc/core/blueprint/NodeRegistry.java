@@ -1,11 +1,11 @@
 package ltd.opens.mg.mc.core.blueprint;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class NodeRegistry {
-    private static final Map<String, NodeDefinition> REGISTRY = new HashMap<>();
+    private static final Map<String, NodeDefinition> REGISTRY = new ConcurrentHashMap<>();
 
     public static void register(NodeDefinition definition) {
         REGISTRY.put(definition.id(), definition);

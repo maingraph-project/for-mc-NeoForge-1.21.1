@@ -2,10 +2,10 @@
 
 ## 第一阶段：基础设施与规范 (重构基础)
 
-- [ ] **提升线程安全性**
-    - **原因**：当前的 `HashMap` 在多线程环境下（如 NeoForge 并行加载或异步脚本解析）会导致死循环或数据丢失。
-    - [ ] **操作**：将 `NodeRegistry.java` 和 `NodeLogicRegistry.java` 的底层 `HashMap` 替换为 `ConcurrentHashMap`。
-    - [ ] **细节**：确保在并发初始化时，`register` 和 `get` 操作是线程安全的。
+- [x] **提升线程安全性** 
+     - **原因**：当前的 `HashMap` 在多线程环境下（如 NeoForge 并行加载或异步脚本解析）会导致死循环或数据丢失。 
+     - [x] **操作**：将 `NodeRegistry.java` 和 `NodeLogicRegistry.java` 的底层 `HashMap` 替换为 `ConcurrentHashMap`。 
+     - [x] **细节**：确保在并发初始化时，`register` 和 `get` 操作是线程安全的。
 - [ ] **引入命名空间机制**
     - **原因**：没有命名空间的 ID（如 `add_float`）极易与第三方插件冲突。确立 `modid:id` 契约是开放 API 的前提。
     - [ ] **操作**：在 `NodeHelper.setup(id, ...)` 中增加逻辑，若 `id` 不包含 `:`，则自动补全为 `mgmc:id`。
