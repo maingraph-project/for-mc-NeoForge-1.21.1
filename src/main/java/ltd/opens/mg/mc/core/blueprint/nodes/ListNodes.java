@@ -3,6 +3,7 @@ package ltd.opens.mg.mc.core.blueprint.nodes;
 import com.google.gson.JsonObject;
 import ltd.opens.mg.mc.core.blueprint.NodeDefinition;
 import ltd.opens.mg.mc.core.blueprint.NodeHelper;
+import ltd.opens.mg.mc.core.blueprint.NodePorts;
 import ltd.opens.mg.mc.core.blueprint.engine.NodeContext;
 import ltd.opens.mg.mc.core.blueprint.engine.NodeLogicRegistry;
 import ltd.opens.mg.mc.core.blueprint.engine.TypeConverter;
@@ -34,13 +35,13 @@ public class ListNodes {
         NodeHelper.setup("get_list_item", "node.mgmc.get_list_item.name")
             .category("node_category.mgmc.variable.list")
             .color(COLOR_LIST)
-            .input("list", "node.mgmc.get_list_item.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
-            .input("index", "node.mgmc.get_list_item.port.index", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
-            .output("value", "node.mgmc.get_list_item.port.value", NodeDefinition.PortType.ANY, COLOR_ANY)
+            .input(NodePorts.LIST, "node.mgmc.get_list_item.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
+            .input(NodePorts.INDEX, "node.mgmc.get_list_item.port.index", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
+            .output(NodePorts.VALUE, "node.mgmc.get_list_item.port.value", NodeDefinition.PortType.ANY, COLOR_ANY)
             .registerValue((node, portId, ctx) -> {
                 try {
-                    List<Object> list = TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, "list", ctx));
-                    int index = TypeConverter.toInt(NodeLogicRegistry.evaluateInput(node, "index", ctx));
+                    List<Object> list = TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, NodePorts.LIST, ctx));
+                    int index = TypeConverter.toInt(NodeLogicRegistry.evaluateInput(node, NodePorts.INDEX, ctx));
                     if (list != null && index >= 0 && index < list.size()) {
                         return list.get(index);
                     }
@@ -52,12 +53,12 @@ public class ListNodes {
         NodeHelper.setup("list_add", "node.mgmc.list_add.name")
             .category("node_category.mgmc.variable.list")
             .color(COLOR_LIST)
-            .input("list", "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
-            .input("item", "node.mgmc.port.value", NodeDefinition.PortType.ANY, COLOR_ANY)
-            .output("list", "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
+            .input(NodePorts.LIST, "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
+            .input(NodePorts.ITEM, "node.mgmc.port.value", NodeDefinition.PortType.ANY, COLOR_ANY)
+            .output(NodePorts.LIST, "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
             .registerValue((node, portId, ctx) -> {
-                List<Object> list = new ArrayList<>(TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, "list", ctx)));
-                Object item = NodeLogicRegistry.evaluateInput(node, "item", ctx);
+                List<Object> list = new ArrayList<>(TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, NodePorts.LIST, ctx)));
+                Object item = NodeLogicRegistry.evaluateInput(node, NodePorts.ITEM, ctx);
                 list.add(item);
                 return list;
             });
@@ -66,12 +67,12 @@ public class ListNodes {
         NodeHelper.setup("list_remove", "node.mgmc.list_remove.name")
             .category("node_category.mgmc.variable.list")
             .color(COLOR_LIST)
-            .input("list", "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
-            .input("index", "node.mgmc.port.index", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
-            .output("list", "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
+            .input(NodePorts.LIST, "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
+            .input(NodePorts.INDEX, "node.mgmc.port.index", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
+            .output(NodePorts.LIST, "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
             .registerValue((node, portId, ctx) -> {
-                List<Object> list = new ArrayList<>(TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, "list", ctx)));
-                int index = (int) TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "index", ctx));
+                List<Object> list = new ArrayList<>(TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, NodePorts.LIST, ctx)));
+                int index = (int) TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.INDEX, ctx));
                 if (index >= 0 && index < list.size()) {
                     list.remove(index);
                 }
@@ -82,11 +83,11 @@ public class ListNodes {
         NodeHelper.setup("list_length", "node.mgmc.list_length.name")
             .category("node_category.mgmc.variable.list")
             .color(COLOR_LIST)
-            .input("list", "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
-            .output("length", "node.mgmc.port.length", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
+            .input(NodePorts.LIST, "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
+            .output(NodePorts.LENGTH, "node.mgmc.port.length", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
             .registerValue((node, portId, ctx) -> {
                 try {
-                    List<Object> list = TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, "list", ctx));
+                    List<Object> list = TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, NodePorts.LIST, ctx));
                     return list != null ? (double) list.size() : 0.0;
                 } catch (Exception e) {
                     return 0.0;
@@ -97,12 +98,12 @@ public class ListNodes {
         NodeHelper.setup("list_contains", "node.mgmc.list_contains.name")
             .category("node_category.mgmc.variable.list")
             .color(COLOR_LIST)
-            .input("list", "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
-            .input("item", "node.mgmc.port.value", NodeDefinition.PortType.ANY, COLOR_ANY)
-            .output("result", "node.mgmc.port.condition", NodeDefinition.PortType.BOOLEAN, COLOR_BOOLEAN)
+            .input(NodePorts.LIST, "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
+            .input(NodePorts.ITEM, "node.mgmc.port.value", NodeDefinition.PortType.ANY, COLOR_ANY)
+            .output(NodePorts.RESULT, "node.mgmc.port.condition", NodeDefinition.PortType.BOOLEAN, COLOR_BOOLEAN)
             .registerValue((node, portId, ctx) -> {
-                List<Object> list = TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, "list", ctx));
-                Object item = NodeLogicRegistry.evaluateInput(node, "item", ctx);
+                List<Object> list = TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, NodePorts.LIST, ctx));
+                Object item = NodeLogicRegistry.evaluateInput(node, NodePorts.ITEM, ctx);
                 if (list == null) return false;
                 
                 if (list.contains(item)) return true;
@@ -126,15 +127,15 @@ public class ListNodes {
         NodeHelper.setup("list_set_item", "node.mgmc.list_set_item.name")
             .category("node_category.mgmc.variable.list")
             .color(COLOR_LIST)
-            .input("list", "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
-            .input("index", "node.mgmc.port.index", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
-            .input("value", "node.mgmc.port.value", NodeDefinition.PortType.ANY, COLOR_ANY)
-            .output("list", "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
+            .input(NodePorts.LIST, "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
+            .input(NodePorts.INDEX, "node.mgmc.port.index", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
+            .input(NodePorts.VALUE, "node.mgmc.port.value", NodeDefinition.PortType.ANY, COLOR_ANY)
+            .output(NodePorts.LIST, "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
             .registerValue((node, portId, ctx) -> {
                 try {
-                    List<Object> list = new ArrayList<>(TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, "list_in", ctx)));
-                    int index = TypeConverter.toInt(NodeLogicRegistry.evaluateInput(node, "index", ctx));
-                    Object value = NodeLogicRegistry.evaluateInput(node, "value", ctx);
+                    List<Object> list = new ArrayList<>(TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, NodePorts.LIST, ctx)));
+                    int index = TypeConverter.toInt(NodeLogicRegistry.evaluateInput(node, NodePorts.INDEX, ctx));
+                    Object value = NodeLogicRegistry.evaluateInput(node, NodePorts.VALUE, ctx);
                     
                     if (index >= 0 && index < list.size()) {
                         list.set(index, value);
@@ -151,12 +152,12 @@ public class ListNodes {
         NodeHelper.setup("list_join", "node.mgmc.list_join.name")
             .category("node_category.mgmc.variable.list")
             .color(COLOR_LIST)
-            .input("list", "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
-            .input("delimiter", "node.mgmc.port.delimiter", NodeDefinition.PortType.STRING, COLOR_STRING, ",")
-            .output("string", "node.mgmc.port.output", NodeDefinition.PortType.STRING, COLOR_STRING)
+            .input(NodePorts.LIST, "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
+            .input(NodePorts.DELIMITER, "node.mgmc.port.delimiter", NodeDefinition.PortType.STRING, COLOR_STRING, ",")
+            .output(NodePorts.STRING, "node.mgmc.port.output", NodeDefinition.PortType.STRING, COLOR_STRING)
             .registerValue((node, portId, ctx) -> {
-                List<Object> list = TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, "list", ctx));
-                String delim = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "delimiter", ctx));
+                List<Object> list = TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, NodePorts.LIST, ctx));
+                String delim = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, NodePorts.DELIMITER, ctx));
                 if (list == null) return "";
                 if (delim == null) delim = "";
                 
@@ -169,10 +170,10 @@ public class ListNodes {
         NodeHelper.setup("random_list_item", "node.mgmc.random_list_item.name")
             .category("node_category.mgmc.variable.list")
             .color(COLOR_LIST)
-            .input("list", "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
-            .output("item", "node.mgmc.port.value", NodeDefinition.PortType.ANY, COLOR_ANY)
+            .input(NodePorts.LIST, "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
+            .output(NodePorts.ITEM, "node.mgmc.port.value", NodeDefinition.PortType.ANY, COLOR_ANY)
             .registerValue((node, portId, ctx) -> {
-                List<?> list = TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, "list", ctx));
+                List<?> list = TypeConverter.toList(NodeLogicRegistry.evaluateInput(node, NodePorts.LIST, ctx));
                 if (list != null && !list.isEmpty()) {
                     return list.get(RANDOM.nextInt(list.size()));
                 }

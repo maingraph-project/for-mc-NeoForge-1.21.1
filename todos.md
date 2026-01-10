@@ -26,10 +26,10 @@
     - [x] **操作**：移除 `NodeRegistry.java` 中的 `static {}` 块及其中调用的 `NodeInitializer.init()`。
     - [x] **操作**：在模组主类（如 `MGMC.java`）的构造函数或 `FMLCommonSetupEvent` 中显式调用初始化方法。
     - [x] **细节**：夺回初始化控制权，确保注册流程在可控的生命周期内执行。
-- [ ] **逻辑与元数据解耦**
-    - **原因**：目前的定义与逻辑强耦合。实现解耦后，纯客户端环境（如编辑器）可以只加载节点外观而不加载复杂的服务器逻辑。
-    - [ ] **操作**：在 `NodeHelper` 中增加 `registerMetadataOnly()` 方法，仅调用 `NodeRegistry.register` 而不涉及 `NodeLogicRegistry`。
-    - [ ] **细节**：支持“纯 UI”环境，允许在没有游戏逻辑类的情况下加载节点外观定义。
+- [x] **逻辑与元数据解耦** 
+     - **原因**：目前的定义与逻辑强耦合。实现解耦后，纯客户端环境（如编辑器）可以只加载节点外观而不加载复杂的服务器逻辑。 
+     - [x] **操作**：在 `NodeHelper` 中增加 `registerMetadataOnly()` 方法，仅调用 `NodeRegistry.register` 而不涉及 `NodeLogicRegistry`。 
+     - [x] **细节**：支持“纯 UI”环境，允许在没有游戏逻辑类的情况下加载节点外观定义。
 - [ ] **引入常量池管理端口 ID**
     - **原因**：大量硬编码字符串（如 `"exec"`, `"value"`）散落在代码各处，一旦拼错就会导致运行时逻辑静默失败。
     - [ ] **操作**：新建 `ltd.opens.mg.mc.core.blueprint.NodePorts` 类，定义如 `EXEC = "exec"`, `VALUE = "value"`, `A = "a"`, `B = "b"` 等常量。

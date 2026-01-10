@@ -6,7 +6,7 @@ import ltd.opens.mg.mc.core.blueprint.NodeHelper;
 import ltd.opens.mg.mc.core.blueprint.engine.NodeContext;
 import ltd.opens.mg.mc.core.blueprint.engine.NodeLogicRegistry;
 import ltd.opens.mg.mc.core.blueprint.engine.TypeConverter;
-
+import ltd.opens.mg.mc.core.blueprint.NodePorts;
 import ltd.opens.mg.mc.core.blueprint.events.RegisterMGMCNodesEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 
@@ -30,12 +30,12 @@ public class ConversionNodes {
         NodeHelper.setup("cast", "node.mgmc.cast.name")
             .category("node_category.mgmc.logic.math")
             .color(COLOR_CONVERSION)
-            .input("input", "node.mgmc.cast.port.input", NodeDefinition.PortType.ANY, 0xFFAAAAAA)
-            .input("to_type", "node.mgmc.cast.port.to_type", NodeDefinition.PortType.STRING, 0xFFFFFFFF, true, "STRING", typeOptions)
-            .output("output", "node.mgmc.cast.port.output", NodeDefinition.PortType.ANY, 0xFFAAAAAA)
+            .input(NodePorts.INPUT, "node.mgmc.cast.port.input", NodeDefinition.PortType.ANY, 0xFFAAAAAA)
+            .input(NodePorts.TO_TYPE, "node.mgmc.cast.port.to_type", NodeDefinition.PortType.STRING, 0xFFFFFFFF, true, "STRING", typeOptions)
+            .output(NodePorts.OUTPUT, "node.mgmc.cast.port.output", NodeDefinition.PortType.ANY, 0xFFAAAAAA)
             .registerValue((node, portId, ctx) -> {
-                Object input = NodeLogicRegistry.evaluateInput(node, "input", ctx);
-                String targetType = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "to_type", ctx));
+                Object input = NodeLogicRegistry.evaluateInput(node, NodePorts.INPUT, ctx);
+                String targetType = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, NodePorts.TO_TYPE, ctx));
                 return TypeConverter.cast(input, targetType);
             });
     }

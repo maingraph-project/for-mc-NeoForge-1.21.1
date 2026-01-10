@@ -2,6 +2,7 @@ package ltd.opens.mg.mc.core.blueprint.nodes;
 
 import ltd.opens.mg.mc.core.blueprint.NodeDefinition;
 import ltd.opens.mg.mc.core.blueprint.NodeHelper;
+import ltd.opens.mg.mc.core.blueprint.NodePorts;
 import ltd.opens.mg.mc.core.blueprint.engine.NodeLogicRegistry;
 import ltd.opens.mg.mc.core.blueprint.engine.TypeConverter;
 
@@ -26,12 +27,12 @@ public class StringNodes {
         NodeHelper.setup("string_concat", "node.mgmc.string_concat.name")
             .category("node_category.mgmc.variable.string")
             .color(COLOR_STRING)
-            .input("a", "node.mgmc.string_concat.port.a", NodeDefinition.PortType.STRING, COLOR_STRING)
-            .input("b", "node.mgmc.string_concat.port.b", NodeDefinition.PortType.STRING, COLOR_STRING)
-            .output("output", "node.mgmc.port.output", NodeDefinition.PortType.STRING, COLOR_STRING)
+            .input(NodePorts.A, "node.mgmc.string_concat.port.a", NodeDefinition.PortType.STRING, COLOR_STRING)
+            .input(NodePorts.B, "node.mgmc.string_concat.port.b", NodeDefinition.PortType.STRING, COLOR_STRING)
+            .output(NodePorts.OUTPUT, "node.mgmc.port.output", NodeDefinition.PortType.STRING, COLOR_STRING)
             .registerValue((node, portId, ctx) -> {
-                String a = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "a", ctx));
-                String b = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "b", ctx));
+                String a = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, NodePorts.A, ctx));
+                String b = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, NodePorts.B, ctx));
                 return (a == null ? "" : a) + (b == null ? "" : b);
             });
 
@@ -40,7 +41,7 @@ public class StringNodes {
             .category("node_category.mgmc.variable.string")
             .color(COLOR_STRING)
             .property("dynamic_inputs", true) // 允许 UI 动态添加输入
-            .output("output", "node.mgmc.port.output", NodeDefinition.PortType.STRING, COLOR_STRING)
+            .output(NodePorts.OUTPUT, "node.mgmc.port.output", NodeDefinition.PortType.STRING, COLOR_STRING)
             .registerValue((node, portId, ctx) -> {
                 StringBuilder sb = new StringBuilder();
                 if (node.has("inputs")) {
@@ -58,7 +59,7 @@ public class StringNodes {
                     });
 
                     for (String key : keys) {
-                        if (key.equals("exec")) continue;
+                        if (key.equals(NodePorts.EXEC)) continue;
                         String val = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, key, ctx));
                         if (val != null) sb.append(val);
                     }
@@ -70,10 +71,10 @@ public class StringNodes {
         NodeHelper.setup("string_length", "node.mgmc.string_length.name")
             .category("node_category.mgmc.variable.string")
             .color(COLOR_STRING)
-            .input("string", "node.mgmc.port.input", NodeDefinition.PortType.STRING, COLOR_STRING)
-            .output("length", "node.mgmc.port.length", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
+            .input(NodePorts.STRING, "node.mgmc.port.input", NodeDefinition.PortType.STRING, COLOR_STRING)
+            .output(NodePorts.LENGTH, "node.mgmc.port.length", NodeDefinition.PortType.FLOAT, COLOR_FLOAT)
             .registerValue((node, portId, ctx) -> {
-                String s = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "string", ctx));
+                String s = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, NodePorts.STRING, ctx));
                 return s == null ? 0.0 : (double) s.length();
             });
 
@@ -81,12 +82,12 @@ public class StringNodes {
         NodeHelper.setup("string_contains", "node.mgmc.string_contains.name")
             .category("node_category.mgmc.variable.string")
             .color(COLOR_STRING)
-            .input("string", "node.mgmc.port.input", NodeDefinition.PortType.STRING, COLOR_STRING)
-            .input("substring", "node.mgmc.string_contains.port.substring", NodeDefinition.PortType.STRING, COLOR_STRING)
-            .output("result", "node.mgmc.port.condition", NodeDefinition.PortType.BOOLEAN, COLOR_BOOLEAN)
+            .input(NodePorts.STRING, "node.mgmc.port.input", NodeDefinition.PortType.STRING, COLOR_STRING)
+            .input(NodePorts.SUBSTRING, "node.mgmc.string_contains.port.substring", NodeDefinition.PortType.STRING, COLOR_STRING)
+            .output(NodePorts.RESULT, "node.mgmc.port.condition", NodeDefinition.PortType.BOOLEAN, COLOR_BOOLEAN)
             .registerValue((node, portId, ctx) -> {
-                String s = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "string", ctx));
-                String sub = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "substring", ctx));
+                String s = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, NodePorts.STRING, ctx));
+                String sub = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, NodePorts.SUBSTRING, ctx));
                 return s != null && sub != null && s.contains(sub);
             });
 
@@ -94,14 +95,14 @@ public class StringNodes {
         NodeHelper.setup("string_replace", "node.mgmc.string_replace.name")
             .category("node_category.mgmc.variable.string")
             .color(COLOR_STRING)
-            .input("string", "node.mgmc.port.input", NodeDefinition.PortType.STRING, COLOR_STRING)
-            .input("old", "node.mgmc.string_replace.port.old", NodeDefinition.PortType.STRING, COLOR_STRING)
-            .input("new", "node.mgmc.string_replace.port.new", NodeDefinition.PortType.STRING, COLOR_STRING)
-            .output("output", "node.mgmc.port.output", NodeDefinition.PortType.STRING, COLOR_STRING)
+            .input(NodePorts.STRING, "node.mgmc.port.input", NodeDefinition.PortType.STRING, COLOR_STRING)
+            .input(NodePorts.OLD, "node.mgmc.string_replace.port.old", NodeDefinition.PortType.STRING, COLOR_STRING)
+            .input(NodePorts.NEW, "node.mgmc.string_replace.port.new", NodeDefinition.PortType.STRING, COLOR_STRING)
+            .output(NodePorts.OUTPUT, "node.mgmc.port.output", NodeDefinition.PortType.STRING, COLOR_STRING)
             .registerValue((node, portId, ctx) -> {
-                String s = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "string", ctx));
-                String oldS = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "old", ctx));
-                String newS = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "new", ctx));
+                String s = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, NodePorts.STRING, ctx));
+                String oldS = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, NodePorts.OLD, ctx));
+                String newS = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, NodePorts.NEW, ctx));
                 if (s == null || oldS == null || newS == null) return s;
                 return s.replace(oldS, newS);
             });
@@ -110,14 +111,14 @@ public class StringNodes {
         NodeHelper.setup("string_substring", "node.mgmc.string_substring.name")
             .category("node_category.mgmc.variable.string")
             .color(COLOR_STRING)
-            .input("string", "node.mgmc.port.input", NodeDefinition.PortType.STRING, COLOR_STRING)
-            .input("start", "node.mgmc.string_substring.port.start", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, true, 0.0)
-            .input("end", "node.mgmc.string_substring.port.end", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, true, 5.0)
-            .output("output", "node.mgmc.port.output", NodeDefinition.PortType.STRING, COLOR_STRING)
+            .input(NodePorts.STRING, "node.mgmc.port.input", NodeDefinition.PortType.STRING, COLOR_STRING)
+            .input(NodePorts.START, "node.mgmc.string_substring.port.start", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, true, 0.0)
+            .input(NodePorts.END, "node.mgmc.string_substring.port.end", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, true, 5.0)
+            .output(NodePorts.OUTPUT, "node.mgmc.port.output", NodeDefinition.PortType.STRING, COLOR_STRING)
             .registerValue((node, portId, ctx) -> {
-                String s = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "string", ctx));
-                int start = TypeConverter.toInt(NodeLogicRegistry.evaluateInput(node, "start", ctx));
-                int end = TypeConverter.toInt(NodeLogicRegistry.evaluateInput(node, "end", ctx));
+                String s = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, NodePorts.STRING, ctx));
+                int start = TypeConverter.toInt(NodeLogicRegistry.evaluateInput(node, NodePorts.START, ctx));
+                int end = TypeConverter.toInt(NodeLogicRegistry.evaluateInput(node, NodePorts.END, ctx));
                 if (s == null) return "";
                 start = Math.max(0, Math.min(start, s.length()));
                 end = Math.max(start, Math.min(end, s.length()));
@@ -128,13 +129,13 @@ public class StringNodes {
         NodeHelper.setup("string_case", "node.mgmc.string_case.name")
             .category("node_category.mgmc.variable.string")
             .color(COLOR_STRING)
-            .input("string", "node.mgmc.port.input", NodeDefinition.PortType.STRING, COLOR_STRING)
-            .input("mode", "node.mgmc.string_case.port.mode", NodeDefinition.PortType.STRING, COLOR_STRING, true, "UPPER",
+            .input(NodePorts.STRING, "node.mgmc.port.input", NodeDefinition.PortType.STRING, COLOR_STRING)
+            .input(NodePorts.MODE, "node.mgmc.string_case.port.mode", NodeDefinition.PortType.STRING, COLOR_STRING, true, "UPPER",
                 new String[]{"UPPER", "LOWER", "TRIM"})
-            .output("output", "node.mgmc.port.output", NodeDefinition.PortType.STRING, COLOR_STRING)
+            .output(NodePorts.OUTPUT, "node.mgmc.port.output", NodeDefinition.PortType.STRING, COLOR_STRING)
             .registerValue((node, portId, ctx) -> {
-                String s = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "string", ctx));
-                String mode = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "mode", ctx));
+                String s = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, NodePorts.STRING, ctx));
+                String mode = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, NodePorts.MODE, ctx));
                 if (s == null) return "";
                 return switch (mode != null ? mode : "UPPER") {
                     case "LOWER" -> s.toLowerCase();
@@ -147,12 +148,12 @@ public class StringNodes {
         NodeHelper.setup("string_split", "node.mgmc.string_split.name")
             .category("node_category.mgmc.variable.list")
             .color(COLOR_LIST)
-            .input("string", "node.mgmc.port.input", NodeDefinition.PortType.STRING, COLOR_STRING)
-            .input("delimiter", "node.mgmc.port.delimiter", NodeDefinition.PortType.STRING, COLOR_STRING, true, ",")
-            .output("list", "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
+            .input(NodePorts.STRING, "node.mgmc.port.input", NodeDefinition.PortType.STRING, COLOR_STRING)
+            .input(NodePorts.DELIMITER, "node.mgmc.port.delimiter", NodeDefinition.PortType.STRING, COLOR_STRING, true, ",")
+            .output(NodePorts.LIST, "node.mgmc.port.list", NodeDefinition.PortType.LIST, COLOR_LIST)
             .registerValue((node, portId, ctx) -> {
-                String s = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "string", ctx));
-                String delim = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "delimiter", ctx));
+                String s = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, NodePorts.STRING, ctx));
+                String delim = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, NodePorts.DELIMITER, ctx));
                 if (s == null) return List.of();
                 if (delim == null || delim.isEmpty()) return List.of(s);
                 return List.of(s.split(java.util.regex.Pattern.quote(delim)));

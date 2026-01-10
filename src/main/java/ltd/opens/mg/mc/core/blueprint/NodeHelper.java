@@ -131,8 +131,16 @@ public class NodeHelper {
         if (handler == null) {
             throw new IllegalArgumentException("Node handler cannot be null for node: " + id);
         }
-        NodeRegistry.register(builder.build());
+        registerMetadataOnly();
         NodeLogicRegistry.register(id, handler);
+    }
+
+    /**
+     * 仅注册节点元数据（不注册执行逻辑）
+     * 适用于纯客户端环境（如编辑器）或只需要显示定义的场景，实现逻辑与元数据解耦。
+     */
+    public void registerMetadataOnly() {
+        NodeRegistry.register(builder.build());
     }
 
     public void registerExec(SimpleExecuteHandler handler) {

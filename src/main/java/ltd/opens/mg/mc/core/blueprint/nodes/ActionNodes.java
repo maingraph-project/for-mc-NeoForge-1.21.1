@@ -6,6 +6,7 @@ import ltd.opens.mg.mc.core.blueprint.NodeHelper;
 import ltd.opens.mg.mc.core.blueprint.engine.NodeContext;
 import ltd.opens.mg.mc.core.blueprint.engine.NodeLogicRegistry;
 import ltd.opens.mg.mc.core.blueprint.engine.TypeConverter;
+import ltd.opens.mg.mc.core.blueprint.NodePorts;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,11 +36,11 @@ public class ActionNodes {
         NodeHelper.setup("print_chat", "node.mgmc.print_chat.name")
             .category("node_category.mgmc.action.player")
             .color(COLOR_ACTION)
-            .input("exec", "node.mgmc.port.exec_in", NodeDefinition.PortType.EXEC, 0)
-            .input("message", "node.mgmc.port.message", NodeDefinition.PortType.STRING, COLOR_STRING, "")
-            .output("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, 0)
+            .input(NodePorts.EXEC, "node.mgmc.port.exec_in", NodeDefinition.PortType.EXEC, 0)
+            .input(NodePorts.MESSAGE, "node.mgmc.port.message", NodeDefinition.PortType.STRING, COLOR_STRING, "")
+            .output(NodePorts.EXEC, "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, 0)
             .registerExec((node, ctx) -> {
-                String message = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "message", ctx));
+                String message = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, NodePorts.MESSAGE, ctx));
                 if (ctx.level != null && !ctx.level.isClientSide()) {
                     if (ctx.triggerUuid != null && !ctx.triggerUuid.isEmpty()) {
                         try {
@@ -56,20 +57,20 @@ public class ActionNodes {
                         ctx.level.getServer().getPlayerList().broadcastSystemMessage(Component.literal(message), false);
                     }
                 }
-                NodeLogicRegistry.triggerExec(node, "exec", ctx);
+                NodeLogicRegistry.triggerExec(node, NodePorts.EXEC, ctx);
             });
 
         // run_command_as_player (以玩家身份运行命令)
         NodeHelper.setup("run_command_as_player", "node.mgmc.run_command_as_player.name")
             .category("node_category.mgmc.action.player")
             .color(COLOR_ACTION)
-            .input("exec", "node.mgmc.port.exec_in", NodeDefinition.PortType.EXEC, 0)
-            .input("uuid", "node.mgmc.port.uuid", NodeDefinition.PortType.STRING, COLOR_STRING, "")
-            .input("command", "node.mgmc.port.command", NodeDefinition.PortType.STRING, COLOR_STRING, "")
-            .output("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, 0)
+            .input(NodePorts.EXEC, "node.mgmc.port.exec_in", NodeDefinition.PortType.EXEC, 0)
+            .input(NodePorts.UUID, "node.mgmc.port.uuid", NodeDefinition.PortType.STRING, COLOR_STRING, "")
+            .input(NodePorts.COMMAND, "node.mgmc.port.command", NodeDefinition.PortType.STRING, COLOR_STRING, "")
+            .output(NodePorts.EXEC, "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, 0)
             .registerExec((node, ctx) -> {
-                String uuidStr = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "uuid", ctx));
-                String command = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "command", ctx));
+                String uuidStr = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, NodePorts.UUID, ctx));
+                String command = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, NodePorts.COMMAND, ctx));
 
                 if (ctx.level != null && !ctx.level.isClientSide() && ctx.level.getServer() != null) {
                     ServerPlayer player = null;
@@ -92,24 +93,24 @@ public class ActionNodes {
                         ctx.level.getServer().getCommands().performPrefixedCommand(player.createCommandSourceStack(), command);
                     }
                 }
-                NodeLogicRegistry.triggerExec(node, "exec", ctx);
+                NodeLogicRegistry.triggerExec(node, NodePorts.EXEC, ctx);
             });
 
         // play_effect (播放特效)
         NodeHelper.setup("play_effect", "node.mgmc.play_effect.name")
             .category("node_category.mgmc.action.world")
             .color(COLOR_ACTION)
-            .input("exec", "node.mgmc.port.exec_in", NodeDefinition.PortType.EXEC, 0)
-            .input("effect", "node.mgmc.port.effect", NodeDefinition.PortType.STRING, COLOR_STRING, "minecraft:heart")
-            .input("x", "node.mgmc.port.x", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
-            .input("y", "node.mgmc.port.y", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
-            .input("z", "node.mgmc.port.z", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
-            .output("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, 0)
+            .input(NodePorts.EXEC, "node.mgmc.port.exec_in", NodeDefinition.PortType.EXEC, 0)
+            .input(NodePorts.EFFECT, "node.mgmc.port.effect", NodeDefinition.PortType.STRING, COLOR_STRING, "minecraft:heart")
+            .input(NodePorts.X, "node.mgmc.port.x", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
+            .input(NodePorts.Y, "node.mgmc.port.y", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
+            .input(NodePorts.Z, "node.mgmc.port.z", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
+            .output(NodePorts.EXEC, "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, 0)
             .registerExec((node, ctx) -> {
-                String effectName = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, "effect", ctx));
-                double x = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "x", ctx));
-                double y = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "y", ctx));
-                double z = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "z", ctx));
+                String effectName = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, NodePorts.EFFECT, ctx));
+                double x = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.X, ctx));
+                double y = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.Y, ctx));
+                double z = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.Z, ctx));
 
                 try {
                     if (ctx.level instanceof ServerLevel serverLevel) {
@@ -123,24 +124,24 @@ public class ActionNodes {
                         }
                     }
                 } catch (Exception ignored) {}
-                NodeLogicRegistry.triggerExec(node, "exec", ctx);
+                NodeLogicRegistry.triggerExec(node, NodePorts.EXEC, ctx);
             });
 
         // explosion (爆炸)
         NodeHelper.setup("explosion", "node.mgmc.explosion.name")
             .category("node_category.mgmc.action.world")
             .color(COLOR_ACTION)
-            .input("exec", "node.mgmc.port.exec_in", NodeDefinition.PortType.EXEC, 0)
-            .input("radius", "node.mgmc.port.radius", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 3.0)
-            .input("x", "node.mgmc.port.x", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
-            .input("y", "node.mgmc.port.y", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
-            .input("z", "node.mgmc.port.z", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
-            .output("exec", "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, 0)
+            .input(NodePorts.EXEC, "node.mgmc.port.exec_in", NodeDefinition.PortType.EXEC, 0)
+            .input(NodePorts.RADIUS, "node.mgmc.port.radius", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 3.0)
+            .input(NodePorts.X, "node.mgmc.port.x", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
+            .input(NodePorts.Y, "node.mgmc.port.y", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
+            .input(NodePorts.Z, "node.mgmc.port.z", NodeDefinition.PortType.FLOAT, COLOR_FLOAT, 0.0)
+            .output(NodePorts.EXEC, "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, 0)
             .registerExec((node, ctx) -> {
-                double x = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "x", ctx));
-                double y = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "y", ctx));
-                double z = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "z", ctx));
-                float radius = (float) TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, "radius", ctx));
+                double x = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.X, ctx));
+                double y = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.Y, ctx));
+                double z = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.Z, ctx));
+                float radius = (float) TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.RADIUS, ctx));
                 if (radius <= 0) radius = 3.0f;
 
                 try {
@@ -148,7 +149,7 @@ public class ActionNodes {
                         ctx.level.explode(null, x, y, z, radius, Level.ExplosionInteraction.TNT);
                     }
                 } catch (Exception ignored) {}
-                NodeLogicRegistry.triggerExec(node, "exec", ctx);
+                NodeLogicRegistry.triggerExec(node, NodePorts.EXEC, ctx);
             });
     }
 }
