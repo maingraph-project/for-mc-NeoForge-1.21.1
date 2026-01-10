@@ -4,6 +4,8 @@ import ltd.opens.mg.mc.client.gui.blueprint.BlueprintState;
 
 import ltd.opens.mg.mc.client.gui.components.*;
 import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import ltd.opens.mg.mc.core.blueprint.NodeDefinition;
 
 public class BlueprintMenuHandler {
@@ -13,9 +15,13 @@ public class BlueprintMenuHandler {
         this.state = state;
     }
 
-    public boolean mouseClicked(double mouseX, double mouseY, int button, int screenWidth, int screenHeight) {
+    public boolean mouseClicked(MouseButtonEvent event, int screenWidth, int screenHeight) {
+        double mouseX = event.x();
+        double mouseY = event.y();
+        int button = event.buttonInfo().button();
+
         if (state.showNodeContextMenu) {
-            BlueprintMenu.ContextMenuResult result = state.menu.onClickContextMenu(mouseX, mouseY, state.menuX, state.menuY);
+            BlueprintMenu.ContextMenuResult result = state.menu.onClickContextMenu(event, state.menuX, state.menuY);
             if (result == BlueprintMenu.ContextMenuResult.DELETE) {
                 if (state.contextMenuNode != null) {
                     if (state.focusedNode == state.contextMenuNode) {
@@ -47,7 +53,7 @@ public class BlueprintMenuHandler {
         }
 
         if (state.showNodeMenu) {
-            NodeDefinition def = state.menu.onClickNodeMenu(mouseX, mouseY, state.menuX, state.menuY, screenWidth, screenHeight);
+            NodeDefinition def = state.menu.onClickNodeMenu(event, state.menuX, state.menuY, screenWidth, screenHeight);
             if (def != null) {
                 createNodeAtMenu(def);
                 return true;
@@ -73,23 +79,24 @@ public class BlueprintMenuHandler {
         state.menu.reset();
     }
 
-    public boolean keyPressed(int key) {
+    public boolean keyPressed(KeyEvent event) {
         if (state.showNodeMenu) {
-            if (key == 257) { // Enter
+            int key = event.key();
+            if (key == 257 || key == 335) { // Enter or Numpad Enter
                 NodeDefinition def = state.menu.getSelectedNode();
                 if (def != null) {
                     createNodeAtMenu(def);
                     return true;
                 }
             }
-            return state.menu.keyPressed(key);
+            return state.menu.keyPressed(event);
         }
         return false;
     }
 
     public boolean charTyped(CharacterEvent event) {
         if (state.showNodeMenu) {
-            return state.menu.charTyped((char) event.codepoint());
+            return state.menu.charTyped(event);
         }
         return false;
     }

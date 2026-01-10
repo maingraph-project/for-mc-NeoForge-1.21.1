@@ -46,7 +46,7 @@ public class BlueprintEventHandler {
         if (state.readOnly) {
             // Skip node menu and context menu in read-only
         } else {
-            if (menuHandler.mouseClicked(mouseX, mouseY, button, screen.width, screen.height)) return true;
+            if (menuHandler.mouseClicked(event, screen.width, screen.height)) return true;
         }
 
         // 2. View interactions (panning start)
@@ -124,7 +124,7 @@ public class BlueprintEventHandler {
 
     public boolean keyPressed(KeyEvent event) {
         if (state.readOnly) return false;
-        if (menuHandler.keyPressed(event.key())) return true;
+        if (menuHandler.keyPressed(event)) return true;
         return nodeHandler.keyPressed(event.key());
     }
 

@@ -83,6 +83,7 @@ public class BlueprintScreen extends Screen {
     public void tick() {
         super.tick();
         state.cursorTick++;
+        state.menu.tick();
     }
 
     private boolean isHovering(int mouseX, int mouseY, int x, int y, int w, int h) {

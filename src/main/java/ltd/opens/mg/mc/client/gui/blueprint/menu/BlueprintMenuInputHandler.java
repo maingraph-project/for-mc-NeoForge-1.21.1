@@ -6,6 +6,10 @@ import ltd.opens.mg.mc.client.gui.blueprint.manager.*;
 import ltd.opens.mg.mc.core.blueprint.NodeDefinition;
 import java.util.List;
 
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+
 public class BlueprintMenuInputHandler {
 
     public static void handleMouseScrolled(BlueprintMenu menu, double mouseX, double mouseY, double menuX, double menuY, int screenWidth, int screenHeight, double amount) {
@@ -33,16 +37,20 @@ public class BlueprintMenuInputHandler {
         menu.setScrollAmount(menu.getScrollAmount() - (amount * 15));
     }
 
-    public static boolean handleKeyPressed(BlueprintMenu menu, int key) {
-        if (key == 259) { // Backspace
-            String query = menu.getSearchQuery();
-            if (!query.isEmpty()) {
-                menu.setSearchQuery(query.substring(0, query.length() - 1));
-                menu.updateSearch();
-                menu.setScrollAmount(0);
+    public static boolean handleKeyPressed(BlueprintMenu menu, KeyEvent event) {
+        if (menu.getSearchEditBox() != null) {
+            String oldQuery = menu.getSearchQuery();
+            if (menu.getSearchEditBox().keyPressed(event)) {
+                if (!oldQuery.equals(menu.getSearchQuery())) {
+                    menu.updateSearch();
+                    menu.setScrollAmount(0);
+                }
                 return true;
             }
-        } else if (key == 257) { // Enter
+        }
+
+        int key = event.key();
+        if (key == 257) { // Enter
             if (!menu.getFilteredResults().isEmpty() && !menu.getSearchQuery().isEmpty()) {
                 BlueprintSearchManager.SearchResult res = menu.getFilteredResults().get(menu.getSelectedIndex());
                 if (res.isCategory()) {
@@ -64,17 +72,33 @@ public class BlueprintMenuInputHandler {
         return false;
     }
 
-    public static boolean handleCharTyped(BlueprintMenu menu, char codePoint) {
-        menu.setSearchQuery(menu.getSearchQuery() + codePoint);
-        menu.updateSearch();
-        menu.setScrollAmount(0);
-        return true;
+    public static boolean handleCharTyped(BlueprintMenu menu, CharacterEvent event) {
+        if (menu.getSearchEditBox() != null) {
+            String oldQuery = menu.getSearchQuery();
+            if (menu.getSearchEditBox().charTyped(event)) {
+                if (!oldQuery.equals(menu.getSearchQuery())) {
+                    menu.updateSearch();
+                    menu.setScrollAmount(0);
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
-    public static NodeDefinition handleOnClickNodeMenu(BlueprintMenu menu, double mouseX, double mouseY, double menuX, double menuY, int screenWidth, int screenHeight) {
+    public static NodeDefinition handleOnClickNodeMenu(BlueprintMenu menu, MouseButtonEvent event, double menuX, double menuY, int screenWidth, int screenHeight) {
+        double mouseX = event.x();
+        double mouseY = event.y();
         int x = (int) menuX;
         int width = menu.getMenuWidth();
         if (x + width > screenWidth) x -= width;
+
+        // Forward click to EditBox
+        if (menu.getSearchEditBox() != null) {
+            if (menu.getSearchEditBox().mouseClicked(event, false)) {
+                return null;
+            }
+        }
 
         if (!menu.getSearchQuery().isEmpty()) {
             List<BlueprintSearchManager.SearchResult> filteredResults = menu.getFilteredResults();
@@ -168,12 +192,18 @@ public class BlueprintMenuInputHandler {
         return false;
     }
 
-    public static BlueprintMenu.ContextMenuResult handleOnClickContextMenu(double mouseX, double mouseY, double menuX, double menuY) {
+    public static BlueprintMenu.ContextMenuResult handleOnClickContextMenu(MouseButtonEvent event, double menuX, double menuY) {
+        double mouseX = event.x();
+        double mouseY = event.y();
         int x = (int) menuX;
         int y = (int) menuY;
         int width = 120;
-        if (mouseX >= x && mouseX <= x + width && mouseY >= y + 3 && mouseY <= y + 23) return BlueprintMenu.ContextMenuResult.DELETE;
-        if (mouseX >= x && mouseX <= x + width && mouseY >= y + 23 && mouseY <= y + 43) return BlueprintMenu.ContextMenuResult.BREAK_LINKS;
+        int itemHeight = 20;
+
+        if (mouseX >= x && mouseX <= x + width) {
+            if (mouseY >= y && mouseY <= y + itemHeight) return BlueprintMenu.ContextMenuResult.DELETE;
+            if (mouseY >= y + itemHeight && mouseY <= y + itemHeight * 2) return BlueprintMenu.ContextMenuResult.BREAK_LINKS;
+        }
         return BlueprintMenu.ContextMenuResult.NONE;
     }
 }
