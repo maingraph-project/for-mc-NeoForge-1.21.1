@@ -47,9 +47,8 @@ public class TypeConverter {
         if (value == null) return new ArrayList<>();
         
         // 1. 如果已经是 List，确保返回可变列表
-        if (value instanceof List) {
-            //noinspection unchecked
-            return new ArrayList<>((List<Object>) value);
+        if (value instanceof List<?> listValue) {
+            return new ArrayList<>(listValue);
         }
         
         // 2. 处理 JsonArray (Gson)

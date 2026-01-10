@@ -138,7 +138,6 @@ public class MaingraphforMC {
         }
         
         private static final java.util.Map<String, CachedBlueprint> blueprintCache = new java.util.HashMap<>();
-        private static long lastCacheRefresh = 0;
         private static final long CACHE_REFRESH_INTERVAL = 1000; // 1 second
 
         private static boolean isValidFileName(String name) {
