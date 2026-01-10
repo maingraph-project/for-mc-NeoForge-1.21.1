@@ -120,6 +120,7 @@ public class EventDispatcher {
             
             // 执行蓝图
             for (JsonObject blueprint : blueprints) {
+                MaingraphforMC.LOGGER.info("MGMC: Executing blueprint for node {} (IDs: {})", def.id(), ids);
                 BlueprintEngine.execute(serverLevel, blueprint, def.id(), contextBuilder);
             }
         }
@@ -134,13 +135,11 @@ public class EventDispatcher {
                 if (epe.getEntity() instanceof Player p) return p;
             }
         }
-        if (event instanceof net.neoforged.neoforge.event.entity.living.LivingEvent le) {
-            if (le.getEntity() instanceof Player p) return p;
-        }
         return null;
     }
 
     private static Level getLevelFromEvent(Event event) {
+        if (event instanceof net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent iepe) return iepe.getPlayer().level();
         if (event instanceof net.neoforged.neoforge.event.level.LevelEvent le) {
             if (le.getLevel() instanceof Level l) return l;
         }
@@ -149,6 +148,7 @@ public class EventDispatcher {
         }
         if (event instanceof net.neoforged.neoforge.event.entity.EntityEvent ee) return ee.getEntity().level();
         if (event instanceof net.neoforged.neoforge.event.tick.PlayerTickEvent pte) return pte.getEntity().level();
+        if (event instanceof net.neoforged.neoforge.event.entity.player.PlayerEvent pe) return pe.getEntity().level();
         return null;
     }
 }

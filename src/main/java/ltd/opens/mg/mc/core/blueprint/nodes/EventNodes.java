@@ -316,7 +316,7 @@ public class EventNodes {
                 b.triggerUuid(e.getPlayer().getUUID().toString())
                  .triggerName(e.getPlayer().getName().getString())
                  .triggerItemId(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(e.getItemEntity().getItem().getItem()).toString());
-            }, e -> BlueprintRouter.PLAYERS_ID,
+            }, e -> net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(e.getItemEntity().getItem().getItem()).toString(),
             (node, portId, ctx) -> switch (portId) {
                 case NodePorts.ITEM_ID -> ctx.triggerItemId;
                 case NodePorts.UUID -> ctx.triggerUuid;
