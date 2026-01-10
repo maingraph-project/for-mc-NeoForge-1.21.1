@@ -26,93 +26,45 @@ public class MathNodes {
         NodeHelper.setup("add_float", "node.mgmc.add_float.name")
             .category("node_category.mgmc.logic.math")
             .color(NodeThemes.COLOR_NODE_MATH)
-            .input(NodePorts.A, "node.mgmc.port.a", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 0.0)
-            .input(NodePorts.B, "node.mgmc.port.b", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 0.0)
-            .output(NodePorts.RESULT, "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT)
-            .registerValue((node, portId, ctx) -> {
-                double a = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.A, ctx));
-                double b = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.B, ctx));
-                return a + b;
-            });
+            .registerMathOp((a, b) -> a + b);
 
         NodeHelper.setup("sub_float", "node.mgmc.sub_float.name")
             .category("node_category.mgmc.logic.math")
             .color(NodeThemes.COLOR_NODE_MATH)
-            .input(NodePorts.A, "node.mgmc.port.a", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 0.0)
-            .input(NodePorts.B, "node.mgmc.port.b", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 0.0)
-            .output(NodePorts.RESULT, "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT)
-            .registerValue((node, portId, ctx) -> {
-                double a = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.A, ctx));
-                double b = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.B, ctx));
-                return a - b;
-            });
+            .registerMathOp((a, b) -> a - b);
 
         NodeHelper.setup("mul_float", "node.mgmc.mul_float.name")
             .category("node_category.mgmc.logic.math")
             .color(NodeThemes.COLOR_NODE_MATH)
-            .input(NodePorts.A, "node.mgmc.port.a", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 1.0)
-            .input(NodePorts.B, "node.mgmc.port.b", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 1.0)
-            .output(NodePorts.RESULT, "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT)
-            .registerValue((node, portId, ctx) -> {
-                double a = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.A, ctx));
-                double b = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.B, ctx));
-                return a * b;
-            });
+            .mathInputs(1.0, 1.0)
+            .registerMathOp((a, b) -> a * b);
 
         NodeHelper.setup("div_float", "node.mgmc.div_float.name")
             .category("node_category.mgmc.logic.math")
             .color(NodeThemes.COLOR_NODE_MATH)
-            .input(NodePorts.A, "node.mgmc.port.a", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 1.0)
-            .input(NodePorts.B, "node.mgmc.port.b", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 1.0)
-            .output(NodePorts.RESULT, "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT)
-            .registerValue((node, portId, ctx) -> {
-                double a = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.A, ctx));
-                double b = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.B, ctx));
-                return b != 0 ? a / b : 0.0;
-            });
+            .mathInputs(1.0, 1.0)
+            .registerMathOp((a, b) -> b != 0 ? a / b : 0.0);
 
         NodeHelper.setup("mod_float", "node.mgmc.mod_float.name")
             .category("node_category.mgmc.logic.math")
             .color(NodeThemes.COLOR_NODE_MATH)
-            .input(NodePorts.A, "node.mgmc.port.a", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 1.0)
-            .input(NodePorts.B, "node.mgmc.port.b", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 1.0)
-            .output(NodePorts.RESULT, "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT)
-            .registerValue((node, portId, ctx) -> {
-                double a = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.A, ctx));
-                double b = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.B, ctx));
-                return b != 0 ? a % b : 0.0;
-            });
+            .mathInputs(1.0, 1.0)
+            .registerMathOp((a, b) -> b != 0 ? a % b : 0.0);
 
         NodeHelper.setup("abs_float", "node.mgmc.abs_float.name")
             .category("node_category.mgmc.logic.math")
             .color(NodeThemes.COLOR_NODE_MATH)
-            .input(NodePorts.INPUT, "node.mgmc.port.input", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 0.0)
-            .output(NodePorts.RESULT, "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT)
-            .registerValue((node, portId, ctx) -> Math.abs(TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.INPUT, ctx))));
+            .registerUnaryMathOp(Math::abs);
 
         NodeHelper.setup("min_float", "node.mgmc.min_float.name")
             .category("node_category.mgmc.logic.math")
             .color(NodeThemes.COLOR_NODE_MATH)
-            .input(NodePorts.A, "node.mgmc.port.a", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 0.0)
-            .input(NodePorts.B, "node.mgmc.port.b", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 0.0)
-            .output(NodePorts.RESULT, "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT)
-            .registerValue((node, portId, ctx) -> {
-                double a = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.A, ctx));
-                double b = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.B, ctx));
-                return Math.min(a, b);
-            });
+            .registerMathOp(Math::min);
 
         NodeHelper.setup("max_float", "node.mgmc.max_float.name")
             .category("node_category.mgmc.logic.math")
             .color(NodeThemes.COLOR_NODE_MATH)
-            .input(NodePorts.A, "node.mgmc.port.a", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 0.0)
-            .input(NodePorts.B, "node.mgmc.port.b", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 0.0)
-            .output(NodePorts.RESULT, "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT)
-            .registerValue((node, portId, ctx) -> {
-                double a = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.A, ctx));
-                double b = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.B, ctx));
-                return Math.max(a, b);
-            });
+            .registerMathOp(Math::max);
 
         NodeHelper.setup("clamp_float", "node.mgmc.clamp_float.name")
             .category("node_category.mgmc.logic.math")
@@ -120,7 +72,7 @@ public class MathNodes {
             .input(NodePorts.VALUE, "node.mgmc.port.value", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 0.0)
             .input(NodePorts.MIN, "node.mgmc.port.min", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 0.0)
             .input(NodePorts.MAX, "node.mgmc.port.max", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 1.0)
-            .output(NodePorts.RESULT, "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT)
+            .mathOutput()
             .registerValue((node, portId, ctx) -> {
                 double val = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.VALUE, ctx));
                 double min = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.MIN, ctx));
@@ -131,23 +83,17 @@ public class MathNodes {
         NodeHelper.setup("round_float", "node.mgmc.round_float.name")
             .category("node_category.mgmc.logic.math")
             .color(NodeThemes.COLOR_NODE_MATH)
-            .input(NodePorts.INPUT, "node.mgmc.port.input", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 0.0)
-            .output(NodePorts.RESULT, "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT)
-            .registerValue((node, portId, ctx) -> (double) Math.round(TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.INPUT, ctx))));
+            .registerUnaryMathOp(v -> (double) Math.round(v));
 
         NodeHelper.setup("floor_float", "node.mgmc.floor_float.name")
             .category("node_category.mgmc.logic.math")
             .color(NodeThemes.COLOR_NODE_MATH)
-            .input(NodePorts.INPUT, "node.mgmc.port.input", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 0.0)
-            .output(NodePorts.RESULT, "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT)
-            .registerValue((node, portId, ctx) -> Math.floor(TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.INPUT, ctx))));
+            .registerUnaryMathOp(Math::floor);
 
         NodeHelper.setup("ceil_float", "node.mgmc.ceil_float.name")
             .category("node_category.mgmc.logic.math")
             .color(NodeThemes.COLOR_NODE_MATH)
-            .input(NodePorts.INPUT, "node.mgmc.port.input", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 0.0)
-            .output(NodePorts.RESULT, "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT)
-            .registerValue((node, portId, ctx) -> Math.ceil(TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.INPUT, ctx))));
+            .registerUnaryMathOp(Math::ceil);
 
         // --- 随机数 ---
         NodeHelper.setup("random_float", "node.mgmc.random_float.name")
@@ -155,7 +101,7 @@ public class MathNodes {
             .color(NodeThemes.COLOR_NODE_MATH)
             .input(NodePorts.MIN, "node.mgmc.port.min", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 0.0)
             .input(NodePorts.MAX, "node.mgmc.port.max", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 1.0)
-            .output(NodePorts.RESULT, "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT)
+            .mathOutput()
             .registerValue((node, portId, ctx) -> {
                 double min = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.MIN, ctx));
                 double max = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.MAX, ctx));
@@ -167,7 +113,7 @@ public class MathNodes {
             .color(NodeThemes.COLOR_NODE_MATH)
             .input(NodePorts.MIN, "node.mgmc.port.min", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 0.0)
             .input(NodePorts.MAX, "node.mgmc.port.max", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 100.0)
-            .output(NodePorts.RESULT, "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT)
+            .mathOutput()
             .registerValue((node, portId, ctx) -> {
                 int min = (int) TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.MIN, ctx));
                 int max = (int) TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.MAX, ctx));

@@ -22,9 +22,20 @@ public class NodeContext {
     public final Map<String, JsonObject> nodesMap;
     public final int formatVersion;
     public final Map<String, Object> variables = new HashMap<>();
+    public final Map<String, Map<String, Object>> runtimeData = new HashMap<>();
     public boolean breakRequested = false;
     public int nodeExecCount = 0;
     public String lastTriggeredPin;
+    
+    public Object getRuntimeData(String nodeId, String key, Object defaultValue) {
+        Map<String, Object> nodeData = runtimeData.get(nodeId);
+        if (nodeData == null) return defaultValue;
+        return nodeData.getOrDefault(key, defaultValue);
+    }
+
+    public void setRuntimeData(String nodeId, String key, Object value) {
+        runtimeData.computeIfAbsent(nodeId, k -> new HashMap<>()).put(key, value);
+    }
 
     public NodeContext(Level level, String eventName, String[] args, String triggerUuid, String triggerName, 
                        double triggerX, double triggerY, double triggerZ, double triggerSpeed,

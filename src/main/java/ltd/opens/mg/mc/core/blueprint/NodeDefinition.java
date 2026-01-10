@@ -92,6 +92,14 @@ public record NodeDefinition(
             return addOutput(id, id, type, color);
         }
 
+        public List<PortDefinition> getInputs() {
+            return inputs;
+        }
+
+        public List<PortDefinition> getOutputs() {
+            return outputs;
+        }
+
         public NodeDefinition build() {
             return new NodeDefinition(id, name, category, color, List.copyOf(inputs), List.copyOf(outputs), Map.copyOf(properties), registeredBy);
         }

@@ -38,16 +38,16 @@
 
 ## 第三阶段：定义语法优化 (消除槽点与设计缺陷)
 
-- [ ] **减少注册时的样板代码 (Boilerplate)**
+- [v] **减少注册时的样板代码 (Boilerplate)**
     - **原因**：目前注册一个简单的加法节点需要 10 多行重复代码。过度冗余的代码降低了开发效率且掩盖了核心逻辑。
-    - [ ] **操作**：在 `NodeHelper` 中新增 `registerMathOp(BiFunction<Double, Double, Double> op)` 等高阶封装方法。
-    - [ ] **细节**：重构 `MathNodes.java`，将原先的冗长逻辑简化为 1-2 行，自动处理类型转换，兼容样板代码写法
-- [ ] **规范化颜色与分类定义**
+    - [v] **操作**：在 `NodeHelper` 中新增 `registerMathOp(BiFunction<Double, Double, Double> op)` 等高阶封装方法。
+    - [v] **细节**：重构 `MathNodes.java`，将原先的冗长逻辑简化为 1-2 行，自动处理类型转换，兼容样板代码写法
+- [v] **规范化颜色与分类定义**
     - **原因**：颜色值硬编码在各个类中，且极其不统一。不仅端口颜色混乱，**不同分类的节点颜色（如动作类、逻辑类、变量类）也散落在各处**。这导致 UI 风格混乱，且难以进行全局主题调整。
-    - [ ] **操作**：新建 `ltd.opens.mg.mc.core.blueprint.NodeThemes` 类，定义一套标准的调色板（Palette）。
-    - [ ] **操作**：统一分类颜色：定义 `COLOR_NODE_ACTION`, `COLOR_NODE_EVENT`, `COLOR_NODE_LOGIC`, `COLOR_NODE_VARIABLE` 等标准色。
-    - [ ] **操作**：统一端口颜色：定义 `COLOR_PORT_EXEC`, `COLOR_PORT_STRING`, `COLOR_PORT_FLOAT`, `COLOR_PORT_BOOLEAN` 等标准色。
-    - [ ] **细节**：在所有节点类（如 `ActionNodes`, `LogicNodes`）中引用这些常量。实现“一处修改，全局生效”，确保同分类节点和同类型端口的颜色在视觉上高度一致。
+    - [v] **操作**：新建 `ltd.opens.mg.mc.core.blueprint.NodeThemes` 类，定义一套标准的调色板（Palette）。
+    - [v] **操作**：统一分类颜色：定义 `COLOR_NODE_ACTION`, `COLOR_NODE_EVENT`, `COLOR_NODE_LOGIC`, `COLOR_NODE_VARIABLE` 等标准色。
+    - [v] **操作**：统一端口颜色：定义 `COLOR_PORT_EXEC`, `COLOR_PORT_STRING`, `COLOR_PORT_FLOAT`, `COLOR_PORT_BOOLEAN` 等标准色。
+    - [v] **细节**：在所有节点类（如 `ActionNodes`, `LogicNodes`）中引用这些常量。实现“一处修改，全局生效”，确保同分类节点和同类型端口的颜色在视觉上高度一致。
 - [ ] **修复执行期状态污染**
     - **原因**：直接在 `JsonObject`（节点实例）上存临时变量（如 `_index`）会导致蓝图文件被修改，且在并发或递归执行时数据会相互干扰。
     - [ ] **操作**：在 `NodeContext.java` 中增加 `Map<String, Object> runtimeData` 或类似作用域。

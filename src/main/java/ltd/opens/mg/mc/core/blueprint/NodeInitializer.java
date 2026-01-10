@@ -26,5 +26,8 @@ public class NodeInitializer {
 
         // 发布注册事件，通知外部模块
         modEventBus.post(new RegisterMGMCNodesEvent());
+        
+        // 冻结注册表，防止运行时动态修改
+        NodeRegistry.freeze();
     }
 }

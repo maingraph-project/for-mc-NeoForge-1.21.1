@@ -2,6 +2,10 @@ package ltd.opens.mg.mc.core.blueprint;
 
 import ltd.opens.mg.mc.core.blueprint.engine.NodeHandler;
 import ltd.opens.mg.mc.core.blueprint.engine.NodeLogicRegistry;
+import ltd.opens.mg.mc.core.blueprint.engine.TypeConverter;
+
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * 节点注册助手类，提供链式调用 API 统一元数据与逻辑注册。
@@ -196,5 +200,52 @@ public class NodeHelper {
 
     public String getId() {
         return id;
+    }
+
+    // --- 高阶封装方法，减少样板代码 ---
+
+    /**
+     * 快速添加标准双参数数学输入（A, B）
+     */
+    public NodeHelper mathInputs(double defaultA, double defaultB) {
+        return this.input(NodePorts.A, "node.mgmc.port.a", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, defaultA)
+                   .input(NodePorts.B, "node.mgmc.port.b", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, defaultB);
+    }
+
+    /**
+     * 快速添加标准数学输出（RESULT）
+     */
+    public NodeHelper mathOutput() {
+        return this.output(NodePorts.RESULT, "node.mgmc.port.output", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT);
+    }
+
+    /**
+     * 注册双参数数学运算逻辑
+     */
+    public void registerMathOp(BiFunction<Double, Double, Double> op) {
+        // 自动补充默认输入输出
+        if (builder.getInputs().isEmpty()) mathInputs(0.0, 0.0);
+        if (builder.getOutputs().isEmpty()) mathOutput();
+
+        registerValue((node, portId, ctx) -> {
+            double a = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.A, ctx));
+            double b = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.B, ctx));
+            return op.apply(a, b);
+        });
+    }
+
+    /**
+     * 注册单参数数学运算逻辑
+     */
+    public void registerUnaryMathOp(Function<Double, Double> op) {
+        if (builder.getInputs().isEmpty()) {
+            input(NodePorts.INPUT, "node.mgmc.port.input", NodeDefinition.PortType.FLOAT, NodeThemes.COLOR_PORT_FLOAT, 0.0);
+        }
+        if (builder.getOutputs().isEmpty()) mathOutput();
+
+        registerValue((node, portId, ctx) -> {
+            double input = TypeConverter.toDouble(NodeLogicRegistry.evaluateInput(node, NodePorts.INPUT, ctx));
+            return op.apply(input);
+        });
     }
 }

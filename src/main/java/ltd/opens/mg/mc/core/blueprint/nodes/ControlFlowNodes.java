@@ -76,8 +76,9 @@ public class ControlFlowNodes {
                     int end = TypeConverter.toInt(NodeLogicRegistry.evaluateInput(node, NodePorts.END, ctx));
                     boolean previousBreakRequested = ctx.breakRequested;
                     ctx.breakRequested = false;
+                    String nodeId = node.get("id").getAsString();
                     for (int i = start; i <= end; i++) {
-                        node.addProperty("_index", i);
+                        ctx.setRuntimeData(nodeId, "index", i);
                         NodeLogicRegistry.triggerExec(node, NodePorts.LOOP_BODY, ctx);
                         if (ctx.breakRequested) {
                             ctx.breakRequested = false;
@@ -91,7 +92,7 @@ public class ControlFlowNodes {
                 @Override
                 public Object getValue(JsonObject node, String portId, NodeContext ctx) {
                     if (NodePorts.INDEX.equals(portId)) {
-                        return node.has("_index") ? node.get("_index").getAsInt() : 0;
+                        return ctx.getRuntimeData(node.get("id").getAsString(), "index", 0);
                     }
                     return null;
                 }

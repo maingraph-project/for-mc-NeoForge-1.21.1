@@ -6,8 +6,20 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class NodeRegistry {
     private static final Map<String, NodeDefinition> REGISTRY = new ConcurrentHashMap<>();
+    private static boolean frozen = false;
+
+    public static void freeze() {
+        frozen = true;
+    }
+
+    public static boolean isFrozen() {
+        return frozen;
+    }
 
     public static void register(NodeDefinition definition) {
+        if (frozen) {
+            throw new IllegalStateException("Cannot register node after registry is frozen: " + definition.id());
+        }
         if (REGISTRY.containsKey(definition.id())) {
             NodeDefinition existing = REGISTRY.get(definition.id());
             String errorMsg = String.format(
