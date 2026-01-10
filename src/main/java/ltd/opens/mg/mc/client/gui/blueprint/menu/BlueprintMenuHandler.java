@@ -18,7 +18,6 @@ public class BlueprintMenuHandler {
     public boolean mouseClicked(MouseButtonEvent event, int screenWidth, int screenHeight) {
         double mouseX = event.x();
         double mouseY = event.y();
-        int button = event.buttonInfo().button();
 
         if (state.showNodeContextMenu) {
             BlueprintMenu.ContextMenuResult result = state.menu.onClickContextMenu(event, state.menuX, state.menuY);

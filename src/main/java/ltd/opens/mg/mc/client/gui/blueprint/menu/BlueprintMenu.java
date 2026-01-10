@@ -5,7 +5,6 @@ import ltd.opens.mg.mc.client.gui.blueprint.manager.*;
 
 
 import ltd.opens.mg.mc.core.blueprint.NodeDefinition;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;

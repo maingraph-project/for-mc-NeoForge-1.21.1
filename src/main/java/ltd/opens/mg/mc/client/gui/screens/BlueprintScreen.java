@@ -17,16 +17,28 @@ import ltd.opens.mg.mc.network.payloads.*;
 import java.nio.file.Path;
 
 public class BlueprintScreen extends Screen {
+    private final Screen parent;
     private final Path dataFile;
     private final String blueprintName;
     private final BlueprintState state = new BlueprintState();
     private final BlueprintEventHandler eventHandler;
+    private boolean forceOpen = false;
 
     public BlueprintScreen(Path dataFile) {
+        this(null, dataFile);
+    }
+
+    public BlueprintScreen(Screen parent, Path dataFile) {
+        this(parent, dataFile, false);
+    }
+
+    public BlueprintScreen(Screen parent, Path dataFile, boolean forceOpen) {
         super(Component.translatable("gui.mgmc.blueprint_editor.title", dataFile.getFileName().toString()));
+        this.parent = parent;
         this.dataFile = dataFile;
         this.blueprintName = dataFile.getFileName().toString();
         this.eventHandler = new BlueprintEventHandler(state);
+        this.forceOpen = forceOpen;
         
         // Special Case: "wwssadadab" - Lock blueprint
         if (blueprintName.startsWith("wwssadadab")) {
@@ -34,16 +46,34 @@ public class BlueprintScreen extends Screen {
         }
 
         BlueprintIO.load(this.dataFile, state.nodes, state.connections);
+        
+        if (forceOpen) {
+            state.zoom = 0.5f; // "缩小" effect
+        }
     }
 
     public BlueprintScreen(String name) {
+        this(null, name);
+    }
+
+    public BlueprintScreen(Screen parent, String name) {
+        this(parent, name, false);
+    }
+
+    public BlueprintScreen(Screen parent, String name, boolean forceOpen) {
         super(Component.translatable("gui.mgmc.blueprint_editor.title", name));
+        this.parent = parent;
         this.dataFile = null;
         this.blueprintName = name.endsWith(".json") ? name : name + ".json";
         this.eventHandler = new BlueprintEventHandler(state);
+        this.forceOpen = forceOpen;
 
         if (blueprintName.startsWith("wwssadadab")) {
             state.readOnly = true;
+        }
+
+        if (forceOpen) {
+            state.zoom = 0.5f; // "缩小" effect
         }
 
         // Request data from server
@@ -53,6 +83,12 @@ public class BlueprintScreen extends Screen {
     }
 
     public void loadFromNetwork(String json, long version) {
+        int formatVersion = BlueprintIO.getFormatVersion(json);
+        if (!forceOpen && formatVersion < 4) {
+            Minecraft.getInstance().setScreen(new VersionWarningScreen(this.parent, this.blueprintName, formatVersion));
+            return;
+        }
+
         state.nodes.clear();
         state.connections.clear();
         BlueprintIO.loadFromString(json, state.nodes, state.connections);

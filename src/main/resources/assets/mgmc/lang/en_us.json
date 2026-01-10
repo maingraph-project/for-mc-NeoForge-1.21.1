@@ -228,5 +228,10 @@
   "gui.mgmc.blueprint_editor.auto_layout": "Auto Layout",
   "gui.mgmc.blueprint_editor.layout_complete": "Layout Complete!",
   "gui.mgmc.blueprint_editor.search_hint": "Search Nodes...",
-  "gui.mgmc.blueprint_editor.no_nodes_found": "No matching nodes found"
+  "gui.mgmc.blueprint_editor.no_nodes_found": "No matching nodes found",
+  "gui.mgmc.version_warning.title": "Blueprint Version Warning",
+  "gui.mgmc.version_warning.message": "This blueprint is version v%d, but the current editor is v%d. Opening it directly may cause some features to malfunction or corrupt the blueprint. It is recommended to copy and open it in the new version.",
+  "gui.mgmc.version_warning.copy_and_open": "Copy and Open (Recommended)",
+  "gui.mgmc.version_warning.exit": "Exit",
+  "gui.mgmc.version_warning.open_anyway": "Open Anyway"
 }
