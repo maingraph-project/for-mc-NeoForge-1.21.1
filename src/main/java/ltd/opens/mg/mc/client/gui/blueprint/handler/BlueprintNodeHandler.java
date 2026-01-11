@@ -94,6 +94,7 @@ public class BlueprintNodeHandler {
                                         String oldStr = oldVal != null ? oldVal.getAsString() : "";
                                         
                                         if (!selected.equals(oldStr)) {
+                                            state.pushHistory();
                                             targetNode.inputValues.addProperty(targetPort, selected);
                                             state.markDirty();
                                             // Update output port type based on selection
@@ -119,6 +120,7 @@ public class BlueprintNodeHandler {
                                     initialText, 
                                     isNumeric,
                                     (newText) -> {
+                                        state.pushHistory();
                                         targetNode.inputValues.addProperty(targetPort, newText);
                                         state.markDirty();
                                     }
@@ -146,6 +148,7 @@ public class BlueprintNodeHandler {
                         (newText) -> {
                              if (newText != null && !newText.isEmpty()) {
                                  if (node.getPortByName(newText, false) == null) {
+                                     state.pushHistory();
                                      node.addOutput(newText, newText, NodeDefinition.PortType.EXEC, 0xFFFFFFFF);
                                      state.markDirty();
                                  }
@@ -166,12 +169,15 @@ public class BlueprintNodeHandler {
                     int nextIndex = maxIndex + 1;
                     String portId = "input_" + nextIndex;
                     String displayName = "input " + nextIndex;
+                    state.pushHistory();
                     node.addInput(portId, displayName, NodeDefinition.PortType.STRING, 0xFFBBBBBB, true, "", null);
                     state.markDirty();
                 }
                 return true;
             }
             if (node.isMouseOverHeader(worldMouseX, worldMouseY)) {
+                state.historyPendingState = BlueprintIO.serialize(state.nodes, state.connections);
+                
                 if (isShiftDown || isCtrlDown) {
                     if (node.isSelected) {
                         node.isSelected = false;
@@ -193,6 +199,8 @@ public class BlueprintNodeHandler {
                 state.draggingNode = node;
                 state.dragOffsetX = (float) (worldMouseX - node.x);
                 state.dragOffsetY = (float) (worldMouseY - node.y);
+                state.startMouseX = node.x;
+                state.startMouseY = node.y;
                 state.nodes.remove(i);
                 state.nodes.add(node);
                 return true;
@@ -248,6 +256,13 @@ public class BlueprintNodeHandler {
             return true;
         }
         if (state.draggingNode != null) {
+            if (Math.abs(state.draggingNode.x - state.startMouseX) > 0.1 || Math.abs(state.draggingNode.y - state.startMouseY) > 0.1) {
+                // If node actually moved, push the state we captured when the drag started
+                if (state.historyPendingState != null) {
+                    state.pushHistory(state.historyPendingState);
+                    state.historyPendingState = null;
+                }
+            }
             state.draggingNode = null;
             return true;
         }
@@ -285,6 +300,20 @@ public class BlueprintNodeHandler {
     public boolean keyPressed(KeyEvent event) {
         int keyCode = event.key();
         boolean isCtrlDown = event.hasControlDown();
+        boolean isShiftDown = event.hasShiftDown();
+
+        if (isCtrlDown && keyCode == GLFW.GLFW_KEY_Z) {
+            if (isShiftDown) {
+                state.redo();
+            } else {
+                state.undo();
+            }
+            return true;
+        }
+        if (isCtrlDown && keyCode == GLFW.GLFW_KEY_Y) {
+            state.redo();
+            return true;
+        }
 
         if (isCtrlDown && keyCode == GLFW.GLFW_KEY_C) {
             if (!state.selectedNodes.isEmpty()) {
@@ -302,6 +331,7 @@ public class BlueprintNodeHandler {
 
         if (isCtrlDown && keyCode == GLFW.GLFW_KEY_V) {
             if (BlueprintState.clipboardJson != null && !BlueprintState.clipboardJson.isEmpty()) {
+                state.pushHistory();
                 List<GuiNode> pastedNodes = new ArrayList<>();
                 List<GuiConnection> pastedConnections = new ArrayList<>();
                 BlueprintIO.loadFromString(BlueprintState.clipboardJson, pastedNodes, pastedConnections, false);
@@ -333,6 +363,7 @@ public class BlueprintNodeHandler {
 
         if (keyCode == GLFW.GLFW_KEY_DELETE || keyCode == GLFW.GLFW_KEY_BACKSPACE) {
             if (!state.selectedNodes.isEmpty()) {
+                state.pushHistory();
                 List<GuiNode> toRemove = new ArrayList<>(state.selectedNodes);
                 for (GuiNode node : toRemove) {
                     if (state.focusedNode == node) {
@@ -363,6 +394,7 @@ public class BlueprintNodeHandler {
             }
             
             if (hoveredToRemove != null) {
+                state.pushHistory();
                 if (state.focusedNode == hoveredToRemove) {
                     state.focusedNode = null;
                     state.focusedPort = null;
