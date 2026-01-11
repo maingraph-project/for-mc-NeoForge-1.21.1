@@ -118,7 +118,7 @@ public class BlueprintScreen extends Screen {
     @Override
     public void tick() {
         super.tick();
-        state.cursorTick++;
+        state.tick(this.width, this.height);
         state.menu.tick();
     }
 
@@ -147,7 +147,8 @@ public class BlueprintScreen extends Screen {
             }
             
             node.updateConnectedState(state.connections);
-            node.render(guiGraphics, this.font, mouseX, mouseY, state.panX, state.panY, state.zoom, state.connections, state.focusedNode, state.focusedPort);
+            int hTimer = (state.highlightedNode == node) ? state.highlightTimer : 0;
+            node.render(guiGraphics, this.font, mouseX, mouseY, state.panX, state.panY, state.zoom, state.connections, state.focusedNode, state.focusedPort, state.editingMarkerNode == node, hTimer);
         }
 
         if (state.connectionStartNode != null) {
@@ -159,6 +160,15 @@ public class BlueprintScreen extends Screen {
 
         // Selection Box (Screen Space)
         BlueprintRenderer.drawSelectionBox(guiGraphics, state);
+        
+        // Minimap
+        BlueprintRenderer.drawMinimap(guiGraphics, state, this.width, this.height);
+        
+        // Quick Search
+        BlueprintRenderer.drawQuickSearch(guiGraphics, state, this.width, this.height, this.font);
+        
+        // Marker Editing
+        BlueprintRenderer.drawMarkerEditing(guiGraphics, state, this.font);
         
         // --- Modern Top Bar (Narrower) ---
         int barHeight = 26;
@@ -301,7 +311,12 @@ public class BlueprintScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyEvent event) {
-        return eventHandler.keyPressed(event) || super.keyPressed(event);
+        return eventHandler.keyPressed(event, this) || super.keyPressed(event);
+    }
+
+    @Override
+    public boolean keyReleased(KeyEvent event) {
+        return eventHandler.keyReleased(event, this) || super.keyReleased(event);
     }
 
     @Override

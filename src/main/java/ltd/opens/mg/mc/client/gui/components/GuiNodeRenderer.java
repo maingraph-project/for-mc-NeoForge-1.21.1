@@ -1,19 +1,31 @@
 package ltd.opens.mg.mc.client.gui.components;
 
 import ltd.opens.mg.mc.core.blueprint.NodeDefinition;
+import ltd.opens.mg.mc.core.blueprint.NodePorts;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
+
 import com.google.gson.JsonElement;
 import java.util.List;
 
 public class GuiNodeRenderer {
 
-    public static void render(GuiNode node, GuiGraphics guiGraphics, Font font, int mouseX, int mouseY, float panX, float panY, float zoom, List<GuiConnection> connections, GuiNode focusedNode, String focusedPort) {
+    public static void render(GuiNode node, GuiGraphics guiGraphics, Font font, int mouseX, int mouseY, float panX, float panY, float zoom, List<GuiConnection> connections, GuiNode focusedNode, String focusedPort, boolean isEditing, int highlightTimer) {
         // LOD 3: Minimal rendering for very far zoom
         if (zoom < 0.15f) {
             guiGraphics.fill((int) node.x, (int) node.y, (int) (node.x + node.width), (int) (node.y + node.height), node.color);
             return;
+        }
+
+        // Highlight Effect
+        if (highlightTimer > 0) {
+            float alpha = Math.min(1.0f, highlightTimer / 10.0f);
+            int color = ((int)(alpha * 255) << 24) | 0xFFFFFF;
+            int expand = (int) (4 * (1.0f - alpha * 0.5f));
+            guiGraphics.renderOutline((int) node.x - expand, (int) node.y - expand, (int) node.width + expand * 2, (int) node.height + expand * 2, color);
+            guiGraphics.renderOutline((int) node.x - expand - 1, (int) node.y - expand - 1, (int) node.width + expand * 2 + 2, (int) node.height + expand * 2 + 2, color);
         }
 
         // Background
@@ -40,6 +52,22 @@ public class GuiNodeRenderer {
         // Title - hide if too small
         if (zoom > 0.3f) {
             guiGraphics.drawString(font, Component.translatable(node.title), (int) node.x + 5, (int) node.y + 4, 0xFFFFFFFF, false);
+        }
+
+        // Marker Special Rendering
+        if (node.definition.properties().containsKey("is_marker")) {
+            if (zoom > 0.2f && !isEditing) {
+                String text = node.inputValues.has(NodePorts.COMMENT) ? 
+                           node.inputValues.get(NodePorts.COMMENT).getAsString() : "";
+                if (!text.isEmpty()) {
+                    int maxWidth = 250;
+                    List<FormattedCharSequence> lines = font.split(Component.literal(text), maxWidth - 20);
+                    for (int i = 0; i < lines.size(); i++) {
+                        guiGraphics.drawString(font, lines.get(i), (int) node.x + 10, (int) (node.y + node.headerHeight + 10 + i * 10), 0xFFAAAAAA, false);
+                    }
+                }
+            }
+            return;
         }
 
         // Render Ports - Skip entirely if very zoomed out

@@ -1,12 +1,35 @@
 package ltd.opens.mg.mc.client.gui.components;
 
 import ltd.opens.mg.mc.core.blueprint.NodeDefinition;
+import ltd.opens.mg.mc.core.blueprint.NodePorts;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
+
+import java.util.List;
 
 public class GuiNodeHelper {
 
     public static void updateSize(GuiNode node, Font font) {
+        // 标记节点特殊处理
+        if (node.definition.properties().containsKey("is_marker")) {
+            String text = node.inputValues.has(NodePorts.COMMENT) ? node.inputValues.get(NodePorts.COMMENT).getAsString() : "";
+            if (text.isEmpty()) {
+                node.width = 100;
+                node.height = 40;
+            } else {
+                int maxWidth = 250;
+                List<net.minecraft.util.FormattedCharSequence> lines = font.split(Component.literal(text), maxWidth - 20);
+                int textWidth = 0;
+                for (net.minecraft.util.FormattedCharSequence line : lines) {
+                    textWidth = Math.max(textWidth, font.width(line));
+                }
+                node.width = Math.max(100, textWidth + 20);
+                node.height = node.headerHeight + 10 + lines.size() * 10 + 10;
+            }
+            node.setSizeDirty(false);
+            return;
+        }
+
         // Calculate height
         int maxPorts = Math.max(node.inputs.size(), node.outputs.size());
         
