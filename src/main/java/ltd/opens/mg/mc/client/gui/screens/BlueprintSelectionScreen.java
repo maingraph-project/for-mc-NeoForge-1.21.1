@@ -13,6 +13,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
 import ltd.opens.mg.mc.network.payloads.*;
+import ltd.opens.mg.mc.client.gui.blueprint.io.BlueprintIO;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -66,10 +67,11 @@ public class BlueprintSelectionScreen extends Screen {
                 
                 this.setFocused(null);
                 if (isRemoteServer()) {
-                    Minecraft.getInstance().setScreen(new BlueprintScreen(name));
+                    if (Minecraft.getInstance().getConnection() != null) Minecraft.getInstance().getConnection().send(new ServerboundCustomPayloadPacket(new SaveBlueprintPayload(name, "{}", -1)));
+                    Minecraft.getInstance().setScreen(new BlueprintScreen(this, name));
                 } else {
                     Path newFile = MaingraphforMCClient.getBlueprintsDir().resolve(name);
-                    Minecraft.getInstance().setScreen(new BlueprintScreen(newFile));
+                    Minecraft.getInstance().setScreen(new BlueprintScreen(this, newFile));
                 }
             }
         }).bounds(createX + createWidth + 5, createY, 50, createHeight).build();
@@ -88,9 +90,15 @@ public class BlueprintSelectionScreen extends Screen {
                 BlueprintEntry entry = this.list.getSelected();
                 this.setFocused(null);
                 if (entry.path != null) {
-                    Minecraft.getInstance().setScreen(new BlueprintScreen(entry.path));
+                    int version = ltd.opens.mg.mc.client.gui.blueprint.io.BlueprintIO.getFormatVersion(entry.path);
+                    if (version < 4) {
+                        Minecraft.getInstance().setScreen(new VersionWarningScreen(this, entry.path, version));
+                    } else {
+                        Minecraft.getInstance().setScreen(new BlueprintScreen(this, entry.path));
+                    }
                 } else {
-                    Minecraft.getInstance().setScreen(new BlueprintScreen(entry.name));
+                    // Remote blueprints - version check will happen in BlueprintScreen.loadFromNetwork
+                    Minecraft.getInstance().setScreen(new BlueprintScreen(this, entry.name));
                 }
             }
         }).bounds(startX, buttonY, buttonWidth, buttonHeight).build();
@@ -419,9 +427,14 @@ public class BlueprintSelectionScreen extends Screen {
                 // Double click
                 BlueprintSelectionScreen.this.setFocused(null);
                 if (this.path != null) {
-                    Minecraft.getInstance().setScreen(new BlueprintScreen(this.path));
+                    int version = BlueprintIO.getFormatVersion(this.path);
+                    if (version < 4) {
+                        Minecraft.getInstance().setScreen(new VersionWarningScreen(BlueprintSelectionScreen.this, this.path, version));
+                    } else {
+                        Minecraft.getInstance().setScreen(new BlueprintScreen(BlueprintSelectionScreen.this, this.path));
+                    }
                 } else {
-                    Minecraft.getInstance().setScreen(new BlueprintScreen(this.name));
+                    Minecraft.getInstance().setScreen(new BlueprintScreen(BlueprintSelectionScreen.this, this.name));
                 }
                 return true;
             }

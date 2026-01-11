@@ -7,14 +7,18 @@ import ltd.opens.mg.mc.client.gui.blueprint.manager.*;
 import ltd.opens.mg.mc.core.blueprint.NodeDefinition;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BlueprintMenu {
-    private String searchQuery = "";
+    private EditBox searchEditBox;
     private List<BlueprintSearchManager.SearchResult> filteredResults = new ArrayList<>();
     private int selectedIndex = -1;
     private double scrollAmount = 0;
@@ -27,25 +31,54 @@ public class BlueprintMenu {
     private String currentPath = BlueprintCategoryManager.ROOT_PATH;
 
     // Getters and Setters for state
-    public String getSearchQuery() { return searchQuery; }
-    public void setSearchQuery(String searchQuery) { this.searchQuery = searchQuery; }
-    public List<BlueprintSearchManager.SearchResult> getFilteredResults() { return filteredResults; }
-    public int getSelectedIndex() { return selectedIndex; }
-    public void setSelectedIndex(int selectedIndex) { this.selectedIndex = selectedIndex; }
-    public double getScrollAmount() { return scrollAmount; }
-    public void setScrollAmount(double scrollAmount) { this.scrollAmount = scrollAmount; }
-    public double getSubScrollAmount() { return subScrollAmount; }
-    public void setSubScrollAmount(double subScrollAmount) { this.subScrollAmount = subScrollAmount; }
-    public int getMenuWidth() { return menuWidth; }
-    public int getSubMenuWidth() { return subMenuWidth; }
-    public int getLastMenuContentY() { return lastMenuContentY; }
-    public int getLastMenuHeight() { return lastMenuHeight; }
-    public String getHoveredCategory() { return hoveredCategory; }
-    public String getCurrentPath() { return currentPath; }
-    public void setCurrentPath(String currentPath) { this.currentPath = currentPath; }
+    public String getSearchQuery() { 
+        return searchEditBox != null ? searchEditBox.getValue() : ""; 
+    }
+    public void setSearchQuery(String searchQuery) { 
+        if (searchEditBox != null) {
+            searchEditBox.setValue(searchQuery);
+        }
+    }
+    
+    public EditBox getSearchEditBox() {
+         return searchEditBox;
+     }
+
+     public List<BlueprintSearchManager.SearchResult> getFilteredResults() { return filteredResults; }
+     public int getSelectedIndex() { return selectedIndex; }
+     public void setSelectedIndex(int selectedIndex) { this.selectedIndex = selectedIndex; }
+     public double getScrollAmount() { return scrollAmount; }
+     public void setScrollAmount(double scrollAmount) { this.scrollAmount = scrollAmount; }
+     public double getSubScrollAmount() { return subScrollAmount; }
+     public void setSubScrollAmount(double subScrollAmount) { this.subScrollAmount = subScrollAmount; }
+     public int getMenuWidth() { return menuWidth; }
+     public int getSubMenuWidth() { return subMenuWidth; }
+     public int getLastMenuContentY() { return lastMenuContentY; }
+     public int getLastMenuHeight() { return lastMenuHeight; }
+     public String getHoveredCategory() { return hoveredCategory; }
+     public String getCurrentPath() { return currentPath; }
+     public void setCurrentPath(String currentPath) { this.currentPath = currentPath; }
+
+     public void init(Font font) {
+        if (searchEditBox == null) {
+            // 这里我们先随便给个位置和大小，实际渲染时我们会设置它
+            searchEditBox = new EditBox(font, 0, 0, 150, 25, Component.empty());
+            searchEditBox.setBordered(false);
+            searchEditBox.setMaxLength(100);
+            searchEditBox.setFocused(true);
+            searchEditBox.setCanLoseFocus(false);
+            searchEditBox.setTextColor(0xFFFFFFFF);
+        }
+    }
+
+    public void tick() {
+        // EditBox in this version doesn't seem to need a tick() call
+    }
 
     public void reset() {
-        searchQuery = "";
+        if (searchEditBox != null) {
+            searchEditBox.setValue("");
+        }
         filteredResults.clear();
         selectedIndex = -1;
         scrollAmount = 0;
@@ -55,7 +88,7 @@ public class BlueprintMenu {
     }
 
     public void updateSearch() {
-        filteredResults = BlueprintSearchManager.performSearch(searchQuery);
+        filteredResults = BlueprintSearchManager.performSearch(getSearchQuery());
         if (!filteredResults.isEmpty()) {
             selectedIndex = 0;
         } else {
@@ -78,6 +111,7 @@ public class BlueprintMenu {
     }
 
     public void renderNodeMenu(GuiGraphics guiGraphics, Font font, int mouseX, int mouseY, double menuX, double menuY, int screenWidth, int screenHeight) {
+        init(font);
         int x = (int) menuX;
         int y = (int) menuY;
         
@@ -89,14 +123,14 @@ public class BlueprintMenu {
         
         // 2. Render Search Box
         int searchHeight = 25;
-        BlueprintMenuRenderer.renderSearchBox(guiGraphics, font, x, y, width, searchHeight, searchQuery, Component.translatable("gui.mgmc.blueprint_editor.search_hint"));
+        BlueprintMenuRenderer.renderSearchBox(guiGraphics, font, x, y, width, searchHeight, this, Component.translatable("gui.mgmc.blueprint_editor.search_hint"));
 
         int contentY = y + searchHeight + 2;
         int maxVisibleItems = 12;
         int itemHeight = 18;
-        int pathBarHeight = (searchQuery.isEmpty()) ? 12 : 0;
+        int pathBarHeight = (getSearchQuery().isEmpty()) ? 12 : 0;
         
-        if (!searchQuery.isEmpty()) {
+        if (!getSearchQuery().isEmpty()) {
             renderSearchResults(guiGraphics, font, x, contentY, width, screenHeight, mouseX, mouseY, maxVisibleItems, itemHeight);
         } else {
             renderCategoryMode(guiGraphics, font, x, contentY, width, screenHeight, mouseX, mouseY, maxVisibleItems, itemHeight, pathBarHeight, screenWidth);
@@ -104,7 +138,7 @@ public class BlueprintMenu {
     }
 
     private void calculateLayout(Font font, int screenWidth) {
-        if (!searchQuery.isEmpty()) {
+        if (!getSearchQuery().isEmpty()) {
             int maxW = 180;
             for (BlueprintSearchManager.SearchResult res : filteredResults) {
                 int itemW = res.isCategory() ? 
@@ -158,18 +192,18 @@ public class BlueprintMenu {
                 
                 if (res.isCategory()) {
                     String catName = Component.translatable(res.category).getString();
-                    BlueprintMenuRenderer.renderHighlightedString(guiGraphics, font, catName, x + 8, itemY + 4, 0xFF88FFFF, searchQuery);
+                    BlueprintMenuRenderer.renderHighlightedString(guiGraphics, font, catName, x + 8, itemY + 4, 0xFF88FFFF, getSearchQuery());
                     guiGraphics.drawString(font, ">", x + width - 15, itemY + 4, 0xFF888888, false);
                 } else {
                     NodeDefinition def = res.node;
                     String name = Component.translatable(def.name()).getString();
-                    BlueprintMenuRenderer.renderHighlightedString(guiGraphics, font, name, x + 8, itemY + 4, 0xFFFFFFFF, searchQuery);
+                    BlueprintMenuRenderer.renderHighlightedString(guiGraphics, font, name, x + 8, itemY + 4, 0xFFFFFFFF, getSearchQuery());
                     
                     if (res.matchedType != null) {
                         guiGraphics.drawString(font, "[TYPE: " + res.matchedType + "]", x + 8 + font.width(name) + 4, itemY + 4, 0xFF55FF55, false);
                     }
                     String cat = Component.translatable(def.category()).getString();
-                    BlueprintMenuRenderer.renderHighlightedString(guiGraphics, font, cat, x + width - font.width(cat) - 8, itemY + 4, 0xFF666666, searchQuery);
+                    BlueprintMenuRenderer.renderHighlightedString(guiGraphics, font, cat, x + width - font.width(cat) - 8, itemY + 4, 0xFF666666, getSearchQuery());
                 }
             }
             guiGraphics.disableScissor();
@@ -327,16 +361,16 @@ public class BlueprintMenu {
         BlueprintMenuInputHandler.handleMouseScrolled(this, mouseX, mouseY, menuX, menuY, screenWidth, screenHeight, amount);
     }
 
-    public boolean keyPressed(int key) {
-        return BlueprintMenuInputHandler.handleKeyPressed(this, key);
+    public boolean keyPressed(KeyEvent event) {
+        return BlueprintMenuInputHandler.handleKeyPressed(this, event);
     }
 
-    public boolean charTyped(char codePoint) {
-        return BlueprintMenuInputHandler.handleCharTyped(this, codePoint);
+    public boolean charTyped(CharacterEvent event) {
+        return BlueprintMenuInputHandler.handleCharTyped(this, event);
     }
 
-    public NodeDefinition onClickNodeMenu(double mouseX, double mouseY, double menuX, double menuY, int screenWidth, int screenHeight) {
-        return BlueprintMenuInputHandler.handleOnClickNodeMenu(this, mouseX, mouseY, menuX, menuY, screenWidth, screenHeight);
+    public NodeDefinition onClickNodeMenu(MouseButtonEvent event, double menuX, double menuY, int screenWidth, int screenHeight) {
+        return BlueprintMenuInputHandler.handleOnClickNodeMenu(this, event, menuX, menuY, screenWidth, screenHeight);
     }
 
     public boolean isClickInsideNodeMenu(double mouseX, double mouseY, double menuX, double menuY, int screenWidth, int screenHeight) {
@@ -345,8 +379,8 @@ public class BlueprintMenu {
 
     public enum ContextMenuResult { DELETE, BREAK_LINKS, NONE }
 
-    public ContextMenuResult onClickContextMenu(double mouseX, double mouseY, double menuX, double menuY) {
-        return BlueprintMenuInputHandler.handleOnClickContextMenu(mouseX, mouseY, menuX, menuY);
+    public ContextMenuResult onClickContextMenu(MouseButtonEvent event, double menuX, double menuY) {
+        return BlueprintMenuInputHandler.handleOnClickContextMenu(event, menuX, menuY);
     }
 }
 

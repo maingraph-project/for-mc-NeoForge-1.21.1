@@ -135,6 +135,10 @@ public class BlueprintIO {
             }
             ui.add("connections", connArray);
             root.add("ui", ui);
+            root.addProperty("format_version", 4);
+            if (!root.has("_version")) {
+                root.addProperty("_version", 0);
+            }
 
             return GSON.toJson(root);
         } catch (Exception e) {
@@ -170,6 +174,26 @@ public class BlueprintIO {
         return null;
     }
 
+    public static int getFormatVersion(String json) {
+        try {
+            if (json == null || json.isEmpty()) return 1;
+            JsonObject root = JsonParser.parseString(json).getAsJsonObject();
+            return root.has("format_version") ? root.get("format_version").getAsInt() : 1;
+        } catch (Exception e) {
+            return 1;
+        }
+    }
+
+    public static int getFormatVersion(Path dataFile) {
+        try {
+            if (!Files.exists(dataFile)) return 1;
+            String json = Files.readString(dataFile);
+            return getFormatVersion(json);
+        } catch (Exception e) {
+            return 1;
+        }
+    }
+
     public static void load(Path dataFile, List<GuiNode> nodes, List<GuiConnection> connections) {
         // Special Case: "wwssadadab" - Lock blueprint and tile nodes
         if (dataFile != null && dataFile.getFileName().toString().startsWith("wwssadadab")) {
@@ -187,12 +211,18 @@ public class BlueprintIO {
     }
 
     public static void loadFromString(String json, List<GuiNode> nodes, List<GuiConnection> connections) {
+        loadFromString(json, nodes, connections, true);
+    }
+
+    public static void loadFromString(String json, List<GuiNode> nodes, List<GuiConnection> connections, boolean clear) {
         try {
             if (json == null || json.isEmpty()) return;
             JsonObject root = JsonParser.parseString(json).getAsJsonObject();
             
-            nodes.clear();
-            connections.clear();
+            if (clear) {
+                nodes.clear();
+                connections.clear();
+            }
             
             Map<String, GuiNode> nodeMap = new HashMap<>();
             

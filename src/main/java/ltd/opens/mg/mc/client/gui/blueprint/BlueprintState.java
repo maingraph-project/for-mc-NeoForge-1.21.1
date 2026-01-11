@@ -13,6 +13,15 @@ public class BlueprintState {
     public final List<GuiNode> nodes = new ArrayList<>();
     public final List<GuiConnection> connections = new ArrayList<>();
     
+    // Selection state
+    public final List<GuiNode> selectedNodes = new ArrayList<>();
+    public boolean isBoxSelecting = false;
+    public double boxSelectStartX, boxSelectStartY;
+    public double boxSelectEndX, boxSelectEndY;
+
+    // Clipboard for copy/paste
+    public static String clipboardJson = null;
+
     public GuiNode draggingNode = null;
     public float dragOffsetX, dragOffsetY;
 

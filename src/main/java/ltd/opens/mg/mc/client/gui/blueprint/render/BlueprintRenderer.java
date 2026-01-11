@@ -1,6 +1,7 @@
 package ltd.opens.mg.mc.client.gui.blueprint.render;
 
 
+import ltd.opens.mg.mc.client.gui.blueprint.BlueprintState;
 import ltd.opens.mg.mc.client.gui.components.*;
 import net.minecraft.client.gui.GuiGraphics;
 import java.util.List;
@@ -128,6 +129,25 @@ public class BlueprintRenderer {
         guiGraphics.fill(0, -1, (int)len, 1, color);
         
         guiGraphics.pose().popMatrix();
+    }
+
+    public static void drawSelectionBox(GuiGraphics guiGraphics, BlueprintState state) {
+        if (!state.isBoxSelecting) return;
+
+        int x1 = (int) state.boxSelectStartX;
+        int y1 = (int) state.boxSelectStartY;
+        int x2 = (int) state.boxSelectEndX;
+        int y2 = (int) state.boxSelectEndY;
+
+        int minX = Math.min(x1, x2);
+        int minY = Math.min(y1, y2);
+        int maxX = Math.max(x1, x2);
+        int maxY = Math.max(y1, y2);
+
+        // Draw translucent fill
+        guiGraphics.fill(minX, minY, maxX, maxY, 0x334488FF);
+        // Draw outline
+        guiGraphics.renderOutline(minX, minY, maxX - minX, maxY - minY, 0xFF4488FF);
     }
 }
 

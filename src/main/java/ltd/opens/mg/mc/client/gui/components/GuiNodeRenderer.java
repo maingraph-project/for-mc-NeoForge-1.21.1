@@ -25,9 +25,13 @@ public class GuiNodeRenderer {
         boolean isHovered = worldMouseX >= node.x && worldMouseX <= node.x + node.width && worldMouseY >= node.y && worldMouseY <= node.y + node.height;
         
         // Simplified border: only draw if hovered or at reasonable zoom
-        if (isHovered || zoom > 0.4f) {
-            int borderColor = isHovered ? 0xFFFFFFFF : 0xFF333333;
+        if (isHovered || node.isSelected || zoom > 0.4f) {
+            int borderColor = node.isSelected ? 0xFFFFCC00 : (isHovered ? 0xFFFFFFFF : 0xFF333333);
             guiGraphics.renderOutline((int) node.x, (int) node.y, (int) node.width, (int) node.height, borderColor);
+            if (node.isSelected) {
+                // Thicker highlight for selection
+                guiGraphics.renderOutline((int) node.x - 1, (int) node.y - 1, (int) node.width + 2, (int) node.height + 2, borderColor);
+            }
         }
         
         // Header

@@ -19,6 +19,7 @@ public class GuiNode {
     public float height = 60;
     public float headerHeight = 15;
     public JsonObject inputValues = new JsonObject();
+    public boolean isSelected = false;
 
     public List<NodePort> inputs = new ArrayList<>();
     public List<NodePort> outputs = new ArrayList<>();

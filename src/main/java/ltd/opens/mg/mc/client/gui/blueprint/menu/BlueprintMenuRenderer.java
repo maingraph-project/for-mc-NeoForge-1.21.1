@@ -2,6 +2,7 @@ package ltd.opens.mg.mc.client.gui.blueprint.menu;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
 
 public class BlueprintMenuRenderer {
@@ -109,13 +110,25 @@ public class BlueprintMenuRenderer {
         guiGraphics.renderOutline(x, y, width, height, 0xFF444444);
     }
 
-    public static void renderSearchBox(GuiGraphics guiGraphics, Font font, int x, int y, int width, int height, String query, Component hint) {
+    public static void renderSearchBox(GuiGraphics guiGraphics, Font font, int x, int y, int width, int height, BlueprintMenu menu, Component hint) {
         guiGraphics.fill(x, y, x + width, y + height, 0xF0121212);
         guiGraphics.renderOutline(x, y, width, height, 0xFF555555);
         
-        String displaySearch = query.isEmpty() ? hint.getString() : query;
-        int searchColor = query.isEmpty() ? 0xFF888888 : 0xFFFFFFFF;
-        guiGraphics.drawString(font, displaySearch + (System.currentTimeMillis() / 500 % 2 == 0 ? "_" : ""), x + 8, y + (height - 9) / 2, searchColor, false);
+        EditBox editBox = menu.getSearchEditBox();
+        if (editBox == null) return;
+
+        // 设置 EditBox 的实际位置和大小，以便正确渲染和处理点击
+        editBox.setX(x + 8);
+        editBox.setY(y + (height - 9) / 2);
+        editBox.setWidth(width - 16);
+        // editBox.setHeight(height); // EditBox height usually fixed by font
+
+        if (editBox.getValue().isEmpty()) {
+            guiGraphics.drawString(font, hint, x + 8, y + (height - 9) / 2, 0xFF888888, false);
+        }
+        
+        // 使用 EditBox 原生的渲染逻辑，它会处理光标和选择高亮
+        editBox.render(guiGraphics, 0, 0, 0);
     }
 }
 

@@ -40,7 +40,9 @@
   "gui.mgmc.blueprint_editor.save": "保存",
   "gui.mgmc.blueprint_editor.reset_view": "重置视角",
   "gui.mgmc.blueprint_editor.stats": "节点数: %d | 连线数: %d",
-  "gui.mgmc.blueprint_editor.instructions": "右键点击添加节点。拖拽端口进行连接。按 DEL 键删除。",
+  "gui.mgmc.blueprint_editor.instructions": "右键点击添加节点。拖拽端口进行连接。按 DEL 键删除。支持框选、多选、复制粘贴。",
+  "gui.mgmc.notification.copied": "已复制 %d 个节点",
+  "gui.mgmc.notification.pasted": "已粘贴 %d 个节点",
   "gui.mgmc.blueprint_editor.modal.select_type": "选择类型",
   "gui.mgmc.blueprint_editor.modal.enter_value": "输入 %s",
   "command.mgmc.mgrun.blueprint_not_found": "未找到蓝图 '%s'。",
@@ -229,5 +231,11 @@
   "gui.mgmc.blueprint_editor.auto_layout": "整理",
   "gui.mgmc.blueprint_editor.layout_complete": "布局整理完成！",
   "gui.mgmc.blueprint_editor.search_hint": "搜索节点...",
-  "gui.mgmc.blueprint_editor.no_nodes_found": "未找到相关节点"
+  "gui.mgmc.blueprint_editor.no_nodes_found": "未找到相关节点",
+  "node.mgmc.string_format.name": "字符串格式化",
+  "gui.mgmc.version_warning.title": "蓝图版本警告",
+  "gui.mgmc.version_warning.message": "该蓝图的版本为 v%d，而当前编辑器版本为 v%d。直接打开可能会导致部分功能无法正常工作或蓝图损坏。建议复制后在新版本中打开。",
+  "gui.mgmc.version_warning.copy_and_open": "复制后打开 (推荐)",
+  "gui.mgmc.version_warning.exit": "退出",
+  "gui.mgmc.version_warning.open_anyway": "执意打开"
 }
