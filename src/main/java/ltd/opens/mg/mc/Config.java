@@ -14,6 +14,10 @@ public class Config {
             .comment("单次蓝图运行最大执行节点数，防止超大规模循环导致卡顿")
             .define("max_node_executions", 5000);
 
+    private static final ModConfigSpec.ConfigValue<Boolean> ALLOW_SERVER_RUN_COMMAND_NODE_VAL = BUILDER
+            .comment("是否允许保存含有 '以服务器身份运行命令' 节点的蓝图。禁用此项可提高安全性。")
+            .define("allow_server_run_command_node", true);
+
     static final ModConfigSpec SPEC = BUILDER.build();
 
     public static int getMaxRecursionDepth() {
@@ -22,5 +26,9 @@ public class Config {
 
     public static int getMaxNodeExecutions() {
         return MAX_NODE_EXECUTIONS_VAL.get();
+    }
+
+    public static boolean isServerRunCommandNodeAllowed() {
+        return ALLOW_SERVER_RUN_COMMAND_NODE_VAL.get();
     }
 }

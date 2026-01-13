@@ -54,6 +54,24 @@ public class BlueprintManager {
         return !name.contains("..") && !name.contains("/") && !name.contains("\\") && name.matches("^[a-zA-Z0-9_\\-\\.]+$");
     }
 
+    private boolean containsNodeOfType(JsonObject blueprint, String typeId) {
+        if (!blueprint.has("execution") || !blueprint.get("execution").isJsonArray()) {
+            return false;
+        }
+        com.google.gson.JsonArray executionNodes = blueprint.getAsJsonArray("execution");
+        for (com.google.gson.JsonElement e : executionNodes) {
+            if (!e.isJsonObject()) continue;
+            JsonObject node = e.getAsJsonObject();
+            if (node.has("type")) {
+                String type = node.get("type").getAsString();
+                if (type.equals(typeId) || type.endsWith(":" + typeId)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public Path getBlueprintsDir(ServerLevel level) {
         Path dir = level.getServer().getWorldPath(LevelResource.ROOT).resolve("mgmc_blueprints");
         if (!Files.exists(dir)) {
@@ -126,6 +144,14 @@ public class BlueprintManager {
                 }
 
                 JsonObject obj = JsonParser.parseString(data).getAsJsonObject();
+
+                // Security check: run_command_as_server node
+                if (!ltd.opens.mg.mc.Config.isServerRunCommandNodeAllowed()) {
+                    if (containsNodeOfType(obj, "run_command_as_server")) {
+                        return new SaveResult(false, "Security violation: 'Run Command as Server' node is disabled in server configuration.", -1);
+                    }
+                }
+
                 long newVersion = (currentVersion == -1 ? 0 : currentVersion) + 1;
                 obj.addProperty("_version", newVersion);
                 obj.addProperty("format_version", 5);
