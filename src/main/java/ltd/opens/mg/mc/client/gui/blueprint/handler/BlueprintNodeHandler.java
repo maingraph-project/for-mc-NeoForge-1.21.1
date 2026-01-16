@@ -178,8 +178,6 @@ public class BlueprintNodeHandler {
                 return true;
             }
             if (node.isMouseOverHeader(worldMouseX, worldMouseY) || (node.definition.properties().containsKey("is_marker") && worldMouseX >= node.x && worldMouseX <= node.x + node.width && worldMouseY >= node.y && worldMouseY <= node.y + node.height)) {
-                state.historyPendingState = BlueprintIO.serialize(state.nodes, state.connections);
-                
                 if (isDouble && node.definition.properties().containsKey("is_marker")) {
                     // Double click marker to edit
                     state.editingMarkerNode = node;
@@ -223,6 +221,11 @@ public class BlueprintNodeHandler {
                 state.startMouseY = node.y;
                 state.nodes.remove(i);
                 state.nodes.add(node);
+
+                // Capture state AFTER z-index change to avoid redundant history on simple clicks
+                state.historyPendingState = BlueprintIO.serialize(state.nodes, state.connections);
+
+                state.markDirty();
                 return true;
             }
         }

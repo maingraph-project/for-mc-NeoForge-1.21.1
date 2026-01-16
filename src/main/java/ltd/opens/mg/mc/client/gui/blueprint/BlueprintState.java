@@ -32,6 +32,7 @@ public class BlueprintState {
 
     public GuiNode draggingNode = null;
     public float dragOffsetX, dragOffsetY;
+    public float startNodeX, startNodeY;
 
     public GuiNode connectionStartNode = null;
     public String connectionStartPort = null;

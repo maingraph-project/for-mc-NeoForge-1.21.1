@@ -46,6 +46,14 @@ public class HistoryManager {
         if (undoStack.isEmpty()) return;
         
         String currentState = BlueprintIO.serialize(nodes, connections);
+        
+        // Skip identical states at the top of the stack
+        while (!undoStack.isEmpty() && undoStack.peek().equals(currentState)) {
+            undoStack.pop();
+        }
+
+        if (undoStack.isEmpty()) return;
+
         if (currentState != null) {
             redoStack.push(currentState);
         }
@@ -59,6 +67,14 @@ public class HistoryManager {
         if (redoStack.isEmpty()) return;
         
         String currentState = BlueprintIO.serialize(nodes, connections);
+        
+        // Skip identical states at the top of the stack
+        while (!redoStack.isEmpty() && redoStack.peek().equals(currentState)) {
+            redoStack.pop();
+        }
+
+        if (redoStack.isEmpty()) return;
+
         if (currentState != null) {
             undoStack.push(currentState);
         }
