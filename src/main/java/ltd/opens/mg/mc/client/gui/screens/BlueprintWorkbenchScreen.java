@@ -130,17 +130,24 @@ public class BlueprintWorkbenchScreen extends AbstractContainerScreen<BlueprintW
             graphics.renderFakeItem(heldItem, slotX + 1, slotY + 1);
             graphics.renderItemDecorations(this.font, heldItem, slotX + 1, slotY + 1);
         } else {
-            // 如果手空，画个淡淡的提示
-            graphics.drawString(this.font, Component.literal("空"), slotX + 4, slotY + 5, 0x888888, false);
+            // 如果手空，画个淡淡的提示 (增加不透明度)
+            graphics.drawString(this.font, Component.literal("空"), slotX + 4, slotY + 5, 0xFF888888, false);
         }
         
-        graphics.drawString(this.font, Component.literal("手持物品"), x + 10, y + 22, 0x404040, false);
+        graphics.drawString(this.font, Component.literal("手持物品"), x + 10, y + 22, 0xFF404040, false);
 
         // 3. 绘制蓝图列表
         renderPanel(graphics, x + 55, y + 35, 85, 90, "已绑定蓝图");
         renderPanel(graphics, x + 160, y + 35, 85, 90, "蓝图库");
 
-        graphics.drawString(this.font, this.title, x + 8, y + 8, 0x404040, false);
+        graphics.drawString(this.font, this.title, x + 8, y + 8, 0xFF404040, false);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
+        if (this.boundBlueprintsList.mouseScrolled(mouseX, mouseY, horizontal, vertical)) return true;
+        if (this.allBlueprintsList.mouseScrolled(mouseX, mouseY, horizontal, vertical)) return true;
+        return super.mouseScrolled(mouseX, mouseY, horizontal, vertical);
     }
 
     private void renderPanel(GuiGraphics g, int x, int y, int w, int h, String label) {
@@ -149,7 +156,7 @@ public class BlueprintWorkbenchScreen extends AbstractContainerScreen<BlueprintW
         g.fill(x, y, x + w + 1, y + h + 1, 0xFFFFFFFF); // 白色边
         g.fill(x, y, x + w, y + h, 0xFF8B8B8B); // 内部灰色
         
-        g.drawString(this.font, Component.literal(label), x, y - 10, 0x404040, false);
+        g.drawString(this.font, Component.literal(label), x, y - 10, 0xFF404040, false);
     }
 
     @Override
@@ -172,31 +179,36 @@ public class BlueprintWorkbenchScreen extends AbstractContainerScreen<BlueprintW
     private class BlueprintEntry extends ObjectSelectionList.Entry<BlueprintEntry> {
         final String path;
         public BlueprintEntry(String path) { this.path = path; }
+
         @Override
         public void renderContent(GuiGraphics guiGraphics, int index, int top, boolean isHovered, float partialTick) {
             int x = this.getX();
             int y = this.getY();
             if (y <= 0) y = top;
-            
+            int width = this.getWidth();
+            int height = this.getHeight();
+
             if (this == allBlueprintsList.getSelected()) {
-                guiGraphics.fill(x, y, x + allBlueprintsList.getRowWidth(), y + 18, 0xFFFFFFFF); // White selection
+                guiGraphics.fill(x, y, x + width, y + height, 0xFFFFFFFF); // 选中白色背景
                 String name = path;
                 if (name.endsWith(".json")) name = name.substring(0, name.length() - 5);
-                guiGraphics.drawString(minecraft.font, name, x + 4, y + 5, 0x404040, false); // Dark text when selected
+                guiGraphics.drawString(minecraft.font, name, x + 4, y + 5, 0xFF404040, false); // 选中时深色文字
             } else {
                 if (isHovered) {
-                    guiGraphics.fill(x, y, x + allBlueprintsList.getRowWidth(), y + 18, 0x44FFFFFF);
+                    guiGraphics.fill(x, y, x + width, y + height, 0x44FFFFFF); // 悬停半透明
                 }
                 String name = path;
                 if (name.endsWith(".json")) name = name.substring(0, name.length() - 5);
-                guiGraphics.drawString(minecraft.font, name, x + 4, y + 5, 0xFFFFFF, false);
+                guiGraphics.drawString(minecraft.font, name, x + 4, y + 5, 0xFFFFFFFF, false); // 普通白色文字
             }
         }
+
         @Override
         public boolean mouseClicked(MouseButtonEvent event, boolean isDouble) {
             allBlueprintsList.setSelected(this);
             return true;
         }
+
         @Override
         public Component getNarration() { return Component.literal(path); }
     }
@@ -221,32 +233,38 @@ public class BlueprintWorkbenchScreen extends AbstractContainerScreen<BlueprintW
     private class BoundEntry extends ObjectSelectionList.Entry<BoundEntry> {
         final String path;
         public BoundEntry(String path) { this.path = path; }
+
         @Override
         public void renderContent(GuiGraphics guiGraphics, int index, int top, boolean isHovered, float partialTick) {
             int x = this.getX();
-            int width = this.getWidth();
             int y = this.getY();
             if (y <= 0) y = top;
+            int width = this.getWidth();
+            int height = this.getHeight();
 
             if (isHovered) {
-                guiGraphics.fill(x, y, x + width, y + 18, 0x44FFFFFF);
+                guiGraphics.fill(x, y, x + width, y + height, 0x44FFFFFF);
             }
 
             String name = path;
             if (name.endsWith(".json")) name = name.substring(0, name.length() - 5);
-            guiGraphics.drawString(minecraft.font, name, x + 4, y + 5, 0xFFFFFF, false);
+            guiGraphics.drawString(minecraft.font, name, x + 4, y + 5, 0xFFFFFFFF, false);
             
             if (isHovered) {
                 guiGraphics.drawString(minecraft.font, "✕", x + width - 12, y + 5, 0xFFFF5555, false);
             }
         }
+
         @Override
         public boolean mouseClicked(MouseButtonEvent event, boolean isDouble) {
+            // 如果点击的是右侧的 X 按钮 (大致范围)
             if (event.x() > this.getX() + this.getWidth() - 15) {
                 NetworkService.getInstance().sendWorkbenchAction(WorkbenchActionPayload.Action.UNBIND, path);
+                return true;
             }
-            return true;
+            return false;
         }
+
         @Override
         public Component getNarration() { return Component.literal(path); }
     }
