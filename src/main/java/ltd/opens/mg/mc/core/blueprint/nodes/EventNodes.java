@@ -348,7 +348,7 @@ public class EventNodes {
                 double dz = player.getZ() - player.zo;
                 double distanceSq = dx * dx + dy * dy + dz * dz;
 
-                if (distanceSq > 0.0001) {
+                if (distanceSq > 1E-6) {
                     b.triggerUuid(player.getUUID().toString())
                      .triggerName(player.getName().getString())
                      .triggerEntity(player)
@@ -360,7 +360,7 @@ public class EventNodes {
                 double dx = player.getX() - player.xo;
                 double dy = player.getY() - player.yo;
                 double dz = player.getZ() - player.zo;
-                return (dx * dx + dy * dy + dz * dz > 0.0001) ? BlueprintRouter.PLAYERS_ID : null;
+                return (dx * dx + dy * dy + dz * dz > 1E-6) ? BlueprintRouter.PLAYERS_ID : null;
             },
             (node, portId, ctx) -> switch (portId) {
                 case NodePorts.XYZ -> ctx.triggerXYZ;
