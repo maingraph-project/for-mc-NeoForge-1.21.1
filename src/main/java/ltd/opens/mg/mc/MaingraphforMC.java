@@ -172,6 +172,12 @@ public class MaingraphforMC {
                 })
             )
             .then(Commands.literal("log")
+                .requires(s -> {
+                    if (s.getServer() != null && s.getEntity() instanceof ServerPlayer player) {
+                        return s.getServer().getProfilePermissions(new net.minecraft.server.players.NameAndId(player.getUUID(), player.getGameProfile().name())).level().id() >= 2;
+                    }
+                    return true;
+                })
                 .executes(context -> {
                     BlueprintManager manager = getServerManager();
                     if (manager != null) {

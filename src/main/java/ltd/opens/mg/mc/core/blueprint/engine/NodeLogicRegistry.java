@@ -128,10 +128,12 @@ public class NodeLogicRegistry {
             manager.addLog(blueprintName, nodeId, "ERROR", message);
         }
 
-        // Send to client if possible
+        // Send to client if possible (Only for Creative mode players to avoid disturbing normal gameplay)
         if (ctx.triggerEntity instanceof net.minecraft.server.level.ServerPlayer player) {
-            player.sendSystemMessage(net.minecraft.network.chat.Component.literal("§c[MGMC Error] §f" + blueprintName + " (Node: " + nodeId + "): " + message));
-            player.connection.send(new ltd.opens.mg.mc.network.payloads.RuntimeErrorReportPayload(blueprintName, nodeId, message));
+            if (player.isCreative()) {
+                player.sendSystemMessage(net.minecraft.network.chat.Component.literal("§c[MGMC Error] §f" + blueprintName + " (Node: " + nodeId + "): " + message));
+                player.connection.send(new ltd.opens.mg.mc.network.payloads.RuntimeErrorReportPayload(blueprintName, nodeId, message));
+            }
         }
     }
 
