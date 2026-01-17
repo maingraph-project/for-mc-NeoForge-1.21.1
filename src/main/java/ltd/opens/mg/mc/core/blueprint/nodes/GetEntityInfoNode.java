@@ -96,6 +96,20 @@ public class GetEntityInfoNode {
                 } catch (Exception ignored) {}
                 return null;
             });
+
+        // 4. self (获取当前挂载的目标)
+        NodeHelper.setup("self", "node.mgmc.self.name")
+            .category("node_category.mgmc.variable.entity")
+            .color(NodeThemes.COLOR_NODE_ENTITY)
+            .output(NodePorts.ENTITY, "node.mgmc.port.entity", NodeDefinition.PortType.ENTITY, NodeThemes.COLOR_PORT_ENTITY)
+            .output(NodePorts.UUID, "node.mgmc.port.uuid", NodeDefinition.PortType.UUID, NodeThemes.COLOR_PORT_UUID)
+            .registerValue((node, pinId, ctx) -> {
+                Entity self = ctx.triggerEntity;
+                if (self == null) return null;
+                if (NodePorts.ENTITY.equals(pinId)) return self;
+                if (NodePorts.UUID.equals(pinId)) return self.getUUID().toString();
+                return null;
+            });
     }
 
     private static Object getEntityInfo(Entity entity, UUID uuid, String pinId, NodeContext ctx) {
