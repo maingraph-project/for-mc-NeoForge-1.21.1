@@ -97,6 +97,7 @@
   "node.mgmc.get_list_item.name": "Get List Item",
   "node.mgmc.list_add.name": "Add to List",
   "node.mgmc.list_remove.name": "Remove from List",
+  "node.mgmc.self.name": "Self (Current Mount)",
   "node.mgmc.list_length.name": "Get List Length",
   "gui.mgmc.workbench.title": "Blueprint Workbench",
   "gui.mgmc.workbench.bound_blueprints": "Bound Blueprints",

@@ -98,6 +98,7 @@
   "node.mgmc.get_list_item.name": "获取列表项",
   "node.mgmc.list_add.name": "添加到列表",
   "node.mgmc.list_remove.name": "从列表删除",
+  "node.mgmc.self.name": "Self (获取当前挂载目标)",
   "node.mgmc.list_length.name": "获取列表长度",
   "gui.mgmc.workbench.title": "蓝图工作台",
   "gui.mgmc.workbench.bound_blueprints": "已绑定蓝图",
