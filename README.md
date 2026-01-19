@@ -6,9 +6,9 @@
 
 ---
 
-Official Website: [mc.maingraph.opens.ltd](https://mc.maingraph.opens.ltd)
+Official Website: [https://mc.maingraph.nb6.ltd/](https://mc.maingraph.nb6.ltd/)
 
-For detailed tutorials, please refer to [zhcn-docs.mc.maingraph.opens.ltd](http://zhcn-docs.mc.maingraph.opens.ltd/) (Note: Documentation is currently in Chinese).
+For detailed tutorials, please refer to [http://zhcn-docs.mc.maingraph.nb6.ltd/](http://zhcn-docs.mc.maingraph.nb6.ltd/)(Note: Documentation is currently in Chinese).
 
 ---
 # Compatibility of Maingraph for MC
