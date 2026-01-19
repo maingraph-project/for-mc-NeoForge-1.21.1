@@ -52,7 +52,9 @@ public class ViewManager {
     }
 
     public void resetView() {
-        state.viewport.set(0, 0, 1.0f);
-        state.isAnimatingView = false;
+        targetPanX = 0;
+        targetPanY = 0;
+        targetZoom = 1.0f;
+        state.isAnimatingView = true;
     }
 }

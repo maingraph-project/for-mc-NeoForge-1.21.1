@@ -21,6 +21,14 @@ public class LayoutManager {
         if (nodes.isEmpty()) return;
         state.historyManager.pushHistory();
 
+        // 记录动画开始前的状态
+        for (GuiNode node : nodes) {
+            node.targetX = node.x;
+            node.targetY = node.y;
+            node.isAnimatingPos = true;
+        }
+        state.isAnimatingLayout = true;
+
         // 1. 分层 (Sugiyama 算法第一步：拓扑排序分配层级)
         Map<GuiNode, Integer> nodeToLayer = new HashMap<>();
         Set<GuiNode> remaining = new HashSet<>(nodes);
@@ -152,8 +160,8 @@ public class LayoutManager {
             float currentY = -totalLayerHeight / 2f; // 垂直居中
             
             for (GuiNode node : layerNodes) {
-                node.x = currentX;
-                node.y = currentY;
+                node.targetX = currentX;
+                node.targetY = currentY;
                 currentY += node.height + verticalPadding;
             }
             
@@ -162,6 +170,34 @@ public class LayoutManager {
 
         state.markDirty();
         state.showNotification(Component.translatable("gui.mgmc.blueprint_editor.layout_complete").getString());
+    }
+
+    public void tick() {
+        if (!state.isAnimatingLayout) return;
+
+        boolean anyAnimating = false;
+        float smoothing = 0.2f;
+
+        for (GuiNode node : state.nodes) {
+            if (node.isAnimatingPos) {
+                float dx = node.targetX - node.x;
+                float dy = node.targetY - node.y;
+
+                if (Math.abs(dx) < 0.1f && Math.abs(dy) < 0.1f) {
+                    node.x = node.targetX;
+                    node.y = node.targetY;
+                    node.isAnimatingPos = false;
+                } else {
+                    node.x += dx * smoothing;
+                    node.y += dy * smoothing;
+                    anyAnimating = true;
+                }
+            }
+        }
+
+        if (!anyAnimating) {
+            state.isAnimatingLayout = false;
+        }
     }
 
     private float getAverageParentY(GuiNode node, List<GuiConnection> connections) {

@@ -15,6 +15,7 @@ public class BlueprintState {
     // UI State
     public GuiNode focusedNode;
     public boolean isAnimatingView = false;
+    public boolean isAnimatingLayout = false;
 
     public final List<GuiNode> nodes = new ArrayList<>();
     public final List<GuiConnection> connections = new ArrayList<>();
@@ -111,6 +112,7 @@ public class BlueprintState {
         if (highlightTimer > 0) highlightTimer--;
         if (notificationTimer > 0) notificationTimer--;
         viewManager.tick();
+        layoutManager.tick();
 
         // Confirm progress logic (Long press Enter or Mouse for history)
         if (showQuickSearch && quickSearchEditBox != null && quickSearchEditBox.getValue().isEmpty()) {

@@ -15,6 +15,8 @@ public class GuiNode {
     public NodeDefinition definition;
     public String title;
     public float x, y;
+    public float targetX, targetY;
+    public boolean isAnimatingPos = false;
     public int color;
     public float width = 120;
     public float height = 60;
@@ -34,6 +36,8 @@ public class GuiNode {
         this.title = def.name();
         this.x = x;
         this.y = y;
+        this.targetX = x;
+        this.targetY = y;
         this.color = def.color();
         
         for (NodeDefinition.PortDefinition p : def.inputs()) {
