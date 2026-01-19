@@ -191,7 +191,12 @@ public class BlueprintScreen extends Screen {
             int popupX = (this.width - popupW) / 2;
             int popupY = 40; // Just below top bar
             
-            float alpha = Math.min(1.0f, state.notificationTimer / 10.0f);
+            float alpha = 1.0f;
+            if (state.notificationTimer < 5) {
+                alpha = state.notificationTimer / 5.0f; // Fade out in 0.25s
+            }
+            alpha = Math.max(0.0f, Math.min(1.0f, alpha));
+            
             int alphaInt = (int)(alpha * 255);
             int bgColor = (alphaInt << 24) | 0x222222;
             int textColor = (alphaInt << 24) | 0xFFFFFF;
@@ -200,8 +205,10 @@ public class BlueprintScreen extends Screen {
             guiGraphics.fill(popupX, popupY, popupX + popupW, popupY + popupH, bgColor);
             guiGraphics.renderOutline(popupX, popupY, popupW, popupH, borderColor);
             guiGraphics.drawString(font, state.notificationMessage, popupX + 10, popupY + (popupH - 9) / 2, textColor, false);
-            
-            state.notificationTimer--;
+
+            // Draw close "X" indicator
+            int closeColor = (alphaInt << 24) | 0x888888;
+            guiGraphics.drawString(font, "×", popupX + popupW - 12, popupY + (popupH - 9) / 2, closeColor, false);
         }
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
@@ -293,6 +300,18 @@ public class BlueprintScreen extends Screen {
     public boolean mouseClicked(MouseButtonEvent event, boolean isDouble) {
         double mouseX = event.x();
         double mouseY = event.y();
+
+        // Handle Notification Close
+        if (state.notificationMessage != null && state.notificationTimer > 0) {
+            int msgW = font.width(state.notificationMessage);
+            int popupW = msgW + 20;
+            int popupX = (this.width - popupW) / 2;
+            int popupY = 40;
+            if (isHovering((int)mouseX, (int)mouseY, popupX, popupY, popupW, 20)) {
+                state.notificationTimer = 0;
+                return true;
+            }
+        }
         
         // Handle Top Bar Buttons
         if (mouseY < 26) {

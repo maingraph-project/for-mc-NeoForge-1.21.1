@@ -82,7 +82,7 @@ public class BlueprintState {
 
     public void showNotification(String message) {
         this.notificationMessage = message;
-        this.notificationTimer = 100; // 5 seconds
+        this.notificationTimer = 60; // 3 seconds (at 20 ticks per second)
     }
 
     public void highlightNode(String nodeId) {
@@ -107,6 +107,7 @@ public class BlueprintState {
     public void tick(int screenWidth, int screenHeight) {
         cursorTick++;
         if (highlightTimer > 0) highlightTimer--;
+        if (notificationTimer > 0) notificationTimer--;
         viewManager.tick();
 
         // Confirm progress logic (Long press Enter or Mouse for history)
