@@ -60,6 +60,7 @@ public class BlueprintConnectionHandler {
 
     public boolean mouseReleased(double worldMouseX, double worldMouseY) {
         if (state.connectionStartNode != null) {
+            boolean connected = false;
             for (GuiNode node : state.nodes) {
                 if (node == state.connectionStartNode) continue;
                 
@@ -82,6 +83,7 @@ public class BlueprintConnectionHandler {
                                 }
                                 state.connections.add(new GuiConnection(state.connectionStartNode, state.connectionStartPort, node, targetPort.id));
                                 state.markDirty();
+                                connected = true;
                             }
                             break;
                         }
@@ -105,12 +107,32 @@ public class BlueprintConnectionHandler {
                                 }
                                 state.connections.add(new GuiConnection(node, targetPort.id, state.connectionStartNode, state.connectionStartPort));
                                 state.markDirty();
+                                connected = true;
                             }
                             break;
                         }
                     }
                 }
+                if (connected) break;
             }
+
+            if (!connected) {
+                // Open node menu if released in empty space
+                state.pendingConnectionSourceNode = state.connectionStartNode;
+                state.pendingConnectionSourcePort = state.connectionStartPort;
+                state.pendingConnectionFromInput = state.isConnectionFromInput;
+                
+                GuiNode.NodePort port = state.connectionStartNode.getPortByName(state.connectionStartPort, state.isConnectionFromInput);
+                if (port != null) {
+                    state.pendingConnectionSourceType = port.type;
+                    state.showNodeMenu = true;
+                    state.menuX = state.viewport.toScreenX((float)worldMouseX);
+                    state.menuY = state.viewport.toScreenY((float)worldMouseY);
+                    state.menu.reset();
+                    state.menu.setFilter(port.type, !state.isConnectionFromInput);
+                }
+            }
+
             state.connectionStartNode = null;
             state.connectionStartPort = null;
             return true;

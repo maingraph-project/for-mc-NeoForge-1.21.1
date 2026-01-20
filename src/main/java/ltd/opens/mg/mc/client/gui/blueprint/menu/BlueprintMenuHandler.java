@@ -43,6 +43,9 @@ public class BlueprintMenuHandler {
             if (!state.menu.isClickInsideNodeMenu(mouseX, mouseY, state.menuX, state.menuY, screenWidth, screenHeight)) {
                 state.showNodeMenu = false;
                 state.menu.reset();
+                state.pendingConnectionSourceNode = null;
+                state.pendingConnectionSourcePort = null;
+                state.pendingConnectionSourceType = null;
             }
             return true;
         }
@@ -56,9 +59,49 @@ public class BlueprintMenuHandler {
         float worldY = state.viewport.toWorldY(state.menuY);
         GuiNode node = new GuiNode(def, worldX, worldY);
         state.nodes.add(node);
+        
+        // Handle pending connection (UE style)
+        if (state.pendingConnectionSourceNode != null) {
+            GuiNode.NodePort sourcePort = state.pendingConnectionSourceNode.getPortByName(state.pendingConnectionSourcePort, state.pendingConnectionFromInput);
+            if (sourcePort != null) {
+                // Find a compatible port on the new node
+                if (state.pendingConnectionFromInput) {
+                    // Dragged from input, need output on new node
+                    for (GuiNode.NodePort targetPort : node.outputs) {
+                        if (canConnect(sourcePort.type, targetPort.type)) {
+                            state.connections.add(new GuiConnection(node, targetPort.id, state.pendingConnectionSourceNode, state.pendingConnectionSourcePort));
+                            break;
+                        }
+                    }
+                } else {
+                    // Dragged from output, need input on new node
+                    for (GuiNode.NodePort targetPort : node.inputs) {
+                        if (canConnect(sourcePort.type, targetPort.type)) {
+                            state.connections.add(new GuiConnection(state.pendingConnectionSourceNode, state.pendingConnectionSourcePort, node, targetPort.id));
+                            break;
+                        }
+                    }
+                }
+            }
+            // Clear context
+            state.pendingConnectionSourceNode = null;
+            state.pendingConnectionSourcePort = null;
+            state.pendingConnectionSourceType = null;
+        }
+
         state.markDirty();
         state.showNodeMenu = false;
         state.menu.reset();
+    }
+
+    private boolean canConnect(ltd.opens.mg.mc.core.blueprint.NodeDefinition.PortType type1, ltd.opens.mg.mc.core.blueprint.NodeDefinition.PortType type2) {
+        if (type1 == ltd.opens.mg.mc.core.blueprint.NodeDefinition.PortType.EXEC || type2 == ltd.opens.mg.mc.core.blueprint.NodeDefinition.PortType.EXEC) {
+            return type1 == type2;
+        }
+        if (type1 == ltd.opens.mg.mc.core.blueprint.NodeDefinition.PortType.ANY || type2 == ltd.opens.mg.mc.core.blueprint.NodeDefinition.PortType.ANY) {
+            return true;
+        }
+        return type1 == type2;
     }
 
     public boolean keyPressed(KeyEvent event) {
@@ -146,6 +189,12 @@ public class BlueprintMenuHandler {
             state.menuX = mouseX;
             state.menuY = mouseY;
             state.menu.reset(); // Reset search when opening
+            
+            // Clear pending connection context when opening menu normally via right-click
+            state.pendingConnectionSourceNode = null;
+            state.pendingConnectionSourcePort = null;
+            state.pendingConnectionSourceType = null;
+            
             return true;
         }
         return false;

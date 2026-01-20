@@ -5,6 +5,7 @@ import ltd.opens.mg.mc.client.gui.blueprint.menu.*;
 import ltd.opens.mg.mc.client.gui.components.*;
 import ltd.opens.mg.mc.client.gui.components.GuiContextMenu;
 import ltd.opens.mg.mc.client.gui.blueprint.manager.MarkerSearchManager;
+import ltd.opens.mg.mc.core.blueprint.NodeDefinition;
 import net.minecraft.client.gui.components.EditBox;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +83,12 @@ public class BlueprintState {
     public int lastHistorySelectedIndex = -1;
     public boolean isEnterDown = false;
     public boolean isMouseDown = false;
+
+    // Drag-to-create-node context
+    public GuiNode pendingConnectionSourceNode = null;
+    public String pendingConnectionSourcePort = null;
+    public boolean pendingConnectionFromInput = false;
+    public NodeDefinition.PortType pendingConnectionSourceType = null;
 
     public void showNotification(String message) {
         this.notificationMessage = message;

@@ -62,7 +62,11 @@ public class BlueprintSearchManager {
     }
 
     public static List<SearchResult> performSearch(String searchQuery) {
-        if (searchQuery.isEmpty()) {
+        return performSearch(searchQuery, null, false);
+    }
+
+    public static List<SearchResult> performSearch(String searchQuery, NodeDefinition.PortType filterType, boolean lookingForInput) {
+        if (searchQuery.isEmpty() && filterType == null) {
             return new ArrayList<>();
         }
 
@@ -72,6 +76,19 @@ public class BlueprintSearchManager {
 
         // 1. Process Nodes
         for (NodeDefinition def : NodeRegistry.getAllDefinitions()) {
+            // Filter by port compatibility if filterType is provided
+            if (filterType != null) {
+                boolean hasCompatiblePort = false;
+                List<NodeDefinition.PortDefinition> ports = lookingForInput ? def.inputs() : def.outputs();
+                for (NodeDefinition.PortDefinition port : ports) {
+                    if (canConnect(filterType, port.type())) {
+                        hasCompatiblePort = true;
+                        break;
+                    }
+                }
+                if (!hasCompatiblePort) continue;
+            }
+
             String localizedName = Component.translatable(def.name()).getString().toLowerCase();
             String localizedCat = Component.translatable(def.category()).getString().toLowerCase();
             String rawName = def.name().toLowerCase();
@@ -82,51 +99,68 @@ public class BlueprintSearchManager {
 
             SearchResult res = new SearchResult(def);
             int score = calculateScore(terms, fullQuery, localizedName, rawName, localizedCat, rawCat, locPath, rawPath, false, res, def);
+            
+            // If query is empty but we have a filter, everything that passed the filter gets a base score
+            if (searchQuery.isEmpty() && filterType != null) {
+                score = 1;
+            }
+
             if (score > 0) {
                 res.score = score;
                 results.add(res);
             }
         }
 
-        // 2. Process Categories
-        Set<String> categories = new HashSet<>();
-        for (NodeDefinition def : NodeRegistry.getAllDefinitions()) {
-            String cat = def.category();
-            String[] parts = cat.split("\\.");
-            StringBuilder current = new StringBuilder();
-            for (int i = 0; i < parts.length; i++) {
-                if (i > 0) current.append(".");
-                current.append(parts[i]);
-                categories.add(current.toString());
+        // 2. Process Categories (Only if not filtering by port type)
+        if (filterType == null) {
+            Set<String> categories = new HashSet<>();
+            for (NodeDefinition def : NodeRegistry.getAllDefinitions()) {
+                String cat = def.category();
+                String[] parts = cat.split("\\.");
+                StringBuilder current = new StringBuilder();
+                for (int i = 0; i < parts.length; i++) {
+                    if (i > 0) current.append(".");
+                    current.append(parts[i]);
+                    categories.add(current.toString());
+                }
+            }
+
+            for (String cat : categories) {
+                if (cat.equals("node_category") || cat.equals("node_category.mgmc")) continue;
+
+                String localizedCat = Component.translatable(cat).getString().toLowerCase();
+                String rawCat = cat.toLowerCase();
+                String locPath = getLocalizedPath(cat).toLowerCase();
+                String rawPath = cat.replace(".", "/").toLowerCase();
+
+                SearchResult res = new SearchResult(cat);
+                int score = calculateScore(terms, fullQuery, null, null, localizedCat, rawCat, locPath, rawPath, true, res, null);
+                if (score > 0) {
+                    res.score = score;
+                    results.add(res);
+                }
             }
         }
 
-        for (String cat : categories) {
-            if (cat.equals("node_category") || cat.equals("node_category.mgmc")) continue;
-
-            String localizedCatName = Component.translatable(cat).getString().toLowerCase();
-            String rawCatName = cat.toLowerCase();
-
-            String locPath = getLocalizedPath(cat).toLowerCase();
-            String rawPath = cat.replace(".", "/").toLowerCase();
-
-            SearchResult res = new SearchResult(cat);
-            int score = calculateScore(terms, fullQuery, localizedCatName, rawCatName, "", "", locPath, rawPath, true, res, null);
-            if (score > 0) {
-                res.score = score;
-                results.add(res);
-            }
-        }
-
-        // 3. Sort by score, then by name
         results.sort((a, b) -> {
             if (a.score != b.score) return b.score - a.score;
-            String nameA = a.isNode() ? Component.translatable(a.node.name()).getString() : Component.translatable(a.category).getString();
-            String nameB = b.isNode() ? Component.translatable(b.node.name()).getString() : Component.translatable(b.category).getString();
+            if (a.isCategory() != b.isCategory()) return a.isCategory() ? 1 : -1;
+            String nameA = a.isNode() ? a.node.name() : a.category;
+            String nameB = b.isNode() ? b.node.name() : b.category;
             return nameA.compareTo(nameB);
         });
 
         return results;
+    }
+
+    private static boolean canConnect(NodeDefinition.PortType type1, NodeDefinition.PortType type2) {
+        if (type1 == NodeDefinition.PortType.EXEC || type2 == NodeDefinition.PortType.EXEC) {
+            return type1 == type2;
+        }
+        if (type1 == NodeDefinition.PortType.ANY || type2 == NodeDefinition.PortType.ANY) {
+            return true;
+        }
+        return type1 == type2;
     }
 
     private static int calculateScore(String[] terms, String fullQuery, String locName, String rawName, String locCat, String rawCat, String locPath, String rawPath, boolean isFolder, SearchResult res, NodeDefinition def) {

@@ -29,6 +29,14 @@ public class BlueprintMenu {
     private int lastMenuHeight = 0;
     private String hoveredCategory = null;
     private String currentPath = BlueprintCategoryManager.ROOT_PATH;
+    private NodeDefinition.PortType filterType = null;
+    private boolean lookingForInput = false;
+
+    public void setFilter(NodeDefinition.PortType type, boolean lookingForInput) {
+        this.filterType = type;
+        this.lookingForInput = lookingForInput;
+        updateSearch();
+    }
 
     // Getters and Setters for state
     public String getSearchQuery() { 
@@ -85,10 +93,12 @@ public class BlueprintMenu {
         subScrollAmount = 0;
         hoveredCategory = null;
         currentPath = BlueprintCategoryManager.ROOT_PATH;
+        filterType = null;
+        lookingForInput = false;
     }
 
     public void updateSearch() {
-        filteredResults = BlueprintSearchManager.performSearch(getSearchQuery());
+        filteredResults = BlueprintSearchManager.performSearch(getSearchQuery(), filterType, lookingForInput);
         if (!filteredResults.isEmpty()) {
             selectedIndex = 0;
         } else {
