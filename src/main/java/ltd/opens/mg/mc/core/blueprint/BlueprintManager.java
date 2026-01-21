@@ -115,6 +115,11 @@ public class BlueprintManager {
         return dir;
     }
 
+    public static boolean isMultiplayer(ServerLevel level) {
+        if (level == null || level.getServer() == null) return false;
+        return level.getServer().isDedicatedServer() || level.getServer().isPublished();
+    }
+
     public JsonObject getBlueprint(ServerLevel level, String name) {
         if (!isValidFileName(name)) return null;
         try {
@@ -128,8 +133,7 @@ public class BlueprintManager {
             
             // 2. 如果存档目录没有，且不是专服/联机模式，尝试从全局目录加载
             if ((dataFile == null || !Files.exists(dataFile)) && level != null) {
-                boolean isMultiplayer = level.getServer().isDedicatedServer() || level.getServer().isPublished();
-                if (!isMultiplayer) {
+                if (!isMultiplayer(level)) {
                     Path globalFile = getGlobalBlueprintsDir().resolve(fileName);
                     if (Files.exists(globalFile)) {
                         dataFile = globalFile;
@@ -346,8 +350,7 @@ public class BlueprintManager {
             }
 
             // 2. 如果不是专服/联机模式，加载全局蓝图（不覆盖同名存档蓝图）
-            boolean isMultiplayer = level != null && (level.getServer().isDedicatedServer() || level.getServer().isPublished());
-            if (!isMultiplayer) {
+            if (!isMultiplayer(level)) {
                 Path globalDir = getGlobalBlueprintsDir();
                 try (var stream = Files.list(globalDir)) {
                     stream.filter(p -> p.toString().endsWith(".json")).forEach(p -> {

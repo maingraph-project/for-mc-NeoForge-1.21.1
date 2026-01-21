@@ -43,8 +43,7 @@ public class BlueprintNetworkHandler {
             }
 
             // 2. 如果不是专服/联机模式，合并全局目录蓝图（不重复添加）
-            boolean isMultiplayer = level.getServer().isDedicatedServer() || level.getServer().isPublished();
-            if (!isMultiplayer) {
+            if (!ltd.opens.mg.mc.core.blueprint.BlueprintManager.isMultiplayer(level)) {
                 try (var stream = java.nio.file.Files.list(ltd.opens.mg.mc.core.blueprint.BlueprintManager.getGlobalBlueprintsDir())) {
                     stream.filter(p -> p.toString().endsWith(".json"))
                             .map(p -> p.getFileName().toString())
@@ -151,7 +150,7 @@ public class BlueprintNetworkHandler {
                     if (!hasPermission(player)) return;
                     var manager = MaingraphforMC.getServerManager();
                     if (manager == null) return;
-                    context.reply(new ResponseMappingsPayload(manager.getRouter().getFullRoutingTable()));
+                    context.reply(new ResponseMappingsPayload(manager.getRouter().getFullRoutingTable((ServerLevel) player.level())));
                 }
             });
         }
@@ -164,7 +163,7 @@ public class BlueprintNetworkHandler {
                     if (manager == null) return;
                     manager.getRouter().updateAllMappings((ServerLevel) player.level(), payload.mappings());
                     // 广播更新？目前先简单回复
-                    context.reply(new ResponseMappingsPayload(manager.getRouter().getFullRoutingTable()));
+                    context.reply(new ResponseMappingsPayload(manager.getRouter().getFullRoutingTable((ServerLevel) player.level())));
                 }
             });
         }

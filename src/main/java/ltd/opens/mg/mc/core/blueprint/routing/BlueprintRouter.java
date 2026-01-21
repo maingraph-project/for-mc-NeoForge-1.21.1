@@ -45,10 +45,7 @@ public class BlueprintRouter {
         Map<String, Set<String>> combinedTable = new ConcurrentHashMap<>();
 
         // 1. 加载全局映射 (仅在单机/非专服模式下加载)
-        // 这里的判断逻辑：如果是专用服务器，或者服务器已经开启了联机(虽然 Starting 阶段还没开启，但可以通过 isDedicated 过滤)
-        boolean isDedicated = level != null && level.getServer().isDedicatedServer();
-        
-        if (!isDedicated) {
+        if (!BlueprintManager.isMultiplayer(level)) {
             Path globalPath = getMappingsPath(null);
             if (Files.exists(globalPath)) {
                 try (FileReader reader = new FileReader(globalPath.toFile())) {
@@ -172,10 +169,37 @@ public class BlueprintRouter {
     /**
      * 获取完整的路由表快照
      */
-    public Map<String, Set<String>> getFullRoutingTable() {
+    public Map<String, Set<String>> getFullRoutingTable(ServerLevel level) {
         Map<String, Set<String>> copy = new HashMap<>();
-        routingTable.get().forEach((k, v) -> copy.put(k, new HashSet<>(v)));
+        boolean isMultiplayer = BlueprintManager.isMultiplayer(level);
+        Path saveDir = level != null ? MaingraphforMC.getServerManager().getBlueprintsDir(level) : null;
+
+        routingTable.get().forEach((id, blueprints) -> {
+            Set<String> filteredBlueprints = new HashSet<>();
+            for (String path : blueprints) {
+                // 如果是多人模式，检查该蓝图是否在存档目录中存在
+                if (isMultiplayer && saveDir != null) {
+                    if (Files.exists(saveDir.resolve(path))) {
+                        filteredBlueprints.add(path);
+                    }
+                } else {
+                    // 非多人模式，全部允许
+                    filteredBlueprints.add(path);
+                }
+            }
+            if (!filteredBlueprints.isEmpty()) {
+                copy.put(id, filteredBlueprints);
+            }
+        });
         return copy;
+    }
+
+    /**
+     * @deprecated Use {@link #getFullRoutingTable(ServerLevel)}
+     */
+    @Deprecated
+    public Map<String, Set<String>> getFullRoutingTable() {
+        return getFullRoutingTable(null);
     }
 
     /**
