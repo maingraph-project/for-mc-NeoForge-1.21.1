@@ -89,6 +89,9 @@ public class BlueprintManager {
     }
 
     public Path getBlueprintsDir(ServerLevel level) {
+        if (level == null) {
+            return getGlobalBlueprintsDir();
+        }
         Path dir = level.getServer().getWorldPath(LevelResource.ROOT).resolve("mgmc_blueprints");
         if (!Files.exists(dir)) {
             try {
@@ -100,13 +103,46 @@ public class BlueprintManager {
         return dir;
     }
 
+    public static Path getGlobalBlueprintsDir() {
+        Path dir = java.nio.file.Paths.get("mgmc_blueprints");
+        if (!Files.exists(dir)) {
+            try {
+                Files.createDirectories(dir);
+            } catch (Exception e) {
+                LogManager.getLogger().error("Failed to create global blueprints directory: " + dir, e);
+            }
+        }
+        return dir;
+    }
+
     public JsonObject getBlueprint(ServerLevel level, String name) {
         if (!isValidFileName(name)) return null;
         try {
             final String fileName = name.endsWith(".json") ? name : name + ".json";
-            Path dataFile = getBlueprintsDir(level).resolve(fileName);
             
-            if (Files.exists(dataFile)) {
+            // 1. 尝试从存档目录加载
+            Path dataFile = null;
+            if (level != null) {
+                dataFile = getBlueprintsDir(level).resolve(fileName);
+            }
+            
+            // 2. 如果存档目录没有，且不是专服/联机模式，尝试从全局目录加载
+            if ((dataFile == null || !Files.exists(dataFile)) && level != null) {
+                boolean isMultiplayer = level.getServer().isDedicatedServer() || level.getServer().isPublished();
+                if (!isMultiplayer) {
+                    Path globalFile = getGlobalBlueprintsDir().resolve(fileName);
+                    if (Files.exists(globalFile)) {
+                        dataFile = globalFile;
+                    }
+                }
+            }
+            
+            // 如果是主界面模式 (level == null)，直接用全局目录
+            if (level == null) {
+                dataFile = getGlobalBlueprintsDir().resolve(fileName);
+            }
+            
+            if (dataFile != null && Files.exists(dataFile)) {
                 long lastModified = Files.getLastModifiedTime(dataFile).toMillis();
                 CachedBlueprint cached = blueprintCache.get(fileName);
                 

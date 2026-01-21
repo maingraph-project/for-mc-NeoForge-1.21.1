@@ -102,6 +102,9 @@ public class BlueprintMenu {
         currentPath = BlueprintCategoryManager.ROOT_PATH;
         filterType = null;
         lookingForInput = false;
+        
+        // Ensure data is refreshed from registry
+        updateSearch();
     }
 
     public void updateSearch() {

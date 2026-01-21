@@ -42,32 +42,61 @@ public class BlueprintRouter {
      * 从指定世界的路由表文件加载
      */
     public void load(ServerLevel level) {
-        Path filePath = getMappingsPath(level);
-        if (!Files.exists(filePath)) {
-            routingTable.set(new ConcurrentHashMap<>());
-            save(level); // 创建初始文件
-            return;
-        }
+        Map<String, Set<String>> combinedTable = new ConcurrentHashMap<>();
 
-        try (FileReader reader = new FileReader(filePath.toFile())) {
-            JsonObject json = GSON.fromJson(reader, JsonObject.class);
-            Map<String, Set<String>> newTable = new ConcurrentHashMap<>();
-            if (json != null) {
-                for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
-                    JsonArray array = entry.getValue().getAsJsonArray();
-                    Set<String> blueprints = Collections.newSetFromMap(new ConcurrentHashMap<>());
-                    for (JsonElement e : array) {
-                        blueprints.add(e.getAsString());
+        // 1. 加载全局映射 (仅在单机/非专服模式下加载)
+        // 这里的判断逻辑：如果是专用服务器，或者服务器已经开启了联机(虽然 Starting 阶段还没开启，但可以通过 isDedicated 过滤)
+        boolean isDedicated = level != null && level.getServer().isDedicatedServer();
+        
+        if (!isDedicated) {
+            Path globalPath = getMappingsPath(null);
+            if (Files.exists(globalPath)) {
+                try (FileReader reader = new FileReader(globalPath.toFile())) {
+                    JsonObject json = GSON.fromJson(reader, JsonObject.class);
+                    if (json != null) {
+                        for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
+                            JsonArray array = entry.getValue().getAsJsonArray();
+                            Set<String> blueprints = Collections.newSetFromMap(new ConcurrentHashMap<>());
+                            for (JsonElement e : array) {
+                                blueprints.add(e.getAsString());
+                            }
+                            combinedTable.put(entry.getKey(), blueprints);
+                        }
                     }
-                    newTable.put(entry.getKey(), blueprints);
+                    LOGGER.info("MGMC: Loaded {} global ID mappings", combinedTable.size());
+                } catch (IOException e) {
+                    LOGGER.error("MGMC: Failed to load global mappings", e);
                 }
             }
-            // 原子替换，防止在 clear() 期间其他线程读取到空数据
-            routingTable.set(newTable);
-            LOGGER.info("MGMC: Loaded {} ID mappings from {}", newTable.size(), filePath);
-        } catch (IOException e) {
-            LOGGER.error("MGMC: Failed to load mappings from " + filePath, e);
+        } else {
+            LOGGER.info("MGMC: Global blueprints disabled in dedicated server mode.");
         }
+
+        // 2. 加载存档映射并合并
+        if (level != null) {
+            Path savePath = getMappingsPath(level);
+            if (Files.exists(savePath)) {
+                try (FileReader reader = new FileReader(savePath.toFile())) {
+                    JsonObject json = GSON.fromJson(reader, JsonObject.class);
+                    if (json != null) {
+                        for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
+                            JsonArray array = entry.getValue().getAsJsonArray();
+                            Set<String> blueprints = combinedTable.computeIfAbsent(entry.getKey(), k -> Collections.newSetFromMap(new ConcurrentHashMap<>()));
+                            for (JsonElement e : array) {
+                                blueprints.add(e.getAsString());
+                            }
+                        }
+                    }
+                    LOGGER.info("MGMC: Merged ID mappings from {}", savePath);
+                } catch (IOException e) {
+                    LOGGER.error("MGMC: Failed to load save mappings from " + savePath, e);
+                }
+            } else {
+                save(level); // 为存档创建初始文件
+            }
+        }
+
+        routingTable.set(combinedTable);
     }
 
     /**
@@ -97,6 +126,9 @@ public class BlueprintRouter {
     }
 
     private Path getMappingsPath(ServerLevel level) {
+        if (level == null) {
+            return java.nio.file.Paths.get("mgmc_blueprints/.routing/mappings.json");
+        }
         return level.getServer().getWorldPath(LevelResource.ROOT).resolve("mgmc_blueprints/.routing/mappings.json");
     }
 
