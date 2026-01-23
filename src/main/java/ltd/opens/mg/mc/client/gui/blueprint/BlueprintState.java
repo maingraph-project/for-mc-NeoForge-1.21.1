@@ -89,6 +89,7 @@ public class BlueprintState {
     public boolean isEnterDown = false;
     public boolean isMouseDown = false;
     public boolean isWDown = false;
+    public boolean wTriggered = false; // Add this to prevent repeated triggers
     public float wPressProgress = 0f;
     public String wPressUrl = null;
 
@@ -130,36 +131,44 @@ public class BlueprintState {
         layoutManager.tick();
 
         // W Long Press Logic
-        if (isWDown && !selectedNodes.isEmpty() && !showQuickSearch && editingMarkerNode == null) {
-            // Find first selected node with a web_url
-            String url = null;
-            for (GuiNode node : selectedNodes) {
-                if (node.definition != null && node.definition.properties().containsKey("web_url")) {
-                    url = (String) node.definition.properties().get("web_url");
-                    break;
-                }
-            }
-
-            if (url != null) {
-                wPressUrl = url;
-                wPressProgress += 0.04f; // 25 ticks = 1.25s
-                if (wPressProgress >= 1.0f) {
-                    System.out.println("MGMC: Long press W completed for URL: " + url);
-                    wPressProgress = 0f;
-                    isWDown = false;
-                    openWebpage(url);
-                }
+        if (isWDown && selectedNodes.size() == 1 && !showQuickSearch && editingMarkerNode == null) {
+            if (wTriggered) {
+                // If already triggered, keep progress at 0 or 1, and don't do anything
+                wPressProgress = 0f;
             } else {
-                if (wPressProgress > 0) {
-                    System.out.println("MGMC: W down but no web_url found in selected nodes");
+                // Find first selected node with a web_url
+                String url = null;
+                for (GuiNode node : selectedNodes) {
+                    if (node.definition != null && node.definition.properties().containsKey("web_url")) {
+                        url = (String) node.definition.properties().get("web_url");
+                        break;
+                    }
                 }
-                wPressProgress *= 0.8f;
-                if (wPressProgress < 0.01f) {
-                    wPressProgress = 0f;
-                    wPressUrl = null;
+
+                if (url != null) {
+                    wPressUrl = url;
+                    wPressProgress += 0.04f; // 25 ticks = 1.25s
+                    if (wPressProgress >= 1.0f) {
+                        System.out.println("MGMC: Long press W completed for URL: " + url);
+                        wPressProgress = 0f;
+                        wTriggered = true; // Mark as triggered
+                        openWebpage(url);
+                    }
+                } else {
+                    if (wPressProgress > 0) {
+                        System.out.println("MGMC: W down but no web_url found in selected nodes");
+                    }
+                    wPressProgress *= 0.8f;
+                    if (wPressProgress < 0.01f) {
+                        wPressProgress = 0f;
+                        wPressUrl = null;
+                    }
                 }
             }
         } else {
+            if (!isWDown) {
+                wTriggered = false; // Reset when key is released
+            }
             wPressProgress *= 0.8f;
             if (wPressProgress < 0.01f) {
                 wPressProgress = 0f;

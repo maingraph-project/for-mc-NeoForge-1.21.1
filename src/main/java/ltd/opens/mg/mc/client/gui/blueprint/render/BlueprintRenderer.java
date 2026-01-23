@@ -157,24 +157,38 @@ public class BlueprintRenderer {
     public static void drawWPressProgressBar(GuiGraphics guiGraphics, BlueprintState state, int screenWidth, int screenHeight, net.minecraft.client.gui.Font font) {
         if (state.wPressProgress <= 0) return;
 
-        int barWidth = 200;
-        int barHeight = 4;
+        int barWidth = 160;
+        int barHeight = 3;
         int x = (screenWidth - barWidth) / 2;
-        int y = screenHeight - 60;
+        int y = screenHeight - 50;
 
-        // Draw background
-        guiGraphics.fill(x - 2, y - 12, x + barWidth + 2, y + barHeight + 2, 0xAA000000);
+        // 绘制半透明圆角背景背景 (模拟)
+        guiGraphics.fill(x - 10, y - 18, x + barWidth + 10, y + barHeight + 8, 0x88000000);
         
-        // Draw label
+        // 绘制文字，带一点点发光效果 (通过叠加两次绘制)
         String label = Component.translatable("gui.mgmc.blueprint.opening_webpage").getString();
-        guiGraphics.drawCenteredString(font, label, screenWidth / 2, y - 10, 0xFFFFFFFF);
+        guiGraphics.drawCenteredString(font, label, screenWidth / 2 + 1, y - 13 + 1, 0x44000000); // 阴影
+        guiGraphics.drawCenteredString(font, label, screenWidth / 2, y - 13, 0xFFFFFFFF);
 
-        // Draw bar background
-        guiGraphics.fill(x, y, x + barWidth, y + barHeight, 0xFF444444);
+        // 绘制进度条背景
+        guiGraphics.fill(x, y, x + barWidth, y + barHeight, 0xFF222222);
         
-        // Draw progress
+        // 绘制进度
         int progressWidth = (int) (barWidth * state.wPressProgress);
-        guiGraphics.fill(x, y, x + progressWidth, y + barHeight, 0xFF55FFFF);
+        
+        // 进度条主体颜色 (青色到蓝色的渐变感)
+        int color = 0xFF55FFFF;
+        if (state.wPressProgress > 0.9f) {
+            // 即将完成时变为亮白色闪烁感
+            color = 0xFFFFFFFF;
+        }
+        
+        guiGraphics.fill(x, y, x + progressWidth, y + barHeight, color);
+        
+        // 在进度条末端加一个小光点
+        if (progressWidth > 0) {
+            guiGraphics.fill(x + progressWidth - 1, y - 1, x + progressWidth + 1, y + barHeight + 1, 0xFFFFFFFF);
+        }
     }
 
     public static void drawMinimap(GuiGraphics guiGraphics, BlueprintState state, int screenWidth, int screenHeight) {
