@@ -57,6 +57,16 @@ public class MGMCNetwork {
             WorkbenchActionPayload.STREAM_CODEC,
             BlueprintNetworkHandler.Server::handleWorkbenchAction
         );
+        registrar.playToServer(
+            RequestExportPayload.TYPE,
+            RequestExportPayload.STREAM_CODEC,
+            BlueprintNetworkHandler.Server::handleRequestExport
+        );
+        registrar.playToServer(
+            ImportBlueprintPayload.TYPE,
+            ImportBlueprintPayload.STREAM_CODEC,
+            BlueprintNetworkHandler.Server::handleImport
+        );
 
         // Server -> Client
         registrar.playToClient(
@@ -78,6 +88,11 @@ public class MGMCNetwork {
             ResponseMappingsPayload.TYPE,
             ResponseMappingsPayload.STREAM_CODEC,
             BlueprintNetworkHandler.Client::handleResponseMappings
+        );
+        registrar.playToClient(
+            ResponseExportPayload.TYPE,
+            ResponseExportPayload.STREAM_CODEC,
+            BlueprintNetworkHandler.Client::handleResponseExport
         );
         registrar.playToClient(
             RuntimeErrorReportPayload.TYPE,

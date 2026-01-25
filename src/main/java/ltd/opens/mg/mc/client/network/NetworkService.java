@@ -84,6 +84,20 @@ public class NetworkService {
     }
 
     /**
+     * 请求导出蓝图
+     */
+    public void requestExport(String name) {
+        sendPacket(new RequestExportPayload(name));
+    }
+
+    /**
+     * 导入蓝图
+     */
+    public void importBlueprint(String name, String data, Map<String, Set<String>> mappings) {
+        sendPacket(new ImportBlueprintPayload(name, data, mappings));
+    }
+
+    /**
      * 统一发送自定义载荷数据包
      */
     private void sendPacket(net.minecraft.network.protocol.common.custom.CustomPacketPayload payload) {

@@ -194,6 +194,58 @@ public class BlueprintNetworkHandler {
                 }
             });
         }
+
+        public static void handleRequestExport(final RequestExportPayload payload, final IPayloadContext context) {
+            context.enqueueWork(() -> {
+                if (context.player() instanceof ServerPlayer player) {
+                    if (!hasPermission(player)) return;
+                    var manager = MaingraphforMC.getServerManager();
+                    if (manager == null) return;
+                    
+                    JsonObject bp = manager.getBlueprint((ServerLevel) player.level(), payload.name());
+                    if (bp != null) {
+                        java.util.Map<String, java.util.Set<String>> relatedMappings = new java.util.HashMap<>();
+                        var router = manager.getRouter();
+                        router.getRoutingTable().forEach((id, blueprints) -> {
+                            if (blueprints.contains(payload.name())) {
+                                relatedMappings.put(id, java.util.Collections.singleton(payload.name()));
+                            }
+                        });
+                        context.reply(new ResponseExportPayload(payload.name(), bp.toString(), relatedMappings));
+                    }
+                }
+            });
+        }
+
+        public static void handleImport(final ImportBlueprintPayload payload, final IPayloadContext context) {
+            context.enqueueWork(() -> {
+                if (context.player() instanceof ServerPlayer player) {
+                    if (!hasPermission(player)) return;
+                    var manager = MaingraphforMC.getServerManager();
+                    if (manager == null) return;
+                    
+                    // 1. 保存蓝图逻辑
+                    manager.saveBlueprintAsync((ServerLevel) player.level(), payload.name(), payload.data(), -1).thenAccept(result -> {
+                        if (result.success()) {
+                            // 2. 合并映射
+                            var router = manager.getRouter();
+                            java.util.Map<String, java.util.Set<String>> currentMappings = new java.util.HashMap<>(router.getFullRoutingTable((ServerLevel) player.level()));
+                            
+                            payload.mappings().forEach((id, blueprints) -> {
+                                java.util.Set<String> set = currentMappings.computeIfAbsent(id, k -> new java.util.HashSet<>());
+                                set.addAll(blueprints);
+                            });
+                            
+                            router.updateAllMappings((ServerLevel) player.level(), currentMappings);
+                            
+                            // 3. 通知列表刷新
+                            context.reply(new ResponseBlueprintListPayload(getBlueprintNames((ServerLevel) player.level(), true)));
+                            context.reply(new ResponseMappingsPayload(router.getFullRoutingTable((ServerLevel) player.level())));
+                        }
+                    });
+                }
+            });
+        }
     }
 
     public static class Client {
@@ -235,6 +287,14 @@ public class BlueprintNetworkHandler {
                 
                 if (Minecraft.getInstance().screen instanceof BlueprintMappingScreen screen) {
                     screen.updateMappingsFromServer(payload.mappings());
+                }
+            });
+        }
+
+        public static void handleResponseExport(final ResponseExportPayload payload, final IPayloadContext context) {
+            context.enqueueWork(() -> {
+                if (Minecraft.getInstance().screen instanceof BlueprintSelectionScreen screen) {
+                    screen.handleExportResponse(payload.name(), payload.data(), payload.relatedMappings());
                 }
             });
         }

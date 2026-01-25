@@ -110,6 +110,11 @@ public class BlueprintSelectionScreen extends Screen {
             Minecraft.getInstance().setScreen(new BlueprintMappingScreen(this));
         }).bounds(this.width - 120, 10, 50, 20).build());
 
+        // Import Button
+        this.addRenderableWidget(Button.builder(Component.translatable("gui.mgmc.blueprint_selection.import"), b -> {
+            handleImport();
+        }).bounds(this.width - 180, 10, 50, 20).build());
+
         // About Button (Top-Right)
         this.addRenderableWidget(Button.builder(Component.translatable("gui.mgmc.blueprint_selection.about"), b -> {
             this.setFocused(null);
@@ -145,6 +150,138 @@ public class BlueprintSelectionScreen extends Screen {
         this.list.clearEntries();
         for (String name : blueprints) {
             this.list.add(new BlueprintEntry(name));
+        }
+    }
+
+    public void handleExportResponse(String name, String data, java.util.Map<String, java.util.Set<String>> mappings) {
+        try {
+            java.nio.file.Path exportDir = java.nio.file.Paths.get("mgmc_blueprints/exports");
+            java.nio.file.Files.createDirectories(exportDir);
+            
+            com.google.gson.JsonObject exportObj = new com.google.gson.JsonObject();
+            exportObj.addProperty("mgmc_bp_version", 1);
+            exportObj.addProperty("blueprint_name", name);
+            exportObj.addProperty("blueprint_data", data);
+            
+            com.google.gson.JsonObject mappingsObj = new com.google.gson.JsonObject();
+            mappings.forEach((id, bps) -> {
+                com.google.gson.JsonArray array = new com.google.gson.JsonArray();
+                bps.forEach(array::add);
+                mappingsObj.add(id, array);
+            });
+            exportObj.add("mappings", mappingsObj);
+            
+            String fileName = (name.endsWith(".json") ? name.substring(0, name.length() - 5) : name) + ".mgmcbp";
+            java.nio.file.Path exportFile = exportDir.resolve(fileName);
+            java.nio.file.Files.writeString(exportFile, new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(exportObj));
+            
+            // Notify user
+            if (Minecraft.getInstance().player != null) {
+                Minecraft.getInstance().player.displayClientMessage(net.minecraft.network.chat.Component.translatable("gui.mgmc.blueprint_selection.export_success", exportFile.toString()), false);
+            } else {
+                MaingraphforMC.LOGGER.info("Exported blueprint to: {}", exportFile);
+            }
+        } catch (Exception e) {
+            MaingraphforMC.LOGGER.error("Failed to save export file", e);
+        }
+    }
+
+    private void handleImport() {
+        try {
+            java.nio.file.Path importDir = java.nio.file.Paths.get("mgmc_blueprints/imports");
+            if (!java.nio.file.Files.exists(importDir)) {
+                java.nio.file.Files.createDirectories(importDir);
+                if (Minecraft.getInstance().player != null) {
+                    Minecraft.getInstance().player.displayClientMessage(net.minecraft.network.chat.Component.translatable("gui.mgmc.blueprint_selection.import_dir_created", importDir.toString()), false);
+                }
+                return;
+            }
+
+            java.util.List<java.nio.file.Path> files = new java.util.ArrayList<>();
+            try (java.util.stream.Stream<java.nio.file.Path> stream = java.nio.file.Files.list(importDir)) {
+                stream.filter(p -> p.toString().endsWith(".mgmcbp")).forEach(files::add);
+            }
+
+            if (files.isEmpty()) {
+                if (Minecraft.getInstance().player != null) {
+                    Minecraft.getInstance().player.displayClientMessage(net.minecraft.network.chat.Component.translatable("gui.mgmc.blueprint_selection.import_no_files", importDir.toString()), false);
+                }
+                return;
+            }
+
+            // Show a simple list for selection
+            List<String> fileNames = files.stream().map(p -> p.getFileName().toString()).toList();
+            Minecraft.getInstance().setScreen(new InputModalScreen(
+                this,
+                Component.translatable("gui.mgmc.blueprint_selection.import").getString(),
+                "",
+                false,
+                fileNames.toArray(new String[0]),
+                InputModalScreen.Mode.SELECTION,
+                selectedFileName -> {
+                    if (selectedFileName != null && !selectedFileName.isEmpty()) {
+                        performImport(importDir.resolve(selectedFileName));
+                    }
+                }
+            ));
+        } catch (Exception e) {
+            MaingraphforMC.LOGGER.error("Failed to list import files", e);
+        }
+    }
+
+    private void performImport(java.nio.file.Path path) {
+        try {
+            String content = java.nio.file.Files.readString(path);
+            com.google.gson.JsonObject obj = com.google.gson.JsonParser.parseString(content).getAsJsonObject();
+            
+            String name = obj.get("blueprint_name").getAsString();
+            String data = obj.get("blueprint_data").getAsString();
+            
+            java.util.Map<String, java.util.Set<String>> mappings = new java.util.HashMap<>();
+            if (obj.has("mappings")) {
+                com.google.gson.JsonObject mappingsObj = obj.getAsJsonObject("mappings");
+                mappingsObj.entrySet().forEach(entry -> {
+                    java.util.Set<String> set = new java.util.HashSet<>();
+                    entry.getValue().getAsJsonArray().forEach(e -> set.add(e.getAsString()));
+                    mappings.put(entry.getKey(), set);
+                });
+            }
+
+            if (isGlobalMode) {
+                // Save blueprint
+                java.nio.file.Path bpDir = ltd.opens.mg.mc.core.blueprint.BlueprintManager.getGlobalBlueprintsDir();
+                java.nio.file.Files.writeString(bpDir.resolve(name), data);
+                
+                // Save mappings
+                java.nio.file.Path mappingsPath = java.nio.file.Paths.get("mgmc_blueprints/.routing/mappings.json");
+                com.google.gson.JsonObject currentMappings = new com.google.gson.JsonObject();
+                if (java.nio.file.Files.exists(mappingsPath)) {
+                    currentMappings = com.google.gson.JsonParser.parseString(java.nio.file.Files.readString(mappingsPath)).getAsJsonObject();
+                }
+                
+                for (java.util.Map.Entry<String, java.util.Set<String>> entry : mappings.entrySet()) {
+                    com.google.gson.JsonArray array = currentMappings.has(entry.getKey()) ? currentMappings.getAsJsonArray(entry.getKey()) : new com.google.gson.JsonArray();
+                    for (String bp : entry.getValue()) {
+                        boolean exists = false;
+                        for (com.google.gson.JsonElement e : array) {
+                            if (e.getAsString().equals(bp)) { exists = true; break; }
+                        }
+                        if (!exists) array.add(bp);
+                    }
+                    currentMappings.add(entry.getKey(), array);
+                }
+                
+                java.nio.file.Files.writeString(mappingsPath, new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(currentMappings));
+                refreshFileList();
+            } else {
+                NetworkService.getInstance().importBlueprint(name, data, mappings);
+            }
+            
+            if (Minecraft.getInstance().player != null) {
+                Minecraft.getInstance().player.displayClientMessage(net.minecraft.network.chat.Component.translatable("gui.mgmc.blueprint_selection.import_success", name), false);
+            }
+        } catch (Exception e) {
+            MaingraphforMC.LOGGER.error("Failed to import blueprint", e);
         }
     }
 
@@ -310,6 +447,35 @@ public class BlueprintSelectionScreen extends Screen {
                             }
                         }
                     ));
+                }));
+
+                menuItems.add(new GuiContextMenu.MenuItem(Component.translatable("gui.mgmc.blueprint_selection.export"), () -> {
+                    if (isGlobalMode) {
+                        try {
+                            java.nio.file.Path dir = ltd.opens.mg.mc.core.blueprint.BlueprintManager.getGlobalBlueprintsDir();
+                            String data = java.nio.file.Files.readString(dir.resolve(this.fullName));
+                            
+                            java.util.Map<String, java.util.Set<String>> relatedMappings = new java.util.HashMap<>();
+                            java.nio.file.Path mappingsPath = java.nio.file.Paths.get("mgmc_blueprints/.routing/mappings.json");
+                            if (java.nio.file.Files.exists(mappingsPath)) {
+                                String mappingsJson = java.nio.file.Files.readString(mappingsPath);
+                                com.google.gson.JsonObject json = com.google.gson.JsonParser.parseString(mappingsJson).getAsJsonObject();
+                                json.entrySet().forEach(entry -> {
+                                    com.google.gson.JsonArray array = entry.getValue().getAsJsonArray();
+                                    for (com.google.gson.JsonElement e : array) {
+                                        if (e.getAsString().equals(this.fullName)) {
+                                            relatedMappings.computeIfAbsent(entry.getKey(), k -> new java.util.HashSet<>()).add(this.fullName);
+                                        }
+                                    }
+                                });
+                            }
+                            handleExportResponse(this.fullName, data, relatedMappings);
+                        } catch (java.io.IOException e) {
+                            MaingraphforMC.LOGGER.error("Failed to export global blueprint", e);
+                        }
+                    } else {
+                        NetworkService.getInstance().requestExport(this.fullName);
+                    }
                 }));
 
                 menuItems.add(new GuiContextMenu.MenuItem(Component.translatable("gui.mgmc.blueprint_selection.delete"), () -> {
