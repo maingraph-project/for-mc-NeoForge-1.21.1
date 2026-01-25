@@ -75,14 +75,18 @@ public class BlueprintEngine {
     }
 
     public static void execute(Level level, JsonObject root, String eventType, NodeContext.Builder contextBuilder) {
+        executeWithReturn(level, root, eventType, contextBuilder);
+    }
+
+    public static NodeContext executeWithReturn(Level level, JsonObject root, String eventType, NodeContext.Builder contextBuilder) {
         if (RECURSION_DEPTH.get() >= ltd.opens.mg.mc.Config.getMaxRecursionDepth()) {
-            return;
+            return null;
         }
 
         RECURSION_DEPTH.set(RECURSION_DEPTH.get() + 1);
         try {
             if (!root.has("execution") || !root.get("execution").isJsonArray()) {
-                return;
+                return null;
             }
 
             // 1. 获取或构建节点 ID 映射表 (用于 NodeContext)
@@ -136,8 +140,10 @@ public class BlueprintEngine {
                     }
                 }
             }
+            return ctx;
         } catch (Exception e) {
             MaingraphforMC.LOGGER.error("Error executing blueprint", e);
+            return null;
         } finally {
             RECURSION_DEPTH.set(RECURSION_DEPTH.get() - 1);
         }
