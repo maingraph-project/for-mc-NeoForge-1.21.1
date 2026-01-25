@@ -60,6 +60,7 @@ public class NodePorts {
     public static final String UUID = "uuid";
     public static final String MESSAGE = "message";
     public static final String COMMAND = "command";
+    public static final String BLUEPRINT = "blueprint";
     public static final String EFFECT = "effect";
     public static final String RADIUS = "radius";
     public static final String TO_TYPE = "to_type";

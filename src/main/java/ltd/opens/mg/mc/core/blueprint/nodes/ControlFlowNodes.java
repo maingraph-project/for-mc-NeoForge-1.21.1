@@ -10,7 +10,12 @@ import ltd.opens.mg.mc.core.blueprint.NodePorts;
 import ltd.opens.mg.mc.core.blueprint.NodeThemes;
 import ltd.opens.mg.mc.core.blueprint.engine.TickScheduler;
 import ltd.opens.mg.mc.core.blueprint.events.RegisterMGMCNodesEvent;
+import ltd.opens.mg.mc.MaingraphforMC;
+import ltd.opens.mg.mc.core.blueprint.engine.BlueprintEngine;
+import net.minecraft.server.level.ServerLevel;
 import net.neoforged.bus.api.SubscribeEvent;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * 控制流相关节点
@@ -147,6 +152,79 @@ public class ControlFlowNodes {
             .output(NodePorts.BREAK, "node.mgmc.break_loop.port.break", NodeDefinition.PortType.EXEC, NodeThemes.COLOR_PORT_EXEC)
             .registerExec((node, ctx) -> {
                 ctx.breakRequested.set(true);
+            });
+
+        // 调用本存档其他蓝图 (Call Other Blueprint)
+        NodeHelper.setup("call_blueprint", "node.mgmc.call_blueprint.name")
+            .category("node_category.mgmc.logic.control")
+            .color(NodeThemes.COLOR_NODE_CONTROL)
+            .property("web_url", "http://zhcn-docs.mc.maingraph.nb6.ltd/nodes/logic/control/call_blueprint")
+            .input(NodePorts.EXEC, "node.mgmc.port.exec_in", NodeDefinition.PortType.EXEC, NodeThemes.COLOR_PORT_EXEC)
+            .input(NodePorts.BLUEPRINT, "node.mgmc.port.blueprint_name", NodeDefinition.PortType.STRING, NodeThemes.COLOR_PORT_STRING, true, "")
+            .input(NodePorts.LIST, "node.mgmc.port.args_list", NodeDefinition.PortType.LIST, NodeThemes.COLOR_PORT_LIST)
+            .output(NodePorts.EXEC, "node.mgmc.port.exec_out", NodeDefinition.PortType.EXEC, NodeThemes.COLOR_PORT_EXEC)
+            .output(NodePorts.LIST, "node.mgmc.port.result_list", NodeDefinition.PortType.LIST, NodeThemes.COLOR_PORT_LIST)
+            .register(new NodeHelper.NodeHandlerAdapter() {
+                @Override
+                public void execute(JsonObject node, NodeContext ctx) {
+                    String name = TypeConverter.toString(NodeLogicRegistry.evaluateInput(node, NodePorts.BLUEPRINT, ctx));
+                    Object argsObj = NodeLogicRegistry.evaluateInput(node, NodePorts.LIST, ctx);
+                    List<Object> argsList = TypeConverter.toList(argsObj);
+                    
+                    if (ctx.level instanceof ServerLevel serverLevel) {
+                        ltd.opens.mg.mc.core.blueprint.BlueprintManager manager = MaingraphforMC.getServerManager();
+                        if (manager != null) {
+                            JsonObject bpJson = manager.getBlueprint(serverLevel, name);
+                            if (bpJson != null) {
+                            String[] argsArr = argsList.stream().map(TypeConverter::toString).toArray(String[]::new);
+                            NodeContext.Builder builder = new NodeContext.Builder(serverLevel)
+                                .blueprintName(name)
+                                .eventName("")
+                                .args(argsArr)
+                                .parentContext(ctx)
+                                .triggerUuid(ctx.triggerUuid)
+                                .triggerName(ctx.triggerName)
+                                .triggerEntity(ctx.triggerEntity)
+                                .triggerX(ctx.triggerX).triggerY(ctx.triggerY).triggerZ(ctx.triggerZ)
+                                .triggerSpeed(ctx.triggerSpeed)
+                                .triggerBlockId(ctx.triggerBlockId)
+                                .triggerItemId(ctx.triggerItemId)
+                                .triggerValue(ctx.triggerValue)
+                                .triggerExtraUuid(ctx.triggerExtraUuid)
+                                .triggerExtraEntity(ctx.triggerExtraEntity);
+                            
+                            NodeContext resultCtx = BlueprintEngine.executeWithReturn(serverLevel, bpJson, "on_blueprint_called", builder);
+                            if (resultCtx != null) {
+                                ctx.setRuntimeData(node.get("id").getAsString(), "results", new ArrayList<>(resultCtx.returnList));
+                            }
+                        }
+                    }
+                }
+                NodeLogicRegistry.triggerExec(node, NodePorts.EXEC, ctx);
+            }
+
+                @Override
+                public Object getValue(JsonObject node, String portId, NodeContext ctx) {
+                    if (NodePorts.LIST.equals(portId)) {
+                        return ctx.getRuntimeData(node.get("id").getAsString(), "results", new ArrayList<>());
+                    }
+                    return null;
+                }
+            });
+
+        // 返回列表到调用蓝图 (Return List to Calling Blueprint)
+        NodeHelper.setup("return_to_caller", "node.mgmc.return_to_caller.name")
+            .category("node_category.mgmc.logic.control")
+            .color(NodeThemes.COLOR_NODE_CONTROL)
+            .property("web_url", "http://zhcn-docs.mc.maingraph.nb6.ltd/nodes/logic/control/return_to_caller")
+            .input(NodePorts.EXEC, "node.mgmc.port.exec_in", NodeDefinition.PortType.EXEC, NodeThemes.COLOR_PORT_EXEC)
+            .input(NodePorts.LIST, "node.mgmc.port.result_list", NodeDefinition.PortType.LIST, NodeThemes.COLOR_PORT_LIST)
+            .registerExec((node, ctx) -> {
+                Object resultObj = NodeLogicRegistry.evaluateInput(node, NodePorts.LIST, ctx);
+                if (resultObj instanceof List) {
+                    ctx.returnList.clear();
+                    ctx.returnList.addAll((List<Object>) resultObj);
+                }
             });
     }
 }

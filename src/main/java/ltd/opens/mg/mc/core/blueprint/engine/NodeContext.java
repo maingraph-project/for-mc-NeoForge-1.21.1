@@ -37,6 +37,10 @@ public class NodeContext {
     public volatile String lastTriggeredPin;
     public volatile String currentBlueprintName = "";
     
+    // 用于子蓝图调用的返回数据
+    public final java.util.List<Object> returnList = new java.util.ArrayList<>();
+    public final NodeContext parentContext;
+
     public Object getRuntimeData(String nodeId, String key, Object defaultValue) {
         Map<String, Object> nodeData = runtimeData.get(nodeId);
         if (nodeData == null) return defaultValue;
@@ -50,7 +54,7 @@ public class NodeContext {
     public NodeContext(Level level, String eventName, String[] args, String triggerUuid, String triggerName, Entity triggerEntity,
                        double triggerX, double triggerY, double triggerZ, double triggerSpeed,
                        String triggerBlockId, String triggerItemId, double triggerValue, String triggerExtraUuid, Entity triggerExtraEntity,
-                       Map<String, JsonObject> nodesMap, int formatVersion, Map<String, Object> properties) {
+                       Map<String, JsonObject> nodesMap, int formatVersion, Map<String, Object> properties, NodeContext parentContext) {
         this.level = level;
         this.eventName = eventName;
         this.args = args;
@@ -70,6 +74,7 @@ public class NodeContext {
         this.nodesMap = nodesMap;
         this.formatVersion = formatVersion;
         this.properties = properties != null ? properties : new HashMap<>();
+        this.parentContext = parentContext;
     }
 
     public NodeContext(Level level, String eventName, String[] args, String triggerUuid, String triggerName, Entity triggerEntity,
@@ -77,7 +82,7 @@ public class NodeContext {
                        String triggerBlockId, String triggerItemId, double triggerValue, String triggerExtraUuid, Entity triggerExtraEntity,
                        Map<String, JsonObject> nodesMap, int formatVersion) {
         this(level, eventName, args, triggerUuid, triggerName, triggerEntity, triggerX, triggerY, triggerZ, triggerSpeed,
-             triggerBlockId, triggerItemId, triggerValue, triggerExtraUuid, triggerExtraEntity, nodesMap, formatVersion, new HashMap<>());
+             triggerBlockId, triggerItemId, triggerValue, triggerExtraUuid, triggerExtraEntity, nodesMap, formatVersion, new HashMap<>(), null);
     }
 
     public static class Builder {
@@ -100,9 +105,15 @@ public class NodeContext {
         private int formatVersion = 1;
         private String blueprintName = "";
         private Map<String, Object> properties = new HashMap<>();
+        private NodeContext parentContext;
 
         public Builder(Level level) {
             this.level = level;
+        }
+
+        public Builder parentContext(NodeContext parentContext) {
+            this.parentContext = parentContext;
+            return this;
         }
 
         public Builder blueprintName(String name) {
@@ -136,7 +147,7 @@ public class NodeContext {
             NodeContext ctx = new NodeContext(level, eventName, args, triggerUuid, triggerName, triggerEntity, 
                                  triggerX, triggerY, triggerZ, triggerSpeed, 
                                  triggerBlockId, triggerItemId, triggerValue, triggerExtraUuid, triggerExtraEntity, 
-                                 nodesMap, formatVersion, properties);
+                                 nodesMap, formatVersion, properties, parentContext);
             ctx.currentBlueprintName = blueprintName;
             return ctx;
         }

@@ -57,8 +57,37 @@ public class TypeConverter {
         if (value instanceof List<?> listValue) {
             return new ArrayList<>(listValue);
         }
-        
-        // 2. 处理 JsonArray (Gson)
+
+        // 2. 处理数组
+        if (value instanceof Object[] array) {
+            List<Object> list = new ArrayList<>();
+            for (Object o : array) {
+                list.add(o);
+            }
+            return list;
+        }
+        if (value instanceof int[] array) {
+            List<Object> list = new ArrayList<>();
+            for (int i : array) list.add(i);
+            return list;
+        }
+        if (value instanceof double[] array) {
+            List<Object> list = new ArrayList<>();
+            for (double d : array) list.add(d);
+            return list;
+        }
+        if (value instanceof boolean[] array) {
+            List<Object> list = new ArrayList<>();
+            for (boolean b : array) list.add(b);
+            return list;
+        }
+        if (value instanceof long[] array) {
+            List<Object> list = new ArrayList<>();
+            for (long l : array) list.add(l);
+            return list;
+        }
+
+        // 3. 处理 JsonArray (Gson)
         if (value instanceof JsonArray array) {
             List<Object> list = new ArrayList<>();
             for (JsonElement element : array) {
