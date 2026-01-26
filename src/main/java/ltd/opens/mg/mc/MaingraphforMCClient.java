@@ -25,13 +25,13 @@ import net.minecraft.ChatFormatting;
 import ltd.opens.mg.mc.core.registry.MGMCRegistries;
 import org.lwjgl.glfw.GLFW;
 import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.NeoForge;
 
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
 @Mod(value = MaingraphforMC.MODID, dist = Dist.CLIENT)
 public class MaingraphforMCClient {
-    public static final KeyMapping.Category MGMC_CATEGORY = new KeyMapping.Category(Identifier.parse(MaingraphforMC.MODID + ":main"));
+    public static final String MGMC_CATEGORY = "key.categories." + MaingraphforMC.MODID;
 
     public static final KeyMapping BLUEPRINT_KEY = new KeyMapping(
         "key.mgmc.open_blueprint",
@@ -53,7 +53,6 @@ public class MaingraphforMCClient {
     }
 
     private void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {
-        event.registerCategory(MGMC_CATEGORY);
         event.register(BLUEPRINT_KEY);
     }
 

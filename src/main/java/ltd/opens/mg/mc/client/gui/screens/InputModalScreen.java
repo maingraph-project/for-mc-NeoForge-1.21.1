@@ -4,7 +4,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
@@ -109,17 +108,18 @@ public class InputModalScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(KeyEvent event) {
-        int keyCode = event.key();
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
-            onConfirm.accept(editBox.getValue());
-            this.minecraft.setScreen(parent);
-            return true;
+            if (mode == Mode.INPUT && editBox != null) {
+                onConfirm.accept(editBox.getValue());
+                this.minecraft.setScreen(parent);
+                return true;
+            }
         }
         if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
             this.minecraft.setScreen(parent);
             return true;
         }
-        return super.keyPressed(event);
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 }

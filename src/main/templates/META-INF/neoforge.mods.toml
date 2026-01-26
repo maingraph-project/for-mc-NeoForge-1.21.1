@@ -3,6 +3,8 @@
 # The overall format is standard TOML format, v0.5.0.
 # Note that there are a couple of TOML lists in this file.
 # Find more information on toml format here:  https://github.com/toml-lang/toml
+modLoader="javafml" #mandatory
+loaderVersion="[4,)" #mandatory (the full version of the mod loader used, usually 4 for 1.21)
 
 # The license for you mod. This is mandatory metadata and allows for easier comprehension of your redistributive properties.
 # Review your options at https://choosealicense.com/. All rights reserved is the default copyright stance, and is thus the default here.

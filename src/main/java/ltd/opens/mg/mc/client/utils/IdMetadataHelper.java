@@ -4,7 +4,7 @@ import ltd.opens.mg.mc.core.blueprint.routing.BlueprintRouter;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -38,22 +38,22 @@ public class IdMetadataHelper {
             return new IdInfo(id, Component.translatable("gui.mgmc.mapping.id.players"), new ItemStack(Items.PLAYER_HEAD), true);
         }
 
-        Identifier rl = Identifier.tryParse(id);
+        ResourceLocation rl = ResourceLocation.tryParse(id);
         if (rl != null) {
             // 尝试作为物品
-            Optional<Holder.Reference<net.minecraft.world.item.Item>> itemRef = BuiltInRegistries.ITEM.get(rl);
+            Optional<Holder.Reference<net.minecraft.world.item.Item>> itemRef = BuiltInRegistries.ITEM.getHolder(rl);
             if (itemRef.isPresent()) {
                 ItemStack stack = new ItemStack(itemRef.get().value());
                 return new IdInfo(id, stack.getHoverName(), stack, false);
             }
             // 尝试作为方块
-            Optional<Holder.Reference<Block>> blockRef = BuiltInRegistries.BLOCK.get(rl);
+            Optional<Holder.Reference<Block>> blockRef = BuiltInRegistries.BLOCK.getHolder(rl);
             if (blockRef.isPresent()) {
                 ItemStack stack = new ItemStack(blockRef.get().value());
                 return new IdInfo(id, stack.getHoverName(), stack, false);
             }
             // 尝试作为实体
-            Optional<Holder.Reference<EntityType<?>>> entityRef = BuiltInRegistries.ENTITY_TYPE.get(rl);
+            Optional<Holder.Reference<EntityType<?>>> entityRef = BuiltInRegistries.ENTITY_TYPE.getHolder(rl);
             if (entityRef.isPresent()) {
                 Component name = entityRef.get().value().getDescription();
                 return new IdInfo(id, name, new ItemStack(Items.ZOMBIE_HEAD), false);

@@ -4,10 +4,10 @@ import ltd.opens.mg.mc.MaingraphforMC;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public record RequestBlueprintListPayload() implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<RequestBlueprintListPayload> TYPE = new CustomPacketPayload.Type<>(Identifier.parse(MaingraphforMC.MODID + ":request_blueprint_list"));
+    public static final CustomPacketPayload.Type<RequestBlueprintListPayload> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(MaingraphforMC.MODID, "request_blueprint_list"));
     
     public static final StreamCodec<FriendlyByteBuf, RequestBlueprintListPayload> STREAM_CODEC = StreamCodec.unit(new RequestBlueprintListPayload());
 

@@ -15,7 +15,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.registries.BuiltInRegistries;
 
 import ltd.opens.mg.mc.core.blueprint.data.XYZ;
@@ -154,7 +154,7 @@ public class ActionNodes {
 
                 try {
                     if (ctx.level instanceof ServerLevel serverLevel) {
-                        Identifier id = Identifier.parse(effectName);
+                        ResourceLocation id = ResourceLocation.parse(effectName);
                         Optional<ParticleType<?>> particleTypeOptional = BuiltInRegistries.PARTICLE_TYPE.getOptional(id);
                         if (particleTypeOptional.isPresent()) {
                             ParticleType<?> type = particleTypeOptional.get();
@@ -230,9 +230,7 @@ public class ActionNodes {
                 else if (ctx.triggerEntity != null) entity = ctx.triggerEntity;
 
                 if (entity != null && amount > 0) {
-                    if (entity.level() instanceof ServerLevel sl) {
-                        entity.hurtServer(sl, entity.damageSources().generic(), amount);
-                    }
+                    entity.hurt(entity.damageSources().generic(), amount);
                 }
                 NodeLogicRegistry.triggerExec(node, NodePorts.EXEC, ctx);
             });
@@ -276,11 +274,7 @@ public class ActionNodes {
                 else if (ctx.triggerEntity != null) entity = ctx.triggerEntity;
 
                 if (entity != null) {
-                    if (ctx.level instanceof ServerLevel sl) {
-                        entity.kill(sl);
-                    } else {
-                        entity.discard();
-                    }
+                    entity.kill();
                 }
                 NodeLogicRegistry.triggerExec(node, NodePorts.EXEC, ctx);
             });
@@ -333,7 +327,7 @@ public class ActionNodes {
 
                 if (entity != null && effectName != null) {
                     try {
-                        Optional<Holder.Reference<MobEffect>> holder = BuiltInRegistries.MOB_EFFECT.get(Identifier.parse(effectName));
+                        Optional<Holder.Reference<MobEffect>> holder = BuiltInRegistries.MOB_EFFECT.getHolder(ResourceLocation.parse(effectName));
                         if (holder.isPresent()) {
                             entity.addEffect(new MobEffectInstance(holder.get(), duration, amplifier, false, showParticles));
                         }

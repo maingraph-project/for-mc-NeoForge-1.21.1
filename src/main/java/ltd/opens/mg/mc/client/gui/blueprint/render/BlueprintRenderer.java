@@ -4,6 +4,8 @@ package ltd.opens.mg.mc.client.gui.blueprint.render;
 import ltd.opens.mg.mc.client.gui.blueprint.BlueprintState;
 import ltd.opens.mg.mc.client.gui.blueprint.Viewport;
 import ltd.opens.mg.mc.client.gui.components.*;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import java.util.List;
@@ -122,17 +124,17 @@ public class BlueprintRenderer {
         if (len < 0.5f) return;
 
         // Use PoseStack for efficient rotated rectangle drawing
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(x1, y1);
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(x1, y1, 0);
         
         float angle = (float) Math.atan2(dy, dx);
-        guiGraphics.pose().rotate(angle);
+        guiGraphics.pose().mulPose(Axis.ZP.rotation(angle));
         
         // Draw the line as a thin rectangle
         // Thickness is 2.0f
         guiGraphics.fill(0, -1, (int)len, 1, color);
         
-        guiGraphics.pose().popMatrix();
+        guiGraphics.pose().popPose();
     }
 
     public static void drawSelectionBox(GuiGraphics guiGraphics, BlueprintState state) {

@@ -40,7 +40,7 @@ public class BlueprintMenuInputHandler {
     public static boolean handleKeyPressed(BlueprintMenu menu, KeyEvent event) {
         if (menu.getSearchEditBox() != null) {
             String oldQuery = menu.getSearchQuery();
-            if (menu.getSearchEditBox().keyPressed(event)) {
+            if (menu.getSearchEditBox().keyPressed(event.key(), event.scanCode(), event.modifiers())) {
                 if (!oldQuery.equals(menu.getSearchQuery())) {
                     menu.updateSearch();
                     menu.setScrollAmount(0);
@@ -75,7 +75,7 @@ public class BlueprintMenuInputHandler {
     public static boolean handleCharTyped(BlueprintMenu menu, CharacterEvent event) {
         if (menu.getSearchEditBox() != null) {
             String oldQuery = menu.getSearchQuery();
-            if (menu.getSearchEditBox().charTyped(event)) {
+            if (menu.getSearchEditBox().charTyped((char)event.codePoint(), event.modifiers())) {
                 if (!oldQuery.equals(menu.getSearchQuery())) {
                     menu.updateSearch();
                     menu.setScrollAmount(0);
@@ -95,7 +95,7 @@ public class BlueprintMenuInputHandler {
 
         // Forward click to EditBox
         if (menu.getSearchEditBox() != null) {
-            if (menu.getSearchEditBox().mouseClicked(event, false)) {
+            if (menu.getSearchEditBox().mouseClicked(event.x(), event.y(), event.buttonInfo().button())) {
                 return null;
             }
         }

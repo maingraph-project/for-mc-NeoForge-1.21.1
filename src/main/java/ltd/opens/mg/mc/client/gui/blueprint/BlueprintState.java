@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
-import net.minecraft.util.Util;
+import net.minecraft.Util;
 import ltd.opens.mg.mc.client.gui.screens.BlueprintScreen;
 import java.util.ArrayList;
 import java.util.List;

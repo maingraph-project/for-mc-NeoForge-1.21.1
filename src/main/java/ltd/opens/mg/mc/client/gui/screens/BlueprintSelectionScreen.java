@@ -10,9 +10,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.CharacterEvent;
-import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import java.util.ArrayList;
 import java.util.List;
@@ -125,7 +122,7 @@ public class BlueprintSelectionScreen extends Screen {
     }
 
     private void refreshFileList() {
-        this.list.clearEntries();
+        this.list.clear();
         if (isGlobalMode) {
             try {
                 java.nio.file.Path dir = ltd.opens.mg.mc.core.blueprint.BlueprintManager.getGlobalBlueprintsDir();
@@ -147,7 +144,7 @@ public class BlueprintSelectionScreen extends Screen {
     }
 
     public void updateListFromServer(List<String> blueprints) {
-        this.list.clearEntries();
+        this.list.clear();
         for (String name : blueprints) {
             this.list.add(new BlueprintEntry(name));
         }
@@ -292,6 +289,7 @@ public class BlueprintSelectionScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         
         // Draw title
@@ -305,21 +303,21 @@ public class BlueprintSelectionScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean isDouble) {
-        if (contextMenu.mouseClicked(event.x(), event.y(), event.buttonInfo().button())) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (contextMenu.mouseClicked(mouseX, mouseY, button)) {
             return true;
         }
-        return super.mouseClicked(event, isDouble);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
-    public boolean keyPressed(KeyEvent event) {
-        return super.keyPressed(event);
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
-    public boolean charTyped(CharacterEvent event) {
-        return super.charTyped(event);
+    public boolean charTyped(char codePoint, int modifiers) {
+        return super.charTyped(codePoint, modifiers);
     }
 
     class BlueprintList extends ObjectSelectionList<BlueprintEntry> {
@@ -329,6 +327,10 @@ public class BlueprintSelectionScreen extends Screen {
 
         public void add(BlueprintEntry entry) {
             super.addEntry(entry);
+        }
+
+        public void clear() {
+            super.clearEntries();
         }
 
         @Override
@@ -353,31 +355,20 @@ public class BlueprintSelectionScreen extends Screen {
         }
 
         @Override
-        public void renderContent(GuiGraphics guiGraphics, int index, int top, boolean isHovered, float partialTick) {
-            int entryWidth = this.getWidth();
-            int entryLeft = this.getX();
-            int entryHeight = this.getHeight();
-            
-            // Use getY() if it's set, otherwise fallback to top
-            int y = this.getY();
-            if (y <= 0) y = top;
-            
-            // If it's still 0 or less, it might be collapsed, but with ObjectSelectionList 
-            // the y should be managed by the list.
-            
+        public void render(GuiGraphics guiGraphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isHovered, float partialTick) {
             String nameToRender = this.displayName;
             
             // Render background if selected or hovered
             if (this == BlueprintSelectionScreen.this.list.getSelected()) {
-                guiGraphics.fill(entryLeft, y, entryLeft + entryWidth, y + entryHeight, 0x44FFFFFF);
-                guiGraphics.renderOutline(entryLeft, y, entryWidth, entryHeight, 0xFFFFCC00);
+                guiGraphics.fill(left, top, left + width, top + height, 0x44FFFFFF);
+                guiGraphics.renderOutline(left, top, width, height, 0xFFFFCC00);
             } else if (isHovered) {
-                guiGraphics.fill(entryLeft, y, entryLeft + entryWidth, y + entryHeight, 0x22FFFFFF);
-                guiGraphics.renderOutline(entryLeft, y, entryWidth, entryHeight, 0xFF888888);
+                guiGraphics.fill(left, top, left + width, top + height, 0x22FFFFFF);
+                guiGraphics.renderOutline(left, top, width, height, 0xFF888888);
             }
 
             int color = this == BlueprintSelectionScreen.this.list.getSelected() ? 0xFFFFCC00 : (isHovered ? 0xFFFFFFFF : 0xFFAAAAAA);
-            guiGraphics.drawString(BlueprintSelectionScreen.this.font, nameToRender, entryLeft + 5, y + (entryHeight - 8) / 2, color);
+            guiGraphics.drawString(BlueprintSelectionScreen.this.font, nameToRender, left + 5, top + (height - 8) / 2, color);
         }
 
         @Override
@@ -386,10 +377,10 @@ public class BlueprintSelectionScreen extends Screen {
         }
 
         @Override
-        public boolean mouseClicked(MouseButtonEvent event, boolean isDouble) {
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
             BlueprintSelectionScreen.this.list.setSelected(this);
             
-            if (event.buttonInfo().button() == 1) { // Right click
+            if (button == 1) { // Right click
                 List<GuiContextMenu.MenuItem> menuItems = new ArrayList<>();
                 
                 menuItems.add(new GuiContextMenu.MenuItem(Component.translatable("gui.mgmc.blueprint_selection.open"), () -> {
@@ -508,7 +499,7 @@ public class BlueprintSelectionScreen extends Screen {
                     ));
                 }, 0xFFFF5555));
 
-                BlueprintSelectionScreen.this.contextMenu.show(event.x(), event.y(), menuItems);
+                BlueprintSelectionScreen.this.contextMenu.show(mouseX, mouseY, menuItems);
                 return true;
             }
 

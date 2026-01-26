@@ -5,7 +5,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 public record ResponseExportPayload(String name, String data, Map<String, Set<String>> relatedMappings) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ResponseExportPayload> TYPE = new CustomPacketPayload.Type<>(Identifier.parse(MaingraphforMC.MODID + ":response_export"));
+    public static final CustomPacketPayload.Type<ResponseExportPayload> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(MaingraphforMC.MODID, "response_export"));
 
     public static final StreamCodec<FriendlyByteBuf, ResponseExportPayload> STREAM_CODEC = StreamCodec.composite(
         ByteBufCodecs.STRING_UTF8,

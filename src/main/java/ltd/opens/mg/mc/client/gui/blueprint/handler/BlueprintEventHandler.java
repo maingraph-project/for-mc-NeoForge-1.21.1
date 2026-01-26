@@ -39,7 +39,7 @@ public class BlueprintEventHandler {
         // 0. Quick Search interactions
         if (state.showQuickSearch) {
             if (state.quickSearchEditBox != null) {
-                if (state.quickSearchEditBox.mouseClicked(event, false)) {
+                if (state.quickSearchEditBox.mouseClicked(event.x(), event.y(), event.buttonInfo().button())) {
                     return true;
                 }
                 
@@ -298,7 +298,7 @@ public class BlueprintEventHandler {
                 }
                 
                 String oldVal = state.quickSearchEditBox.getValue();
-                if (state.quickSearchEditBox.keyPressed(event)) {
+                if (state.quickSearchEditBox.keyPressed(event.key(), event.scanCode(), event.modifiers())) {
                     if (!state.quickSearchEditBox.getValue().equals(oldVal)) {
                         state.updateQuickSearchMatches();
                     }
@@ -314,7 +314,7 @@ public class BlueprintEventHandler {
                 finishMarkerEditing();
                 return true;
             }
-            if (state.markerEditBox.keyPressed(event)) {
+            if (state.markerEditBox.keyPressed(event.key(), event.scanCode(), event.modifiers())) {
                 // Real-time size update
                 state.editingMarkerNode.inputValues.addProperty(ltd.opens.mg.mc.core.blueprint.NodePorts.COMMENT, state.markerEditBox.getValue());
                 state.editingMarkerNode.setSizeDirty(true);
@@ -332,7 +332,7 @@ public class BlueprintEventHandler {
         if (state.showQuickSearch) {
             if (state.quickSearchEditBox != null) {
                 String oldVal = state.quickSearchEditBox.getValue();
-                boolean handled = state.quickSearchEditBox.charTyped(event);
+                boolean handled = state.quickSearchEditBox.charTyped((char)event.codePoint(), event.modifiers());
                 if (handled && !state.quickSearchEditBox.getValue().equals(oldVal)) {
                     state.updateQuickSearchMatches();
                 }
@@ -342,7 +342,7 @@ public class BlueprintEventHandler {
         }
 
         if (state.editingMarkerNode != null && state.markerEditBox != null) {
-            boolean handled = state.markerEditBox.charTyped(event);
+            boolean handled = state.markerEditBox.charTyped((char)event.codePoint(), event.modifiers());
             if (handled) {
                 state.editingMarkerNode.inputValues.addProperty(ltd.opens.mg.mc.core.blueprint.NodePorts.COMMENT, state.markerEditBox.getValue());
                 state.editingMarkerNode.setSizeDirty(true);

@@ -8,7 +8,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.client.input.MouseButtonEvent;
 
 import java.util.List;
 
@@ -50,7 +49,7 @@ public class BlueprintSelectionForMappingScreen extends Screen {
     }
 
     private void refreshList() {
-        this.list.clearEntries();
+        this.list.clear();
         if (isGlobalMode) {
             try {
                 java.nio.file.Path dir = ltd.opens.mg.mc.core.blueprint.BlueprintManager.getGlobalBlueprintsDir();
@@ -73,7 +72,7 @@ public class BlueprintSelectionForMappingScreen extends Screen {
     }
 
     public void updateListFromServer(List<String> blueprints) {
-        this.list.clearEntries();
+        this.list.clear();
         for (String name : blueprints) {
             this.list.add(new BlueprintEntry(name));
         }
@@ -81,6 +80,7 @@ public class BlueprintSelectionForMappingScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 10, 0xFFFFFF);
     }
@@ -90,6 +90,7 @@ public class BlueprintSelectionForMappingScreen extends Screen {
             super(minecraft, width, height, y, itemHeight);
         }
         public void add(BlueprintEntry entry) { super.addEntry(entry); }
+        public void clear() { super.clearEntries(); }
 
         @Override
         public int getRowWidth() {
@@ -106,30 +107,24 @@ public class BlueprintSelectionForMappingScreen extends Screen {
         }
         
         @Override
-        public void renderContent(GuiGraphics guiGraphics, int index, int top, boolean isHovered, float partialTick) {
-            int left = this.getX();
-            int width = this.getWidth();
-            int height = this.getHeight();
-            int y = this.getY();
-            if (y <= 0) y = top;
-
+        public void render(GuiGraphics guiGraphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isHovered, float partialTick) {
             boolean isSelected = BlueprintSelectionForMappingScreen.this.list.getSelected() == this;
 
             // 渲染背景和边框
             if (isSelected) {
-                guiGraphics.fill(left, y, left + width, y + height, 0x44FFFFFF);
-                guiGraphics.renderOutline(left, y, width, height, 0xFFFFCC00);
+                guiGraphics.fill(left, top, left + width, top + height, 0x44FFFFFF);
+                guiGraphics.renderOutline(left, top, width, height, 0xFFFFCC00);
             } else if (isHovered) {
-                guiGraphics.fill(left, y, left + width, y + height, 0x22FFFFFF);
-                guiGraphics.renderOutline(left, y, width, height, 0xFF888888);
+                guiGraphics.fill(left, top, left + width, top + height, 0x22FFFFFF);
+                guiGraphics.renderOutline(left, top, width, height, 0xFF888888);
             }
 
             int color = isSelected ? 0xFFFFCC00 : (isHovered ? 0xFFFFFFFF : 0xFFAAAAAA);
-            guiGraphics.drawString(font, displayName, left + 5, y + (height - 8) / 2, color);
+            guiGraphics.drawString(font, displayName, left + 5, top + (height - 8) / 2, color);
         }
         
         @Override
-        public boolean mouseClicked(MouseButtonEvent event, boolean isDouble) {
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
             BlueprintSelectionForMappingScreen.this.list.setSelected(this);
             return true;
         }

@@ -23,6 +23,7 @@ public class BlueprintScreen extends Screen {
     private boolean forceOpen = false;
 
     private final boolean isGlobalMode;
+    private long lastClickTime;
 
     public BlueprintScreen(String name) {
         this(null, name);
@@ -76,6 +77,10 @@ public class BlueprintScreen extends Screen {
                 NetworkService.getInstance().requestBlueprintData(blueprintName);
             }
         }
+    }
+
+    public net.minecraft.client.gui.Font getFont() {
+        return this.font;
     }
 
     public void loadFromNetwork(String json, long version) {
@@ -185,9 +190,9 @@ public class BlueprintScreen extends Screen {
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         BlueprintRenderer.drawGrid(guiGraphics, this.width, this.height, state.viewport);
 
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(state.viewport.panX, state.viewport.panY);
-        guiGraphics.pose().scale(state.viewport.zoom, state.viewport.zoom);
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(state.viewport.panX, state.viewport.panY, 0);
+        guiGraphics.pose().scale(state.viewport.zoom, state.viewport.zoom, 1.0f);
 
         BlueprintRenderer.drawConnections(guiGraphics, state.connections, this.width, this.height, state.viewport);
 
@@ -211,7 +216,7 @@ public class BlueprintScreen extends Screen {
             BlueprintRenderer.drawBezier(guiGraphics, startPos[0], startPos[1], state.viewport.toWorldX(mouseX), state.viewport.toWorldY(mouseY), 0x88FFFFFF, state.viewport.zoom);
         }
 
-        guiGraphics.pose().popMatrix();
+        guiGraphics.pose().popPose();
 
         // Selection Box (Screen Space)
         BlueprintRenderer.drawSelectionBox(guiGraphics, state);
@@ -368,13 +373,12 @@ public class BlueprintScreen extends Screen {
     }
 
     @Override
-    public boolean mouseReleased(MouseButtonEvent event) {
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        MouseButtonEvent event = new MouseButtonEvent(mouseX, mouseY, new net.minecraft.client.input.ButtonInfo(button, 0, 0));
         state.buttonLongPressTarget = null;
         state.isMouseDown = false;
-        return eventHandler.mouseReleased(event, this) || super.mouseReleased(event);
+        return eventHandler.mouseReleased(event, this) || super.mouseReleased(mouseX, mouseY, button);
     }
-
-
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
@@ -382,24 +386,32 @@ public class BlueprintScreen extends Screen {
     }
 
     @Override
-    public boolean charTyped(CharacterEvent event) {
-        return eventHandler.charTyped(event) || super.charTyped(event);
+    public boolean charTyped(char codePoint, int modifiers) {
+        CharacterEvent event = new CharacterEvent(codePoint, modifiers);
+        return eventHandler.charTyped(event) || super.charTyped(codePoint, modifiers);
     }
 
     @Override
-    public boolean keyPressed(KeyEvent event) {
-        return eventHandler.keyPressed(event, this) || super.keyPressed(event);
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        KeyEvent event = new KeyEvent(keyCode, scanCode, 1, modifiers);
+        return eventHandler.keyPressed(event, this) || super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
-    public boolean keyReleased(KeyEvent event) {
-        return eventHandler.keyReleased(event, this) || super.keyReleased(event);
+    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+        KeyEvent event = new KeyEvent(keyCode, scanCode, 0, modifiers);
+        return eventHandler.keyReleased(event, this) || super.keyReleased(keyCode, scanCode, modifiers);
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean isDouble) {
-        double mouseX = event.x();
-        double mouseY = event.y();
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        long currentTime = System.currentTimeMillis();
+        boolean isDouble = (currentTime - lastClickTime) < 300;
+        lastClickTime = currentTime;
+
+        MouseButtonEvent event = new MouseButtonEvent(mouseX, mouseY, new net.minecraft.client.input.ButtonInfo(button, 1, 0));
+        // double mouseX = event.x(); // Removed duplicate
+        // double mouseY = event.y(); // Removed duplicate
 
         // Handle Notification Close
         if (state.notificationMessage != null && state.notificationTimer > 0) {
@@ -481,11 +493,12 @@ public class BlueprintScreen extends Screen {
             return true; // Clicked on top bar but not on buttons
         }
 
-        return eventHandler.mouseClicked(event, isDouble, font, this) || super.mouseClicked(event, isDouble);
+        return eventHandler.mouseClicked(event, isDouble, font, this) || super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
-    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
-        return eventHandler.mouseDragged(event, dragX, dragY) || super.mouseDragged(event, dragX, dragY);
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        MouseButtonEvent event = new MouseButtonEvent(mouseX, mouseY, new net.minecraft.client.input.ButtonInfo(button, 1, 0));
+        return eventHandler.mouseDragged(event, dragX, dragY) || super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 }

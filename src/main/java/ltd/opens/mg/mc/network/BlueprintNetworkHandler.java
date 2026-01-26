@@ -11,7 +11,6 @@ import ltd.opens.mg.mc.network.payloads.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.players.NameAndId;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,8 +22,7 @@ public class BlueprintNetworkHandler {
 
     public static class Server {
         private static boolean hasPermission(ServerPlayer player) {
-            if (player.level().getServer() == null) return false;
-            return player.level().getServer().getProfilePermissions(new NameAndId(player.getUUID(), player.getGameProfile().name())).level().id() >= 2;
+            return player.hasPermissions(2);
         }
 
         private static java.util.List<String> getBlueprintNames(ServerLevel level, boolean force) {

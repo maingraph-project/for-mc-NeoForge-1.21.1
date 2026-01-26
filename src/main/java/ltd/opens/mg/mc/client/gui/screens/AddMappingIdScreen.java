@@ -7,10 +7,9 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
-import net.minecraft.client.input.MouseButtonEvent;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -85,7 +84,7 @@ public class AddMappingIdScreen extends Screen {
                 .limit(50)
                 .collect(Collectors.toList());
 
-        this.suggestionList.clearEntries();
+        this.suggestionList.clear();
         for (IdMetadataHelper.IdInfo info : filtered) {
             this.suggestionList.add(new SuggestionEntry(info));
         }
@@ -143,8 +142,7 @@ public class AddMappingIdScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(KeyEvent event) {
-        int keyCode = event.key();
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
             this.onClose();
             return true;
@@ -153,7 +151,7 @@ public class AddMappingIdScreen extends Screen {
             this.confirmSelection();
             return true;
         }
-        return super.keyPressed(event);
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     class SuggestionList extends ObjectSelectionList<SuggestionEntry> {
@@ -163,6 +161,10 @@ public class AddMappingIdScreen extends Screen {
 
         public void add(SuggestionEntry entry) {
             this.addEntry(entry);
+        }
+
+        public void clear() {
+            this.clearEntries();
         }
 
         @Override
@@ -179,44 +181,38 @@ public class AddMappingIdScreen extends Screen {
         }
 
         @Override
-        public void renderContent(GuiGraphics guiGraphics, int index, int top, boolean isHovered, float partialTick) {
-            int left = this.getX();
-            int width = this.getWidth();
-            int height = this.getHeight();
-            int y = this.getY();
-            if (y <= 0) y = top;
-            
+        public void render(GuiGraphics guiGraphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isHovered, float partialTick) {
             boolean isSelected = suggestionList.getSelected() == this;
             boolean isExists = existingIds.contains(info.id);
 
             // 渲染背景和边框
             if (isSelected) {
-                guiGraphics.fill(left, y, left + width, y + height, 0x44FFFFFF);
-                guiGraphics.renderOutline(left, y, width, height, 0xFFFFCC00);
+                guiGraphics.fill(left, top, left + width, top + height, 0x44FFFFFF);
+                guiGraphics.renderOutline(left, top, width, height, 0xFFFFCC00);
             } else if (isHovered) {
-                guiGraphics.fill(left, y, left + width, y + height, 0x22FFFFFF);
-                guiGraphics.renderOutline(left, y, width, height, 0xFF888888);
+                guiGraphics.fill(left, top, left + width, top + height, 0x22FFFFFF);
+                guiGraphics.renderOutline(left, top, width, height, 0xFF888888);
             }
 
             // 绘制图标
             if (!info.icon.isEmpty()) {
-                guiGraphics.renderItem(info.icon, left + 5, y + 4);
+                guiGraphics.renderItem(info.icon, left + 5, top + 4);
             }
 
             // 绘制文本 - 使用 0xFF 前缀确保 Alpha 通道正确
             int textColor = isExists ? 0xFF888888 : (isSelected ? 0xFFFFCC00 : (isHovered ? 0xFFFFFFFF : 0xFFAAAAAA));
-            guiGraphics.drawString(font, info.name, left + 25, y + 4, textColor);
-            guiGraphics.drawString(font, info.id, left + 25, y + 14, 0xFF888888);
+            guiGraphics.drawString(font, info.name, left + 25, top + 4, textColor);
+            guiGraphics.drawString(font, info.id, left + 25, top + 14, 0xFF888888);
             
             if (isExists) {
-                guiGraphics.drawString(font, "✔", left + width - 15, y + 8, 0xFF55FF55);
+                guiGraphics.drawString(font, "✔", left + width - 15, top + 8, 0xFF55FF55);
             }
         }
 
         @Override
-        public boolean mouseClicked(MouseButtonEvent event, boolean isDouble) {
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
             suggestionList.setSelected(this);
-            if (event.buttonInfo().button() == 0) {
+            if (button == 0) {
                 confirmSelection(info.id);
                 return true;
             }

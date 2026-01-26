@@ -49,7 +49,7 @@ public class MaingraphforMC {
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(ltd.opens.mg.mc.core.blueprint.engine.TickScheduler.class);
 
-        if (FMLEnvironment.getDist() == Dist.CLIENT) {
+        if (FMLEnvironment.dist == Dist.CLIENT) {
             clientRouter = new BlueprintRouter();
         }
 
@@ -118,8 +118,8 @@ public class MaingraphforMC {
     }
 
     private boolean hasPermission(CommandSourceStack s) {
-        if (s.getServer() != null && s.getEntity() instanceof ServerPlayer player) {
-            return s.getServer().getProfilePermissions(new net.minecraft.server.players.NameAndId(player.getUUID(), player.getGameProfile().name())).level().id() >= 2;
+        if (s.getEntity() instanceof ServerPlayer player) {
+            return player.hasPermissions(2);
         }
         return true;
     }

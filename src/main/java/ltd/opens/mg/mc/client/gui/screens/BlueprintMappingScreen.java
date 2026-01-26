@@ -12,7 +12,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.client.input.MouseButtonEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -160,7 +159,7 @@ public class BlueprintMappingScreen extends Screen {
 
     private void refreshIdList() {
         String prevSelected = selectedId;
-        this.idList.clearEntries();
+        this.idList.clear();
         
         // 确保内置 ID 存在
         workingMappings.putIfAbsent(BlueprintRouter.GLOBAL_ID, new HashSet<>());
@@ -192,7 +191,7 @@ public class BlueprintMappingScreen extends Screen {
         
         // 确保右侧列表存在
         if (this.blueprintList != null) {
-            this.blueprintList.clearEntries();
+            this.blueprintList.clear();
             if (id != null && workingMappings.containsKey(id)) {
                 workingMappings.get(id).stream().sorted().forEach(bp -> {
                     this.blueprintList.add(new BlueprintMappingEntry(bp));
@@ -213,6 +212,7 @@ public class BlueprintMappingScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 15, 0xFFFFFF);
         
@@ -223,11 +223,11 @@ public class BlueprintMappingScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean isDouble) {
-        if (contextMenu.mouseClicked(event.x(), event.y(), event.buttonInfo().button())) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (contextMenu.mouseClicked(mouseX, mouseY, button)) {
             return true;
         }
-        return super.mouseClicked(event, isDouble);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     // --- 内部类：ID 列表 ---
@@ -238,6 +238,10 @@ public class BlueprintMappingScreen extends Screen {
 
         public void add(IdEntry entry) {
             super.addEntry(entry);
+        }
+
+        public void clear() {
+            super.clearEntries();
         }
 
         @Override
@@ -259,42 +263,36 @@ public class BlueprintMappingScreen extends Screen {
         }
 
         @Override
-        public void renderContent(GuiGraphics guiGraphics, int index, int top, boolean isHovered, float partialTick) {
-            int left = this.getX();
-            int width = this.getWidth();
-            int height = this.getHeight();
-            int y = this.getY();
-            if (y <= 0) y = top;
-
+        public void render(GuiGraphics guiGraphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isHovered, float partialTick) {
             boolean isSelected = selectedId != null && selectedId.equals(id);
             IdMetadataHelper.IdInfo info = IdMetadataHelper.getInfo(id);
 
             // 渲染背景和边框
             if (isSelected) {
-                guiGraphics.fill(left, y, left + width, y + height, 0x44FFFFFF);
-                guiGraphics.renderOutline(left, y, width, height, 0xFFFFCC00);
+                guiGraphics.fill(left, top, left + width, top + height, 0x44FFFFFF);
+                guiGraphics.renderOutline(left, top, width, height, 0xFFFFCC00);
             } else if (isHovered) {
-                guiGraphics.fill(left, y, left + width, y + height, 0x22FFFFFF);
-                guiGraphics.renderOutline(left, y, width, height, 0xFF888888);
+                guiGraphics.fill(left, top, left + width, top + height, 0x22FFFFFF);
+                guiGraphics.renderOutline(left, top, width, height, 0xFF888888);
             }
 
             // 渲染图标
             if (!info.icon.isEmpty()) {
-                guiGraphics.renderItem(info.icon, left + 5, y + 4);
+                guiGraphics.renderItem(info.icon, left + 5, top + 4);
             }
 
             int color = isSelected ? 0xFFFFCC00 : (isHovered ? 0xFFFFFFFF : (info.isBuiltIn ? 0xFF888888 : 0xFFAAAAAA));
             
             // 渲染显示名称
-            guiGraphics.drawString(font, info.name, left + 25, y + 4, color);
+            guiGraphics.drawString(font, info.name, left + 25, top + 4, color);
             // 渲染 ID
-            guiGraphics.drawString(font, info.id, left + 25, y + 14, 0x888888);
+            guiGraphics.drawString(font, info.id, left + 25, top + 14, 0x888888);
         }
 
         @Override
-        public boolean mouseClicked(MouseButtonEvent event, boolean isDouble) {
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
             selectId(id);
-            if (event.buttonInfo().button() == 1) { // 右键
+            if (button == 1) { // 右键
                 boolean isBuiltIn = id.equals(BlueprintRouter.GLOBAL_ID) || id.equals(BlueprintRouter.PLAYERS_ID);
                 List<GuiContextMenu.MenuItem> items = new ArrayList<>();
                 items.add(new GuiContextMenu.MenuItem(
@@ -311,7 +309,7 @@ public class BlueprintMappingScreen extends Screen {
                     isBuiltIn ? 0x888888 : 0xFFFF5555
                 ));
                 contextMenu.setWidth(120);
-                contextMenu.show(event.x(), event.y(), items);
+                contextMenu.show(mouseX, mouseY, items);
                 return true;
             }
             return true;
@@ -331,6 +329,10 @@ public class BlueprintMappingScreen extends Screen {
 
         public void add(BlueprintMappingEntry entry) {
             super.addEntry(entry);
+        }
+
+        public void clear() {
+            super.clearEntries();
         }
 
         @Override
@@ -354,40 +356,32 @@ public class BlueprintMappingScreen extends Screen {
         }
 
         @Override
-        public void renderContent(GuiGraphics guiGraphics, int index, int top, boolean isHovered, float partialTick) {
-            int left = this.getX();
-            int width = this.getWidth();
-            int height = this.getHeight();
-            int y = this.getY();
-            if (y <= 0) y = top;
-
+        public void render(GuiGraphics guiGraphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isHovered, float partialTick) {
             // 渲染背景
             if (isHovered) {
-                guiGraphics.fill(left, y, left + width, y + height, 0x22FFFFFF);
-                guiGraphics.renderOutline(left, y, width, height, 0xFF888888);
+                guiGraphics.fill(left, top, left + width, top + height, 0x22FFFFFF);
+                guiGraphics.renderOutline(left, top, width, height, 0xFF888888);
             }
 
             int color = isHovered ? 0xFFFFFFFF : 0xFFAAAAAA;
-            guiGraphics.drawString(font, displayName, left + 5, y + (height - 8) / 2, color);
+            guiGraphics.drawString(font, displayName, left + 5, top + (height - 8) / 2, color);
             
             // 删除按钮 (X)
             int xBtnWidth = 20;
             int xBtnX = left + width - xBtnWidth;
             // 简化悬停显示：只要条目被悬停，就显示浅红色的 X
-            guiGraphics.drawString(font, "X", xBtnX + 5, y + (height - 8) / 2, isHovered ? 0xFFFF5555 : 0x44FF5555);
+            guiGraphics.drawString(font, "X", xBtnX + 5, top + (height - 8) / 2, isHovered ? 0xFFFF5555 : 0x44FF5555);
         }
 
         @Override
-        public boolean mouseClicked(MouseButtonEvent event, boolean isDouble) {
-            int entryWidth = this.getWidth();
-            int entryLeft = this.getX();
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            // 在 1.21.1 中 Entry 没有 getX/getWidth，使用列表的属性
+            int entryWidth = blueprintList.getRowWidth();
+            int entryLeft = blueprintList.getRowLeft();
             int xBtnWidth = 20;
             int xBtnX = entryLeft + entryWidth - xBtnWidth;
             
-            double mouseX = event.x();
-            double mouseY = event.y();
-
-            if (event.buttonInfo().button() == 1) { // 右键
+            if (button == 1) { // 右键
                 List<GuiContextMenu.MenuItem> items = new ArrayList<>();
                 items.add(new GuiContextMenu.MenuItem(
                     Component.translatable("gui.mgmc.mapping.delete_mapping"),

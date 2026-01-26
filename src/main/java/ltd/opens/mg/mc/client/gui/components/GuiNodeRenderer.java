@@ -3,6 +3,7 @@ package ltd.opens.mg.mc.client.gui.components;
 import ltd.opens.mg.mc.client.gui.blueprint.Viewport;
 import ltd.opens.mg.mc.core.blueprint.NodeDefinition;
 import ltd.opens.mg.mc.core.blueprint.NodePorts;
+import com.mojang.math.Axis;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -259,12 +260,12 @@ public class GuiNodeRenderer {
         float dy = y2 - y1;
         float len = (float) Math.sqrt(dx * dx + dy * dy);
         if (len < 0.5f) return;
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(x1, y1);
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(x1, y1, 0);
         float angle = (float) Math.atan2(dy, dx);
-        guiGraphics.pose().rotate(angle);
+        guiGraphics.pose().mulPose(Axis.ZP.rotation(angle));
         guiGraphics.fill(0, 0, (int)len, 1, color);
-        guiGraphics.pose().popMatrix();
+        guiGraphics.pose().popPose();
     }
 
     private static void drawCircle(GuiGraphics guiGraphics, float cx, float cy, int radius, int color) {

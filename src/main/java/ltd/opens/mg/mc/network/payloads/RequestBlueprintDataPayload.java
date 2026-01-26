@@ -5,10 +5,10 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public record RequestBlueprintDataPayload(String name) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<RequestBlueprintDataPayload> TYPE = new CustomPacketPayload.Type<>(Identifier.parse(MaingraphforMC.MODID + ":request_blueprint_data"));
+    public static final CustomPacketPayload.Type<RequestBlueprintDataPayload> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(MaingraphforMC.MODID, "request_blueprint_data"));
     
     public static final StreamCodec<FriendlyByteBuf, RequestBlueprintDataPayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8,

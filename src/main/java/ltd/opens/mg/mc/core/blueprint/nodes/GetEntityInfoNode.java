@@ -11,10 +11,10 @@ import ltd.opens.mg.mc.core.blueprint.engine.TypeConverter;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.players.NameAndId;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
 import ltd.opens.mg.mc.core.blueprint.events.RegisterMGMCNodesEvent;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -146,7 +146,8 @@ public class GetEntityInfoNode {
                 return false;
             case NodePorts.PERMISSION_LEVEL:
                 if (entity instanceof ServerPlayer serverPlayer && ctx.level != null && ctx.level.getServer() != null) {
-                    return (double) ctx.level.getServer().getProfilePermissions(new NameAndId(serverPlayer.getUUID(), serverPlayer.getGameProfile().name())).level().id();
+                    net.minecraft.server.players.ServerOpListEntry entry = ctx.level.getServer().getPlayerList().getOps().get(serverPlayer.getGameProfile());
+                    return entry != null ? (double) entry.getLevel() : 0.0;
                 }
                 return 0.0;
         }

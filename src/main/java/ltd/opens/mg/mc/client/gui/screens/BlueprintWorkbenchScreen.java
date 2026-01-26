@@ -9,7 +9,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -57,7 +56,7 @@ public class BlueprintWorkbenchScreen extends AbstractContainerScreen<BlueprintW
 
     public void updateListFromServer(List<String> blueprints) {
         if (allBlueprintsList != null) {
-            allBlueprintsList.clearEntries();
+            allBlueprintsList.clear();
             for (String bp : blueprints) {
                 allBlueprintsList.add(new BlueprintEntry(bp));
             }
@@ -86,7 +85,7 @@ public class BlueprintWorkbenchScreen extends AbstractContainerScreen<BlueprintW
                 if (scripts != null) {
                     this.boundBlueprintsList.updateList(scripts);
                 } else {
-                    this.boundBlueprintsList.clearEntries();
+                    this.boundBlueprintsList.clear();
                 }
                 lastStack = stack.copy();
                 lastScripts = scripts == null ? null : List.copyOf(scripts);
@@ -169,6 +168,9 @@ public class BlueprintWorkbenchScreen extends AbstractContainerScreen<BlueprintW
         public void add(BlueprintEntry entry) {
             this.addEntry(entry);
         }
+        public void clear() {
+            super.clearEntries();
+        }
         @Override
         public int getRowWidth() { return this.width - 4; }
     }
@@ -182,26 +184,20 @@ public class BlueprintWorkbenchScreen extends AbstractContainerScreen<BlueprintW
         }
 
         @Override
-        public void renderContent(GuiGraphics guiGraphics, int index, int top, boolean isHovered, float partialTick) {
-            int x = this.getX();
-            int y = this.getY();
-            if (y <= 0) y = top;
-            int width = this.getWidth();
-            int height = this.getHeight();
-
+        public void render(GuiGraphics guiGraphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isHovered, float partialTick) {
             if (this == allBlueprintsList.getSelected()) {
-                guiGraphics.fill(x, y, x + width, y + height, 0xFFFFFFFF); // 选中白色背景
-                guiGraphics.drawString(minecraft.font, displayName, x + 4, y + 5, 0xFF404040, false); // 选中时深色文字
+                guiGraphics.fill(left, top, left + width, top + height, 0xFFFFFFFF); // 选中白色背景
+                guiGraphics.drawString(minecraft.font, displayName, left + 4, top + 5, 0xFF404040, false); // 选中时深色文字
             } else {
                 if (isHovered) {
-                    guiGraphics.fill(x, y, x + width, y + height, 0x44FFFFFF); // 悬停半透明
+                    guiGraphics.fill(left, top, left + width, top + height, 0x44FFFFFF); // 悬停半透明
                 }
-                guiGraphics.drawString(minecraft.font, displayName, x + 4, y + 5, 0xFFFFFFFF, false); // 普通白色文字
+                guiGraphics.drawString(minecraft.font, displayName, left + 4, top + 5, 0xFFFFFFFF, false); // 普通白色文字
             }
         }
 
         @Override
-        public boolean mouseClicked(MouseButtonEvent event, boolean isDouble) {
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
             allBlueprintsList.setSelected(this);
             return true;
         }
@@ -216,12 +212,15 @@ public class BlueprintWorkbenchScreen extends AbstractContainerScreen<BlueprintW
         }
         public void updateList(List<String> blueprints) {
             String selected = this.getSelected() != null ? this.getSelected().path : null;
-            this.clearEntries();
+            this.clear();
             for (String bp : blueprints) {
                 BoundEntry entry = new BoundEntry(bp);
                 this.addEntry(entry);
                 if (bp.equals(selected)) this.setSelected(entry);
             }
+        }
+        public void clear() {
+            super.clearEntries();
         }
         @Override
         public int getRowWidth() { return this.width - 4; }
@@ -232,30 +231,27 @@ public class BlueprintWorkbenchScreen extends AbstractContainerScreen<BlueprintW
         public BoundEntry(String path) { this.path = path; }
 
         @Override
-        public void renderContent(GuiGraphics guiGraphics, int index, int top, boolean isHovered, float partialTick) {
-            int x = this.getX();
-            int y = this.getY();
-            if (y <= 0) y = top;
-            int width = this.getWidth();
-            int height = this.getHeight();
-
+        public void render(GuiGraphics guiGraphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isHovered, float partialTick) {
             if (isHovered) {
-                guiGraphics.fill(x, y, x + width, y + height, 0x44FFFFFF);
+                guiGraphics.fill(left, top, left + width, top + height, 0x44FFFFFF);
             }
 
             String name = path;
             if (name.endsWith(".json")) name = name.substring(0, name.length() - 5);
-            guiGraphics.drawString(minecraft.font, name, x + 4, y + 5, 0xFFFFFFFF, false);
+            guiGraphics.drawString(minecraft.font, name, left + 4, top + 5, 0xFFFFFFFF, false);
             
             if (isHovered) {
-                guiGraphics.drawString(minecraft.font, "✕", x + width - 12, y + 5, 0xFFFF5555, false);
+                guiGraphics.drawString(minecraft.font, "✕", left + width - 12, top + 5, 0xFFFF5555, false);
             }
         }
 
         @Override
-        public boolean mouseClicked(MouseButtonEvent event, boolean isDouble) {
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
             // 如果点击的是右侧的 X 按钮 (大致范围)
-            if (event.x() > this.getX() + this.getWidth() - 15) {
+            // 在 1.21.1 中 Entry 没有 getX/getWidth，使用列表的属性
+            int listX = boundBlueprintsList.getRowLeft();
+            int listWidth = boundBlueprintsList.getRowWidth();
+            if (mouseX > listX + listWidth - 15) {
                 NetworkService.getInstance().sendWorkbenchAction(WorkbenchActionPayload.Action.UNBIND, path);
                 return true;
             }

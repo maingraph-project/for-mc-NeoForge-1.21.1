@@ -5,7 +5,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -47,6 +46,7 @@ public class AboutScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
         int centerX = this.width / 2;
@@ -75,9 +75,7 @@ public class AboutScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean isDouble) {
-        double mouseX = event.x();
-        double mouseY = event.y();
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         int centerX = this.width / 2;
         int centerY = this.height / 2;
 
@@ -90,7 +88,7 @@ public class AboutScreen extends Screen {
             return true;
         }
 
-        return super.mouseClicked(event, isDouble);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
