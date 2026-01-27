@@ -1,7 +1,7 @@
 ---- Minecraft Crash Report ----
-// You should try our sister game, Minceraft!
+// Hi. I'm Minecraft, and I'm a crashaholic.
 
-Time: 2026-01-26 23:35:43
+Time: 2026-01-27 00:06:32
 Description: Mod loading failures have occurred; consult the issue messages for more details
 
 net.neoforged.neoforge.logging.CrashReportExtender$ModLoadingCrashException: Mod loading has failed
@@ -13,52 +13,55 @@ A detailed walkthrough of the error, its code path and all known details is as f
 -- Head --
 Thread: Render thread
 Stacktrace:
-	at MC-BOOTSTRAP/fml_loader@4.0.24/net.neoforged.fml.loading.moddiscovery.ModFileInfo.lambda$new$0(ModFileInfo.java:61) ~[loader-4.0.24.jar%23139!/:4.0] {}
--- Mod loading issue --
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.api.BusBuilder.lambda$markerType$0(BusBuilder.java:25) ~[bus-8.0.2.jar%23143!/:?] {}
+-- Mod loading issue for: mgmc --
 Details:
-	Mod file: <No mod information provided>
-	Failure message: File F:\modmc\bc\1.21.1\for-mc\build\classes\java\main is not a valid mod file
-	Mod version: <No mod information provided>
+	Caused by 0: java.lang.IllegalArgumentException: Method public static void ltd.opens.mg.mc.core.blueprint.nodes.MathNodes.onRegister(ltd.opens.mg.mc.core.blueprint.events.RegisterMGMCNodesEvent) has @SubscribeEvent annotation, but takes an argument that is not valid for this busclass ltd.opens.mg.mc.core.blueprint.events.RegisterMGMCNodesEvent
+		at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.registerListener(EventBus.java:164) ~[bus-8.0.2.jar%23143!/:?] {}
+		at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.register(EventBus.java:91) ~[bus-8.0.2.jar%23143!/:?] {}
+		at TRANSFORMER/mgmc@0.4.0+MC1.21.1/ltd.opens.mg.mc.core.blueprint.NodeInitializer.init(NodeInitializer.java:19) ~[%23185!/:?] {re:classloading}
+		at TRANSFORMER/mgmc@0.4.0+MC1.21.1/ltd.opens.mg.mc.MaingraphforMC.commonSetup(MaingraphforMC.java:62) ~[%23185!/:?] {re:classloading}
+		at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.ConsumerEventHandler.invoke(ConsumerEventHandler.java:26) ~[bus-8.0.2.jar%23143!/:?] {}
+		at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:350) ~[bus-8.0.2.jar%23143!/:?] {}
+		at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:315) ~[bus-8.0.2.jar%23143!/:?] {}
+		at MC-BOOTSTRAP/fml_loader@4.0.24/net.neoforged.fml.ModContainer.acceptEvent(ModContainer.java:158) ~[loader-4.0.24.jar%23139!/:4.0] {}
+		at MC-BOOTSTRAP/fml_loader@4.0.24/net.neoforged.fml.ModLoader.lambda$dispatchParallelEvent$4(ModLoader.java:172) ~[loader-4.0.24.jar%23139!/:4.0] {}
+		at MC-BOOTSTRAP/fml_loader@4.0.24/net.neoforged.fml.ModLoader.lambda$dispatchParallelTask$7(ModLoader.java:231) ~[loader-4.0.24.jar%23139!/:4.0] {}
+		at java.base/java.util.concurrent.CompletableFuture.uniHandle(CompletableFuture.java:934) ~[?:?] {}
+		at java.base/java.util.concurrent.CompletableFuture$UniHandle.tryFire(CompletableFuture.java:911) ~[?:?] {}
+		at java.base/java.util.concurrent.CompletableFuture$Completion.exec(CompletableFuture.java:483) ~[?:?] {}
+		at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:387) ~[?:?] {}
+		at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1310) ~[?:?] {}
+		at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1841) ~[?:?] {}
+		at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1806) ~[?:?] {}
+		at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188) ~[?:?] {}
+
+	Mod file: /F:/modmc/bc/1.21.1/for-mc/build/classes/java/main/
+	Failure message: Maingraph for MC (mgmc) encountered an error while dispatching the net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event
+		java.lang.IllegalArgumentException: Method public static void ltd.opens.mg.mc.core.blueprint.nodes.MathNodes.onRegister(ltd.opens.mg.mc.core.blueprint.events.RegisterMGMCNodesEvent) has @SubscribeEvent annotation, but takes an argument that is not valid for this busclass ltd.opens.mg.mc.core.blueprint.events.RegisterMGMCNodesEvent
+	Mod version: 0.4.0+MC1.21.1
 	Mod issues URL: <No issues URL found>
-	Exception message: net.neoforged.neoforgespi.locating.InvalidModFileException: Missing ModLoader in file (main)
+	Exception message: java.lang.IllegalArgumentException: This bus only accepts subclasses of interface net.neoforged.fml.event.IModBusEvent, which class ltd.opens.mg.mc.core.blueprint.events.RegisterMGMCNodesEvent is not.
 Stacktrace:
-	at MC-BOOTSTRAP/fml_loader@4.0.24/net.neoforged.fml.loading.moddiscovery.ModFileInfo.lambda$new$0(ModFileInfo.java:61) ~[loader-4.0.24.jar%23139!/:4.0] {}
-	at java.base/java.util.Optional.orElseThrow(Optional.java:403) ~[?:?] {}
-	at MC-BOOTSTRAP/fml_loader@4.0.24/net.neoforged.fml.loading.moddiscovery.ModFileInfo.<init>(ModFileInfo.java:61) ~[loader-4.0.24.jar%23139!/:4.0] {}
-	at MC-BOOTSTRAP/fml_loader@4.0.24/net.neoforged.fml.loading.moddiscovery.ModFileParser.modsTomlParser(ModFileParser.java:54) ~[loader-4.0.24.jar%23139!/:4.0] {}
-	at MC-BOOTSTRAP/fml_loader@4.0.24/net.neoforged.fml.loading.moddiscovery.ModFileParser.readModList(ModFileParser.java:35) ~[loader-4.0.24.jar%23139!/:4.0] {}
-	at MC-BOOTSTRAP/fml_loader@4.0.24/net.neoforged.fml.loading.moddiscovery.ModFile.<init>(ModFile.java:77) ~[loader-4.0.24.jar%23139!/:4.0] {}
-	at MC-BOOTSTRAP/fml_loader@4.0.24/net.neoforged.fml.loading.moddiscovery.ModFile.<init>(ModFile.java:66) ~[loader-4.0.24.jar%23139!/:4.0] {}
-	at MC-BOOTSTRAP/fml_loader@4.0.24/net.neoforged.fml.loading.moddiscovery.readers.JarModsDotTomlModFileReader.createModFile(JarModsDotTomlModFileReader.java:45) ~[loader-4.0.24.jar%23139!/:4.0] {}
-	at MC-BOOTSTRAP/fml_loader@4.0.24/net.neoforged.fml.loading.moddiscovery.readers.JarModsDotTomlModFileReader.read(JarModsDotTomlModFileReader.java:88) ~[loader-4.0.24.jar%23139!/:4.0] {}
-	at MC-BOOTSTRAP/fml_loader@4.0.24/net.neoforged.fml.loading.moddiscovery.ModDiscoverer$DiscoveryPipeline.addJarContent(ModDiscoverer.java:202) ~[loader-4.0.24.jar%23139!/:4.0] {}
-	at MC-BOOTSTRAP/fml_loader@4.0.24/net.neoforged.fml.loading.moddiscovery.ModDiscoverer$DiscoveryPipeline.addPath(ModDiscoverer.java:179) ~[loader-4.0.24.jar%23139!/:4.0] {}
-	at MC-BOOTSTRAP/fml_loader@4.0.24/net.neoforged.fml.loading.moddiscovery.locators.UserdevLocator.findCandidates(UserdevLocator.java:34) ~[loader-4.0.24.jar%23139!/:4.0] {}
-	at MC-BOOTSTRAP/fml_loader@4.0.24/net.neoforged.fml.loading.moddiscovery.ModDiscoverer.discoverMods(ModDiscoverer.java:72) ~[loader-4.0.24.jar%23139!/:4.0] {}
-	at MC-BOOTSTRAP/fml_loader@4.0.24/net.neoforged.fml.loading.FMLLoader.beginModScan(FMLLoader.java:125) ~[loader-4.0.24.jar%23139!/:4.0] {}
-	at MC-BOOTSTRAP/fml_loader@4.0.24/net.neoforged.fml.loading.FMLServiceProvider.beginScanning(FMLServiceProvider.java:84) ~[loader-4.0.24.jar%23139!/:4.0] {}
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.4/cpw.mods.modlauncher.TransformationServiceDecorator.runScan(TransformationServiceDecorator.java:97) ~[modlauncher-11.0.4.jar%23121!/:?] {}
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.4/cpw.mods.modlauncher.TransformationServicesHandler.lambda$runScanningTransformationServices$7(TransformationServicesHandler.java:94) ~[modlauncher-11.0.4.jar%23121!/:?] {}
-	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197) ~[?:?] {}
-	at java.base/java.util.HashMap$ValueSpliterator.forEachRemaining(HashMap.java:1787) ~[?:?] {}
-	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509) ~[?:?] {}
-	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499) ~[?:?] {}
-	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:575) ~[?:?] {}
-	at java.base/java.util.stream.AbstractPipeline.evaluateToArrayNode(AbstractPipeline.java:260) ~[?:?] {}
-	at java.base/java.util.stream.ReferencePipeline.toArray(ReferencePipeline.java:616) ~[?:?] {}
-	at java.base/java.util.stream.ReferencePipeline.toArray(ReferencePipeline.java:622) ~[?:?] {}
-	at java.base/java.util.stream.ReferencePipeline.toList(ReferencePipeline.java:627) ~[?:?] {}
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.4/cpw.mods.modlauncher.TransformationServicesHandler.runScanningTransformationServices(TransformationServicesHandler.java:96) ~[modlauncher-11.0.4.jar%23121!/:?] {}
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.4/cpw.mods.modlauncher.TransformationServicesHandler.initializeTransformationServices(TransformationServicesHandler.java:50) ~[modlauncher-11.0.4.jar%23121!/:?] {}
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.4/cpw.mods.modlauncher.Launcher.run(Launcher.java:84) [modlauncher-11.0.4.jar%23121!/:?] {}
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.4/cpw.mods.modlauncher.Launcher.main(Launcher.java:74) [modlauncher-11.0.4.jar%23121!/:?] {}
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.4/cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:26) [modlauncher-11.0.4.jar%23121!/:?] {}
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.4/cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:23) [modlauncher-11.0.4.jar%23121!/:?] {}
-	at cpw.mods.bootstraplauncher@2.0.2/cpw.mods.bootstraplauncher.BootstrapLauncher.run(BootstrapLauncher.java:210) [bootstraplauncher-2.0.2.jar:?] {}
-	at cpw.mods.bootstraplauncher@2.0.2/cpw.mods.bootstraplauncher.BootstrapLauncher.main(BootstrapLauncher.java:69) [bootstraplauncher-2.0.2.jar:?] {}
-	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
-	at net.neoforged.devlaunch.Main.main(Main.java:57) [DevLaunch-1.0.2.jar:?] {}
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.api.BusBuilder.lambda$markerType$0(BusBuilder.java:25) ~[bus-8.0.2.jar%23143!/:?] {}
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.registerListener(EventBus.java:162) ~[bus-8.0.2.jar%23143!/:?] {}
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.register(EventBus.java:91) ~[bus-8.0.2.jar%23143!/:?] {}
+	at TRANSFORMER/mgmc@0.4.0+MC1.21.1/ltd.opens.mg.mc.core.blueprint.NodeInitializer.init(NodeInitializer.java:19) ~[%23185!/:?] {re:classloading}
+	at TRANSFORMER/mgmc@0.4.0+MC1.21.1/ltd.opens.mg.mc.MaingraphforMC.commonSetup(MaingraphforMC.java:62) ~[%23185!/:?] {re:classloading}
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.ConsumerEventHandler.invoke(ConsumerEventHandler.java:26) ~[bus-8.0.2.jar%23143!/:?] {}
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:350) ~[bus-8.0.2.jar%23143!/:?] {}
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:315) ~[bus-8.0.2.jar%23143!/:?] {}
+	at MC-BOOTSTRAP/fml_loader@4.0.24/net.neoforged.fml.ModContainer.acceptEvent(ModContainer.java:158) ~[loader-4.0.24.jar%23139!/:4.0] {}
+	at MC-BOOTSTRAP/fml_loader@4.0.24/net.neoforged.fml.ModLoader.lambda$dispatchParallelEvent$4(ModLoader.java:172) ~[loader-4.0.24.jar%23139!/:4.0] {}
+	at MC-BOOTSTRAP/fml_loader@4.0.24/net.neoforged.fml.ModLoader.lambda$dispatchParallelTask$7(ModLoader.java:231) ~[loader-4.0.24.jar%23139!/:4.0] {}
+	at java.base/java.util.concurrent.CompletableFuture.uniHandle(CompletableFuture.java:934) ~[?:?] {}
+	at java.base/java.util.concurrent.CompletableFuture$UniHandle.tryFire(CompletableFuture.java:911) ~[?:?] {}
+	at java.base/java.util.concurrent.CompletableFuture$Completion.exec(CompletableFuture.java:483) ~[?:?] {}
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:387) ~[?:?] {}
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1310) ~[?:?] {}
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1841) ~[?:?] {}
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1806) ~[?:?] {}
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188) ~[?:?] {}
 
 
 -- System Details --
@@ -68,7 +71,7 @@ Details:
 	Operating System: Windows 11 (amd64) version 10.0
 	Java Version: 21.0.9, Oracle Corporation
 	Java VM Version: Java HotSpot(TM) 64-Bit Server VM (mixed mode, sharing), Oracle Corporation
-	Memory: 346122392 bytes (330 MiB) / 738197504 bytes (704 MiB) up to 4288675840 bytes (4090 MiB)
+	Memory: 179885952 bytes (171 MiB) / 545259520 bytes (520 MiB) up to 4288675840 bytes (4090 MiB)
 	CPUs: 8
 	Processor Vendor: GenuineIntel
 	Processor Name: Intel(R) Xeon(R) CPU E3-1230 v5 @ 3.40GHz
@@ -99,15 +102,15 @@ Details:
 	Memory slot #1 capacity (MiB): 8192.00
 	Memory slot #1 clockSpeed (GHz): 2.13
 	Memory slot #1 type: DDR4
-	Virtual memory max (MiB): 39380.39
-	Virtual memory used (MiB): 33333.98
-	Swap memory total (MiB): 23021.89
-	Swap memory used (MiB): 1964.71
+	Virtual memory max (MiB): 39847.45
+	Virtual memory used (MiB): 33465.81
+	Swap memory total (MiB): 23488.95
+	Swap memory used (MiB): 2056.04
 	Space in storage for jna.tmpdir (MiB): <path not set>
 	Space in storage for org.lwjgl.system.SharedLibraryExtractPath (MiB): <path not set>
 	Space in storage for io.netty.native.workdir (MiB): <path not set>
-	Space in storage for java.io.tmpdir (MiB): available: 38.54, total: 114472.00
-	Space in storage for workdir (MiB): available: 524543.25, total: 715403.00
+	Space in storage for java.io.tmpdir (MiB): available: 822.20, total: 114472.00
+	Space in storage for workdir (MiB): available: 524530.06, total: 715403.00
 	JVM Flags: 0 total; 
 	ModLauncher: 11.0.4+main.d2e20e43
 	ModLauncher launch target: forgeclientuserdev
@@ -125,4 +128,8 @@ Details:
 		minecraft@4.0
 	Mod List: 
 		neoforge-21.1.65.jar                              |Minecraft                     |minecraft                     |1.21.1              |Manifest: NOSIGNATURE
+		main                                              |Maingraph for MC              |mgmc                          |0.4.0+MC1.21.1      |Manifest: NOSIGNATURE
 		neoforge-21.1.65.jar                              |NeoForge                      |neoforge                      |21.1.65             |Manifest: NOSIGNATURE
+	Crash Report UUID: d1869bfe-afab-4960-a3d3-31cc62ed6b88
+	FML: 4.0.24
+	NeoForge: 21.1.65

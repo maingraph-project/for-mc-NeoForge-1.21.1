@@ -96,6 +96,7 @@ public class BlueprintScreen extends Screen {
         if (isSpecialBlueprint()) {
             state.showNotification("Special Mode: Listing all registered nodes...");
             java.util.List<ltd.opens.mg.mc.core.blueprint.NodeDefinition> defs = new java.util.ArrayList<>(ltd.opens.mg.mc.core.blueprint.NodeRegistry.getAllDefinitions());
+            MaingraphforMC.LOGGER.info("BlueprintScreen: Found {} registered nodes in registry.", defs.size());
             defs.sort((a, b) -> a.id().compareTo(b.id()));
             
             int cols = (int) Math.ceil(Math.sqrt(defs.size()));
@@ -184,6 +185,12 @@ public class BlueprintScreen extends Screen {
 
     private boolean isHovering(int mouseX, int mouseY, int x, int y, int w, int h) {
         return mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
+    }
+
+    @Override
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Do nothing to prevent default background blur/darkening in 1.21.1
+        // We draw our own background in render() via BlueprintRenderer.drawGrid()
     }
 
     @Override

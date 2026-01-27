@@ -20,6 +20,7 @@ public class MathNodes {
 
     @SubscribeEvent
     public static void onRegister(RegisterMGMCNodesEvent event) {
+        ltd.opens.mg.mc.MaingraphforMC.LOGGER.info("MathNodes: Received RegisterMGMCNodesEvent, starting registration...");
         // --- 基础数学运算 ---
         NodeHelper.setup("add_float", "node.mgmc.add_float.name")
             .category("node_category.mgmc.logic.math")

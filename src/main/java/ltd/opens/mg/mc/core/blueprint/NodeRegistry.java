@@ -18,6 +18,7 @@ public class NodeRegistry {
     }
 
     public static void register(NodeDefinition definition) {
+        ltd.opens.mg.mc.MaingraphforMC.LOGGER.info("NodeRegistry: Attempting to register node: {}", definition.id());
         if (frozen) {
             throw new IllegalStateException("Cannot register node after registry is frozen: " + definition.id());
         }
